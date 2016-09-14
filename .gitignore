@@ -1,0 +1,4 @@
+/cover/
+/coverage/
+/node_modules/
+/**/*.swp

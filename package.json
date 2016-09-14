@@ -1,0 +1,21 @@
+{
+  "name": "model_reducer",
+  "version": "0.0.1",
+  "description": "A reducer based on a Model structure",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/main.js"
+  },
+  "keywords": [
+    "reducer"
+  ],
+  "files": [
+    "lib/"
+  ],
+  "author": "Duncan McDougall",
+  "private": true,
+  "devDependencies": {
+    "istanbul": "^0.4.5",
+    "jasmine": "^2.5.1"
+  }
+}
