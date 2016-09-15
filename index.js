@@ -1,9 +1,4 @@
-function ModelReducer() {
-    this.HelloWorld = "A Panther";
-}
 
-ModelReducer.prototype["fred"] = function() {
-    console.log("Hello World");
-};
+module.exports.ModelCreator = require('./lib/ModleCreator.js');
 
-module.exports = new ModelReducer();
+

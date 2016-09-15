@@ -1,6 +1,6 @@
 var ModelReducer = require('../index.js');
 
-var mockChildCreator = ModelReducer.startCreatingModel('MockCollectionChild');
+var mockChildCreator = new ModelReducer.ModelCreator('MockCollectionChild');
 
 mockChildCreator.setFormsACollection(true);
 mockChildCreator.setCollectionKeyField('id');
@@ -13,4 +13,4 @@ mockChildCreator.addRequest('ChildRequest', function(state){
     return 'Child';
 });
 
-module.exports = mockChildCreator.finaliseConstructor();
+module.exports = mockChildCreator.finaliseModel();

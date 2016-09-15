@@ -1,76 +1,28 @@
 /*eslint-env jasmine */
 
-// var MockChild = require('./mock_Child.js');
-function MockChild()
-{
-    this.Properties = ['child_property'];
-    this.Actions = {
-        'ChildAction': (state) => {return state;}
-    };
-    this.Requests = {
-        'ChildRequest': () => {return 'Child';}
-    };
-    this.Children = {
-    };
-
-    this.getName = function() {return 'MockChild';};
-}
-MockChild.prototype = require('../lib/StateActions.js');
-var Child = new MockChild;
-
-function MockIdChild()
-{
-    this.Properties = ['child_property'];
-    this.Actions = {};
-    this.Requests = {};
-    this.Children = {};
-
-    this.getName = function() {return 'MockIdChild';};
-    this.getIdField = function() {return 'id';};
-}
-MockIdChild.prototype = require('../lib/StateActions.js');
-var IdChild = new MockIdChild;
-
-function MockParent()
-{
-    this.Properties = ['parent_property'];
-    this.Actions = {
-        'ParentAction': (state) => {return state;}
-    };
-    this.Requests = {
-        'ParentRequest': () => {return 'Parent';}
-    };
-    this.Children = {
-        'MockChild': new MockChild(),
-        'MockIdChild': new MockIdChild()
-    };
-
-    this.getName = function() {return 'MockParent';};
-}
-MockParent.prototype = require('../lib/StateActions.js');
-
-var Parent = new MockParent();
-
+var Child = require('./mock_Child.js');
+var CollectionChild = require('./mock_CollectionChild.js');
+var Parent = require('./mock_Parent.js');
 describe('StateActions', function () {
 
-    it('getName(). Should return the name of the object.', function() {
+    it('name. Should return the name of the object.', function() {
         expect(Parent.getName()).toEqual('MockParent');
         expect(Child.getName()).toEqual('MockChild');
-        expect(IdChild.getName()).toEqual('MockIdChild');
+        expect(CollectionChild.getName()).toEqual('MockCollectionChild');
     });
     it('getIdField(). Should return id or null.', function() {
         expect(Parent.getIdField()).toEqual(null);
         expect(Child.getIdField()).toEqual(null);
-        expect(IdChild.getIdField()).toEqual('id');
+        expect(CollectionChild.getIdField()).toEqual('id');
     });
     it('createEmpty(). Should initialise properties to null and children.', function(){
         var state = Parent.createEmpty();
         expect(state.parent_property).toBeNull();
         expect(state.MockChild).not.toBeNull();
         expect(state.MockChild.child_property).toBeNull();
-        expect(state.MockIdChilds).toEqual({});
+        expect(state.MockCollectionChilds).toEqual({});
 
-        var childState = (new MockIdChild()).createEmpty();
+        var childState = (new MockCollectionChild()).createEmpty();
         expect(childState.id).not.toBeUndefined();
         expect(childState.id).toBeNull();
     });
@@ -80,15 +32,15 @@ describe('StateActions', function () {
             'MockChild': {
                 'child_property': 1
             },
-            'MockIdChilds': {
+            'MockCollectionChilds': {
                 '0': {
                     'id': 0,
                     'child_property': 10
                 }
             }
         };
-        Object.freeze(state.MockIdChilds[1]);
-        Object.freeze(state.MockIdChilds);
+        Object.freeze(state.MockCollectionChilds[1]);
+        Object.freeze(state.MockCollectionChilds);
         Object.freeze(state.MockChild);
         Object.freeze(state);
 
@@ -109,15 +61,15 @@ describe('StateActions', function () {
             'MockChild': {
                 'child_property': 1
             },
-            'MockIdChilds': {
+            'MockCollectionChilds': {
                 '0': {
                     'id': 0,
                     'child_property': 10
                 }
             }
         };
-        Object.freeze(state.MockIdChilds[1]);
-        Object.freeze(state.MockIdChilds);
+        Object.freeze(state.MockCollectionChilds[1]);
+        Object.freeze(state.MockCollectionChilds);
         Object.freeze(state.MockChild);
         Object.freeze(state);
 
@@ -166,13 +118,13 @@ describe('StateActions', function () {
             TestParent = new MockParent();
         });
         it('Should add a "Add" action with the correct default name', function(){
-            expect(TestParent.Actions['AddMockIdChild']).toBeUndefined();
-            TestParent.addAddActionFor('MockIdChild');
-            expect(TestParent.Actions['AddMockIdChild']).not.toBeUndefined();
+            expect(TestParent.Actions['AddMockCollectionChild']).toBeUndefined();
+            TestParent.addAddActionFor('MockCollectionChild');
+            expect(TestParent.Actions['AddMockCollectionChild']).not.toBeUndefined();
         });
         it('Should add a "Add" action with the given name', function(){
             expect(TestParent.Actions['Name']).toBeUndefined();
-            TestParent.addAddActionFor('MockIdChild','Name');
+            TestParent.addAddActionFor('MockCollectionChild','Name');
             expect(TestParent.Actions['Name']).not.toBeUndefined();
         });
     });
@@ -188,18 +140,18 @@ describe('StateActions', function () {
             TestParent = new MockParent();
         });
         it('Should add a "Available" request with the correct default name, with an s', function(){
-            expect(TestParent.Requests['AvailableMockIdChildId']).toBeUndefined();
-            TestParent.addAvailableIdRequest('MockIdChilds');
-            expect(TestParent.Requests['AvailableMockIdChildId']).not.toBeUndefined();
+            expect(TestParent.Requests['AvailableMockCollectionChildId']).toBeUndefined();
+            TestParent.addAvailableIdRequest('MockCollectionChilds');
+            expect(TestParent.Requests['AvailableMockCollectionChildId']).not.toBeUndefined();
         });
         it('Should add a "Available" request with the correct default name, without an s', function(){
-            expect(TestParent.Requests['AvailableMockIdChildId']).toBeUndefined();
-            TestParent.addAvailableIdRequest('MockIdChild');
-            expect(TestParent.Requests['AvailableMockIdChildId']).not.toBeUndefined();
+            expect(TestParent.Requests['AvailableMockCollectionChildId']).toBeUndefined();
+            TestParent.addAvailableIdRequest('MockCollectionChild');
+            expect(TestParent.Requests['AvailableMockCollectionChildId']).not.toBeUndefined();
         });
         it('Should add a "Add" action with the given name', function(){
             expect(TestParent.Requests['Name']).toBeUndefined();
-            TestParent.addAvailableIdRequest('MockIdChilds','Name');
+            TestParent.addAvailableIdRequest('MockCollectionChilds','Name');
             expect(TestParent.Requests['Name']).not.toBeUndefined();
         });
     });
