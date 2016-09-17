@@ -12,8 +12,6 @@ mockParentCreator.addAction('ParentAction', function(state){
 mockParentCreator.addRequest('ParentRequest', function(state){
     return 'Parent';
 });
-console.log('adding Child');
-console.log(mock_Child);
 
 mockParentCreator.addChildModel(mock_Child);
 mockParentCreator.addChildModel(mock_CollectionChild);

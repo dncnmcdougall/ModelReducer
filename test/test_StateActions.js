@@ -22,7 +22,7 @@ describe('StateActions', function () {
         expect(state.MockChild.child_property).toBeNull();
         expect(state.MockCollectionChilds).toEqual({});
 
-        var childState = (new MockCollectionChild()).createEmpty();
+        var childState = CollectionChild.createEmpty();
         expect(childState.id).not.toBeUndefined();
         expect(childState.id).toBeNull();
     });
@@ -47,11 +47,11 @@ describe('StateActions', function () {
         spyOn(Parent.Actions,'ParentAction').and.callThrough();
         spyOn(Parent.Children.MockChild.Actions,'ChildAction').and.callThrough();
 
-        expect(Parent.reduce('MockParent.ParentAction',state)).toBe(state);
+        expect(Parent.reduce('ParentAction',state)).toBe(state);
         expect(Parent.Actions.ParentAction).toHaveBeenCalled();
         expect(Parent.Actions.ParentAction).toHaveBeenCalledWith(state);
 
-        expect(Parent.reduce('MockParent.MockChild.ChildAction',state)).toBe(state);
+        expect(Parent.reduce('MockChild.ChildAction',state)).toBe(state);
         expect(Parent.Children.MockChild.Actions.ChildAction).toHaveBeenCalled();
         expect(Parent.Children.MockChild.Actions.ChildAction).toHaveBeenCalledWith(state.MockChild);
     });
@@ -76,30 +76,30 @@ describe('StateActions', function () {
         spyOn(Parent.Requests,'ParentRequest').and.callThrough();
         spyOn(Parent.Children.MockChild.Requests,'ChildRequest').and.callThrough();
 
-        expect(Parent.request('MockParent.ParentRequest',state)).toEqual('Parent');
+        expect(Parent.request('ParentRequest',state)).toEqual('Parent');
         expect(Parent.Requests.ParentRequest).toHaveBeenCalled();
         expect(Parent.Requests.ParentRequest).toHaveBeenCalledWith(state);
 
-        expect(Parent.request('MockParent.MockChild.ChildRequest',state)).toEqual('Child');
+        expect(Parent.request('MockChild.ChildRequest',state)).toEqual('Child');
         expect(Parent.Children.MockChild.Requests.ChildRequest).toHaveBeenCalled();
         expect(Parent.Children.MockChild.Requests.ChildRequest).toHaveBeenCalledWith(state.MockChild);
     });
     it('listActions(). Should list all the actions.', function() {
         var actions = Parent.listActions();
-        expect(actions).toContain('MockParent.ParentAction');
-        expect(actions).toContain('MockParent.MockChild.ChildAction');
+        expect(actions).toContain('ParentAction');
+        expect(actions).toContain('MockChild.ChildAction');
         expect(actions.length).toEqual(2);
     });
     it('listRequests(). Should list all the requests.', function() {
         var requests = Parent.listRequests();
-        expect(requests).toContain('MockParent.ParentRequest');
-        expect(requests).toContain('MockParent.MockChild.ChildRequest');
+        expect(requests).toContain('ParentRequest');
+        expect(requests).toContain('MockChild.ChildRequest');
         expect(requests.length).toEqual(2);
     });
     describe('addPropertAction(). Should add an action for the property', function(){
         var TestParent;
         beforeEach(function() {
-            TestParent = new MockParent();
+            TestParent = Object.assign({},Parent);
         });
         it('Should add a property action with the correct default name', function(){
             expect(TestParent.Actions['SetParentProperty']).toBeUndefined();
@@ -115,7 +115,7 @@ describe('StateActions', function () {
     describe('addAddActionFor(). Should add an "Add" action for a child with an id field.', function(){
         var TestParent;
         beforeEach(function() {
-            TestParent = new MockParent();
+            TestParent = Object.assign({},Parent);
         });
         it('Should add a "Add" action with the correct default name', function(){
             expect(TestParent.Actions['AddMockCollectionChild']).toBeUndefined();
@@ -129,7 +129,7 @@ describe('StateActions', function () {
         });
     });
     it('addStateRequest(). Should add a "State" request.', function(){
-        var TestParent = new MockParent();
+        var TestParent = Object.assign({},Parent);
         expect(TestParent.Requests['State']).toBeUndefined();
         TestParent.addStateRequest();
         expect(TestParent.Requests['State']).not.toBeUndefined();
@@ -137,7 +137,7 @@ describe('StateActions', function () {
     describe('addAAvailableIdRequest(). Should add an "AvailableId" request for a collection.', function(){
         var TestParent;
         beforeEach(function() {
-            TestParent = new MockParent();
+            TestParent = Object.assign({},Parent);
         });
         it('Should add a "Available" request with the correct default name, with an s', function(){
             expect(TestParent.Requests['AvailableMockCollectionChildId']).toBeUndefined();

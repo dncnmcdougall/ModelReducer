@@ -4,7 +4,8 @@
   "description": "A reducer based on a Model structure",
   "main": "index.js",
   "scripts": {
-    "test": "node test/main.js"
+    "test": "node test/main.js",
+    "lint": "./node_modules/.bin/eslint -c .eslintrc.json ./lib/ ./test/"
   },
   "keywords": [
     "reducer"
@@ -15,6 +16,7 @@
   "author": "Duncan McDougall",
   "private": true,
   "devDependencies": {
+    "eslint": "^3.5.0",
     "istanbul": "^0.4.5",
     "jasmine": "^2.5.1"
   }
