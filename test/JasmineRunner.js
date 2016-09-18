@@ -73,16 +73,15 @@ var myReporter = {
 
         this.specResults.forEach( function(spec) {
             if( spec.status == 'failed' ) {
-                console.log( spec.suite.join(' ')+' '+spec.description);
+                console.log( spec.suite.join(' ')+'\n-> '+spec.description);
                 for(var i = 0; i < spec.failedExpectations.length; i++) {
                     colour('red',spec.failedExpectations[i].message);
                     print('\n');
                     console.log(spec.failedExpectations[i].stack);
                     console.log();
                 }
-            }
-            else if (spec.status == 'pending' ) {
-                colour( 'yellow', spec.suite.join(' ')+' '+spec.description);
+            } else if (spec.status == 'pending' ) {
+                colour( 'yellow', spec.suite.join(' ')+'\n-> '+spec.description);
                 print('\n');
             }
         });

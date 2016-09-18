@@ -3,7 +3,7 @@ var ModelReducer = require('../index.js');
 var mockChildCreator = new ModelReducer.ModelCreator('MockCollectionChild');
 
 mockChildCreator.setFormsACollection(true);
-mockChildCreator.setCollectionKeyField('id');
+mockChildCreator.setCollectionKey('id');
 mockChildCreator.setCollectionName('MockCollectionChildren');
 mockChildCreator.addProperty('ChildProperty');
 mockChildCreator.addAction('ChildAction', function(state){
