@@ -5,11 +5,12 @@ var mockChildCreator = new ModelReducer.ModelCreator('MockCollectionChild');
 mockChildCreator.setFormsACollection(true);
 mockChildCreator.setCollectionKey('id');
 mockChildCreator.setCollectionName('MockCollectionChildren');
-mockChildCreator.addProperty('ChildProperty');
-mockChildCreator.addAction('ChildAction', function(state){
+
+mockChildCreator.addProperty('CollectionChildProperty');
+mockChildCreator.addAction('CollectionChildAction', function(state){
     return state;
 });
-mockChildCreator.addRequest('ChildRequest', function(state){
+mockChildCreator.addRequest('CollectionChildRequest', function(state){
     return 'Child';
 });
 
