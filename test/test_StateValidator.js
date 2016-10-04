@@ -2,6 +2,7 @@
 
 var StateValidator = require('../lib/StateValidator.js');
 
+var MockChild = require('./mock_Child.js');
 var MockCollectionChild = require('./mock_CollectionChild.js');
 var MockParent = require('./mock_Parent.js');
 
@@ -49,7 +50,9 @@ describe('StateValidator: A class used for asserting that a given state object f
             var result = StateValidator.validateState( MockParent, state );
 
             expect(result.error).toBeNull();
-            expect(result.value).toBe( state );
+            // CRC: DMD: should this be changed?
+            // expect(result.value).toBe( state );
+            expect(result.value).toEqual( state );
         });
 
         it('Should return an error when a property is of the wrong type.', function() {
@@ -57,7 +60,7 @@ describe('StateValidator: A class used for asserting that a given state object f
 
             var result = StateValidator.validateState( MockParent, state );
             expect(result.error).toEqual( 
-                'Expected property MockParent.NumberProperty to have type "number", but sound type "string".'
+                'Expected property MockParent.NumberProperty to have type "number", but found type "string".'
             );
             expect(result.value).toBeNull();
         });
@@ -66,7 +69,7 @@ describe('StateValidator: A class used for asserting that a given state object f
 
             var result = StateValidator.validateState( MockParent, state );
             expect(result.error).toEqual( 
-                'Expected property MockChild.NumberProperty to have type "number", but sound type "string".'
+                'Expected property MockChild.NumberProperty to have type "number", but found type "string".'
             );
             expect(result.value).toBeNull();
         });
@@ -75,7 +78,7 @@ describe('StateValidator: A class used for asserting that a given state object f
 
             var result = StateValidator.validateState( MockParent, state );
             expect(result.error).toEqual( 
-                'Expected property MockCollectionChild[0].NumberProperty to have type "number", but sound type "string".'
+                'Expected property MockCollectionChildren[0].NumberProperty to have type "number", but found type "string".'
             );
             expect(result.value).toBeNull();
         });
@@ -216,7 +219,7 @@ describe('StateValidator: A class used for asserting that a given state object f
             it('Should return an error when there is a missing property.', function() {
                 delete state[0].NumberProperty;
 
-                var result = StateValidator.validateState( MockParent, state );
+                var result = StateValidator.validateStateCollection( MockCollectionChild, state );
                 expect(result.error).toEqual( 
                     'Expected to find a property named MockCollectionChildren[0].NumberProperty, but did not.'
                 );
@@ -225,7 +228,7 @@ describe('StateValidator: A class used for asserting that a given state object f
             it('Should return an error when there is a missing child.', function() {
                 delete state[0].MockNestedChild;
 
-                var result = StateValidator.validateState( MockParent, state );
+                var result = StateValidator.validateStateCollection( MockCollectionChild, state );
                 expect(result.error).toEqual( 
                     'Expected to find a child named MockCollectionChildren[0].MockNestedChild, but did not.'
                 );
@@ -234,7 +237,7 @@ describe('StateValidator: A class used for asserting that a given state object f
             it('Should return an error when there is a missing collection child.', function() {
                 delete state[0].MockNestedChildren;
 
-                var result = StateValidator.validateState( MockParent, state );
+                var result = StateValidator.validateStateCollection( MockCollectionChild, state );
                 expect(result.error).toEqual( 
                     'Expected to find a collection named MockCollectionChildren[0].MockNestedChildren, but did not.'
                 );
@@ -243,7 +246,7 @@ describe('StateValidator: A class used for asserting that a given state object f
             it('Should return an error when there is an extra property.', function() {
                 state[0].ExtraProperty = 'An extra property';
 
-                var result = StateValidator.validateState( MockParent, state );
+                var result = StateValidator.validateStateCollection( MockCollectionChild, state );
                 expect(result.error).toEqual( 
                     'Did not expecte to find a property named MockCollectionChildren[0].ExtraProperty, but did.'
                 );
@@ -254,7 +257,17 @@ describe('StateValidator: A class used for asserting that a given state object f
                 state[0].id = 1;
                 var result = StateValidator.validateStateCollection( MockCollectionChild, state );
 
-                expect(result.error).toEqual('Expected MockCollectionChild[0] to have "id" 0 but found 1');
+                expect(result.error).toEqual('Expected MockCollectionChildren[0] to have "id" of 0 but found 1.');
+                expect(result.value).toBeNull();
+            });
+
+            it('Should return an error when the Model is not a collection.', function () {
+                state[0].id = 1;
+                var result = StateValidator.validateStateCollection( MockChild, state );
+
+                expect(result.error).toEqual(
+                    'MockChild should not be placed in a collection as it is not marked as forming a collection.'
+                );
                 expect(result.value).toBeNull();
             });
         });
