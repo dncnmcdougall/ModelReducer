@@ -6,6 +6,7 @@ var mockParentCreator = new ModelReducer.ModelCreator('MockParent');
 
 mockParentCreator.setFormsACollection(false);
 mockParentCreator.addProperty('ParentProperty');
+mockParentCreator.addProperty('NumberProperty', 'number');
 mockParentCreator.addAction('ParentAction', function(state){
     return state;
 });

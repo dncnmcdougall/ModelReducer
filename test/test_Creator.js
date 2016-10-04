@@ -79,7 +79,8 @@ describe('ModelCreator: A class used for building a model.', function() {
         });
     });
     describe('setCollectionKeyField: Sets the name of the field which is used to store the numberic '+
-        'identifier of an instance of this model in a collection.', function() {
+        'identifier of an instance of this model in a collection.', 
+        function() {
             it('Should set the name of the key, if the model is a collection', function() {
                 modelCreator.setFormsACollection(true);
                 modelCreator.setCollectionKey('key');
