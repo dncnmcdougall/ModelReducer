@@ -84,7 +84,7 @@
             "error"
         ],
         "complexity": [
-            "error",
+            "warn",
             10
         ],
         "max-depth": [
