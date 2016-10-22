@@ -32,8 +32,160 @@ describe('ModelCreator: A class used for building a model.', function() {
         expect(wrapFunction(modelCreator.addProperty,'property')).toThrow();
     });
 
-    describe('copyFrom: Copies the given model\'s attributes into this model', function(){
-        pending();
+    describe('copyFrom: Copies the given model\'s properties, children, actions and requests into this model', function(){
+
+        var model;
+        var child;
+
+        var newModelCreator1;
+        var newModelCreator2;
+
+        var newModel1;
+        var newModel2;
+
+        beforeEach( function() {
+            child =  ( new ModelCreator('Child') ).finaliseModel();
+
+            modelCreator.addProperty('NumberProperty','number');
+            modelCreator.addChildModel(child);
+            modelCreator.addAction('Action', function(state) {
+                var newState = Object.assign({},state);
+                newState.NumberProperty++;
+                return newState;
+            });
+            modelCreator.addRequest( 'Request', function(state) {
+                return 42;
+            });
+
+            model = modelCreator.finaliseModel();
+
+            newModelCreator1 = new ModelCreator('NewModel');
+            newModelCreator2 = new ModelCreator('NewModel');
+        });
+
+        it('Should not change the collection state of the current model.', function() {
+            newModelCreator1.setFormsACollection(true);
+            newModelCreator2.setFormsACollection(true);
+
+            newModelCreator2.copyFrom(model);
+
+            newModel1 = newModelCreator1.finaliseModel();
+            newModel2 = newModelCreator2.finaliseModel();
+
+            expect(newModel1.formsACollection).toBe(true);
+            expect(newModel2.formsACollection).toBe(true);
+        });
+
+        it('Should add the properties to the current model.', function() {
+            newModelCreator2.copyFrom(model);
+
+            newModel1 = newModelCreator1.finaliseModel();
+            newModel2 = newModelCreator2.finaliseModel();
+
+            expect(newModel1.properties['NumberProperty']).toBeUndefined();
+            expect(newModel2.properties['NumberProperty']).not.toBeUndefined();
+            expect(newModel2.properties['NumberProperty']).toBe('number');
+        });
+
+        it('Should override duplicate properties in the current model.', function() {
+            newModelCreator1.addProperty('NumberProperty','string');
+            newModelCreator2.addProperty('NumberProperty','string');
+
+            newModelCreator2.copyFrom(model);
+
+            newModel1 = newModelCreator1.finaliseModel();
+            newModel2 = newModelCreator2.finaliseModel();
+
+            expect(newModel1.properties['NumberProperty']).toBe('string');
+            expect(newModel2.properties['NumberProperty']).toBe('number');
+        });
+
+        it('Should add the children to the current model.', function() {
+            newModelCreator2.copyFrom(model);
+
+            newModel1 = newModelCreator1.finaliseModel();
+            newModel2 = newModelCreator2.finaliseModel();
+
+            expect(newModel1.children['Child']).toBeUndefined();
+            expect(newModel2.children['Child']).not.toBeUndefined();
+        });
+
+        it('Should add the actions to the current model.', function() {
+            newModelCreator2.copyFrom(model);
+
+            newModel1 = newModelCreator1.finaliseModel();
+            newModel2 = newModelCreator2.finaliseModel();
+
+            expect(newModel1.actions['Action']).toBeUndefined();
+            expect(newModel2.actions['Action']).not.toBeUndefined();
+        });
+
+        it('Should override duplicate actions in the current model.', function() {
+            newModelCreator1.addAction('Action',function(state) {
+                var newState = Object.assign({},state); 
+                newState.NumberProperty--; 
+                return newState;
+            });
+            newModelCreator2.addAction('Action',function(state) { 
+                var newState = Object.assign({},state); 
+                newState.NumberProperty--; 
+                return newState;
+            });
+
+            newModelCreator2.copyFrom(model);
+
+            newModel1 = newModelCreator1.finaliseModel();
+            newModel2 = newModelCreator2.finaliseModel();
+
+            var state = {
+                'NumberProperty': 1
+            };
+
+            var newState1 = newModel1.reduce('NewModel.Action', state);
+            var newState2 = newModel2.reduce('NewModel.Action', state);
+
+            expect(newState1.NumberProperty).toBe(0);
+            expect(newState2.NumberProperty).toBe(2);
+        });
+
+        it('Should add the requests to the current model.', function() {
+            newModelCreator2.copyFrom(model);
+
+            newModel1 = newModelCreator1.finaliseModel();
+            newModel2 = newModelCreator2.finaliseModel();
+
+            expect(newModel1.requests['Request']).toBeUndefined();
+            expect(newModel2.requests['Request']).not.toBeUndefined();
+        });
+
+        it('Should override duplicate requests in the current model.', function() {
+            newModelCreator1.addRequest('Request',function(state) {
+                return 17;
+            });
+            newModelCreator2.addRequest('Request',function(state) {
+                return 17;
+            });
+
+            newModelCreator2.copyFrom(model);
+
+            newModel1 = newModelCreator1.finaliseModel();
+            newModel2 = newModelCreator2.finaliseModel();
+
+            var state = {};
+
+            var val1 = newModel1.request('NewModel.Request', state);
+            var val2 = newModel2.request('NewModel.Request', state);
+
+            expect(val1).toBe(17);
+            expect(val2).toBe(42);
+        });
+
+        it('Should throw if the model is already finalised.', function() {
+            newModel2 = newModelCreator2.finaliseModel();
+
+            expect( wrapFunction(newModelCreator2.copyFrom, model) ).toThrow();
+        });
+
     });
 
     describe('setFormsACollection: Declares that this model will form a collection when it is used as a child.', function() {
