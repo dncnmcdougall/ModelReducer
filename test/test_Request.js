@@ -1,9 +1,5 @@
 /*eslint-env jasmine */
 
-var StateValidator = require('../lib/StateValidator.js');
-
-var MockChild = require('./mock_Child.js');
-var MockCollectionChild = require('./mock_CollectionChild.js');
 var MockParent = require('./mock_Parent.js');
 
 var defaultState = require('./mock_DefaultState.js');
@@ -31,7 +27,7 @@ describe('Model: The model returned from the crerator. Used to process state.', 
         });
 
         it('Should call the correct child action', function() {
-            var subState =state.MockChild
+            var subState =state.MockChild;
 
             expect(MockParent.request('MockParent.MockChild.ChildRequest',state)).toEqual('Child');
 
@@ -44,7 +40,8 @@ describe('Model: The model returned from the crerator. Used to process state.', 
         it('Should call the correct collection action', function() {
             var subState =state.MockCollectionChildren[0] ;
 
-            expect(MockParent.request('MockParent.MockCollectionChild.CollectionChildRequest',state, 0)).toEqual('CollectionChild');
+            expect(MockParent.request('MockParent.MockCollectionChild.CollectionChildRequest',state, 0))
+                .toEqual('CollectionChild');
 
             expect(MockParent.requests.ParentRequest).not.toHaveBeenCalled();
             expect(MockParent.children.MockChild.requests.ChildRequest).not.toHaveBeenCalled();

@@ -18,6 +18,7 @@ mockChildCreator.addAction('IncrementAction', function(state){
 mockChildCreator.addRequest('ChildRequest', function(state){
     return 'Child';
 });
+mockChildCreator.addStateRequest();
 
 mockChildCreator.addChildModel(mock_NestedChild);
 mockChildCreator.addChildModel(mock_NestedCollection);

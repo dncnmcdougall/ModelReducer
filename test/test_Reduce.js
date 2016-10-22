@@ -1,7 +1,5 @@
 /*eslint-env jasmine */
 
-var MockChild = require('./mock_Child.js');
-var MockCollectionChild = require('./mock_CollectionChild.js');
 var MockParent = require('./mock_Parent.js');
 
 var defaultState = require('./mock_DefaultState.js');
@@ -52,7 +50,7 @@ describe('Model: The model returned from the crerator. Used to process state.', 
         });
 
         it('Should call the correct child action and return the same state', function() {
-            var subState =state.MockChild
+            var subState = state.MockChild;
 
             expect(MockParent.reduce('MockParent.MockChild.NullAction',state)).toBe(state);
 
@@ -66,7 +64,7 @@ describe('Model: The model returned from the crerator. Used to process state.', 
             expect(MockParent.children.MockCollectionChild.actions.IncrementAction).not.toHaveBeenCalled();
         });
         it('Should call the correct child action and return the new state', function() {
-            var subState =state.MockChild
+            var subState = state.MockChild;
 
             var result = MockParent.reduce('MockParent.MockChild.IncrementAction',state);
             expect(result).not.toEqual(state);

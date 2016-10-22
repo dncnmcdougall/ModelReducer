@@ -18,8 +18,10 @@ mockParentCreator.addAction('IncrementAction', function(state){
 mockParentCreator.addRequest('ParentRequest', function(state){
     return 'Parent';
 });
+mockParentCreator.addStateRequest();
 
 mockParentCreator.addChildModel(mock_Child);
 mockParentCreator.addChildModel(mock_CollectionChild);
+mockParentCreator.addAvailableKeyRequestFor(mock_CollectionChild);
 
 module.exports = mockParentCreator.finaliseModel();
