@@ -1,7 +1,11 @@
-= Names =
-== ModelReducer ==
+Names=
+=
+
+ModelReducer ==
+==
 Is confused with the reduc form model reducer.
-== Shape ==
+Shape
+==
 The redux doc opens with a section declaring that the "State Shape" is
 important.
 
@@ -19,7 +23,8 @@ important.
 - StateShaper
 - StateShapeBasedReducer (accurate)
 
-== Delegator ==
+Delegator
+==
 https://github.com/lapanoid/redux-delegator
 
 This is a module which makes composing reducers easy.
