@@ -177,8 +177,28 @@ describe('Model: The model returned from the creator. Used to process state.', f
         });
     });
     describe('Set[PropertyName] (action): Sets the named property to the given value and returnes the new state.', function() {
-        it('Should set the property to the given value.');
-        it('Should throw if there is a type violation.');
+        var Model;
+        beforeAll( function() {
+            var modelCreator = new ModelCreator('Model');
+            modelCreator.addProperty('NumberProp','number');
+            modelCreator.addSetPropertyActionFor('NumberProp');
+            Model = modelCreator.finaliseModel();
+        });
+
+        it('Should set the property to the given value.', function() {
+            var state = Model.createEmpty();
+            expect( state.NumberProp ).toEqual( 0 );
+
+            var newState = Model.reduce('Model.SetNumberProp',state,3);
+            expect( state.NumberProp ).toEqual( 0 );
+            expect( newState.NumberProp ).toEqual( 3 );
+        });
+        it('Should throw if there is a type violation.', function() {
+            var state = Model.createEmpty();
+            expect( state.NumberProp ).toEqual( 0 );
+
+            expect( wrapFunction(Model.reduce, 'Model.SetNumberProp', state, 'A String') ).toThrow();
+        });
     });
     describe('Add[ChildName] (action): Adds an empty instance of the child, under the given key, and returns the new state.', 
         function() {
