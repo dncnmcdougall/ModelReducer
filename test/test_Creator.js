@@ -156,23 +156,40 @@ describe('ModelCreator: A class used for building a model.', function() {
     });
     describe('addAction: Adds an action to the model.', function() {
         var testFunc = function(state) {
-            return state;
+            var newState = Object.assign({}, state);
+            newState.NumberProp = state.NumberProp +1;
+            return newState;
         };
+        beforeEach( function() {
+            modelCreator.addProperty('NumberProp','number');
+        });
         it('Should add an action with the specified function to the model.', function() {
 
             modelCreator.addAction('action', testFunc);
             var model = modelCreator.finaliseModel();
 
-            expect(model.actions['action']).not.toBeUndefined();
-            expect(model.actions['action']).toBe(testFunc);
-        });
-        it('Should override an action if it already exists.', function() {
-            modelCreator.addAction('action', (state) => {return state;});
-            modelCreator.addAction('action', testFunc );
-            var model = modelCreator.finaliseModel();
+            var state = model.createEmpty();
+            expect(state.NumberProp).toBe( 0 );
 
             expect(model.actions['action']).not.toBeUndefined();
-            expect(model.actions['action']).toBe(testFunc);
+            var newState = model.reduce('Model.action',state);
+            expect(newState.NumberProp).toBe( 1 );
+        });
+        it('Should override an action if it already exists.', function() {
+            modelCreator.addAction('action', testFunc );
+            modelCreator.addAction('action', (state) => {
+                var newState = Object.assign({}, state);
+                newState.NumberProp = state.NumberProp - 1;
+                return newState;
+            });
+            var model = modelCreator.finaliseModel();
+
+            var state = model.createEmpty();
+            expect(state.NumberProp).toBe( 0 );
+
+            expect(model.actions['action']).not.toBeUndefined();
+            var newState = model.reduce('Model.action',state);
+            expect(newState.NumberProp).toBe( -1 );
         });
         it('Should throw if the action name is not a string.', function() {
             expect( wrapFunction(modelCreator.addAction) ).toThrow();
@@ -216,16 +233,20 @@ describe('ModelCreator: A class used for building a model.', function() {
             modelCreator.addRequest('request', testFunc);
             var model = modelCreator.finaliseModel();
 
-            expect(model.requests['request']).not.toBeUndefined();
-            expect(model.requests['request']).toBe(testFunc);
-        });
-        it('Should override a request if it already exists.', function() {
-            modelCreator.addRequest('request', (state) => {return 42;});
-            modelCreator.addRequest('request', testFunc );
-            var model = modelCreator.finaliseModel();
+            var state = model.createEmpty();
 
             expect(model.requests['request']).not.toBeUndefined();
-            expect(model.requests['request']).toBe(testFunc);
+            expect( model.request('Model.request', state) ).toBe(42);
+        });
+        it('Should override a request if it already exists.', function() {
+            modelCreator.addRequest('request', testFunc );
+            modelCreator.addRequest('request', (state) => {return 49;});
+            var model = modelCreator.finaliseModel();
+
+            var state = model.createEmpty();
+
+            expect(model.requests['request']).not.toBeUndefined();
+            expect( model.request('Model.request', state) ).toBe(49);
         });
         it('Should throw if the request name is not a string.', function() {
             expect( wrapFunction(modelCreator.addRequest) ).toThrow();

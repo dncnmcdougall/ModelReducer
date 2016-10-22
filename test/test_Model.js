@@ -177,13 +177,127 @@ describe('Model: The model returned from the creator. Used to process state.', f
         });
     });
     describe('Set[PropertyName] (action): Sets the named property to the given value and returnes the new state.', function() {
-        it('Should set the property to the given value.');
-        it('Should throw if there is a type violation.');
+        var Model;
+        beforeAll( function() {
+            var modelCreator = new ModelCreator('Model');
+            modelCreator.addProperty('NumberProp','number');
+            modelCreator.addProperty('TypelessProp');
+            modelCreator.addSetPropertyActionFor('NumberProp');
+            modelCreator.addSetPropertyActionFor('TypelessProp');
+            modelCreator.addSetPropertyActionFor('UnknownProp');
+            Model = modelCreator.finaliseModel();
+        });
+
+        it('Should set the property to the given value.', function() {
+            var state = Model.createEmpty();
+            expect( state.NumberProp ).toEqual( 0 );
+
+            var newState = Model.reduce('Model.SetNumberProp',state,3);
+            expect( state.NumberProp ).toEqual( 0 );
+            expect( newState.NumberProp ).toEqual( 3 );
+            expect( newState).not.toBe( state );
+        });
+        it('Should do nothing if the value is the same.', function() {
+            var state = Model.createEmpty();
+            expect( state.NumberProp ).toEqual( 0 );
+
+            var newState = Model.reduce('Model.SetNumberProp',state,0);
+            expect( state.NumberProp ).toEqual( 0 );
+            expect( newState.NumberProp ).toEqual( 0 );
+            expect( newState).toBe( state );
+        });
+
+        it('Should set the property to any value if the type is not give.', function() {
+            var state = Model.createEmpty();
+            expect( state.TypelessProp ).toEqual( null );
+
+            var newState = Model.reduce('Model.SetTypelessProp', state, 'A String');
+            expect( state.TypelessProp ).toBe( null );
+            expect( newState.TypelessProp ).toBe( 'A String' );
+
+            newState = Model.reduce('Model.SetTypelessProp', state, false);
+            expect( state.TypelessProp ).toBe( null );
+            expect( newState.TypelessProp ).toBe( false );
+
+            newState = Model.reduce('Model.SetTypelessProp', state, {'Key':'value'});
+            expect( state.TypelessProp ).toBe( null );
+            expect( newState.TypelessProp ).toEqual( {'Key':'value'} );
+        });
+        it('Should throw if there is a type violation.', function() {
+            var state = Model.createEmpty();
+            expect( wrapFunction(Model.reduce, 'Model.SetNumberProp', state, 'A String') ).toThrow(
+                new Error('Expected parameter to be of type "number" but received "string".')
+            );
+        });
+        it('Should throw if the property does not exist.', function() {
+            var state = Model.createEmpty();
+            expect( wrapFunction(Model.reduce, 'Model.SetUnknownProp', state, 'A String') ).toThrow(
+                new Error('The property "UnknownProp" was not defined on the model')
+            );
+        });
     });
     describe('Add[ChildName] (action): Adds an empty instance of the child, under the given key, and returns the new state.', 
         function() {
-            it('Should add the child a child at the given id.');
-            it('Should overwrite a child if it already exists.');
+            var Model;
+            var CollectionModel;
+            beforeAll( function() {
+
+                var collectionCreator = new ModelCreator('Collection');
+                collectionCreator.setFormsACollection(true);
+                collectionCreator.setCollectionName('Collection');
+                collectionCreator.addProperty('NumberProp','number');
+                collectionCreator.addSetPropertyActionFor('NumberProp');
+                CollectionModel = collectionCreator.finaliseModel();
+
+                var modelCreator = new ModelCreator('Model');
+                modelCreator.addChildModel( CollectionModel );
+                modelCreator.addAddActionFor( CollectionModel, 'AddCollectionChild' );
+                Model = modelCreator.finaliseModel();
+            });
+
+            it('Should add the child a child at the given id.', function() {
+                var state = Model.createEmpty();
+                expect( state.Collection ).toEqual( {} );
+
+                var newState = Model.reduce('Model.AddCollectionChild', state, 2 );
+                expect( newState.Collection ).toEqual( {
+                    '2': {
+                        'Key': 2,
+                        'NumberProp': 0
+                    }
+                });
+                newState = Model.reduce('Model.AddCollectionChild', newState, 1 );
+                expect( newState.Collection ).toEqual( {
+                    '1': {
+                        'Key': 1,
+                        'NumberProp': 0
+                    },
+                    '2': {
+                        'Key': 2,
+                        'NumberProp': 0
+                    }
+                });
+            });
+
+            it('Should overwrite a child if it already exists.', function() {
+                var state = Model.createEmpty();
+                var newState = Model.reduce('Model.AddCollectionChild', state, 2 );
+                newState = Model.reduce('Model.Collection.SetNumberProp', newState, 2, 4);
+                expect( newState.Collection ).toEqual( {
+                    '2': {
+                        'Key': 2,
+                        'NumberProp': 4
+                    }
+                });
+
+                newState = Model.reduce('Model.AddCollectionChild', state, 2 );
+                expect( newState.Collection ).toEqual( {
+                    '2': {
+                        'Key': 2,
+                        'NumberProp': 0
+                    }
+                });
+            });
         });
     describe('Available[ChildName] (request): Returns the available key value for the given child collection in the state.', 
         function() {
