@@ -1,7 +1,6 @@
 /*eslint-env jasmine */
 
 var ModelReducer = require('../index.js');
-
 var ModelCreator = ModelReducer.ModelCreator;
 
 var wrapFunction = function( func, ...args) {

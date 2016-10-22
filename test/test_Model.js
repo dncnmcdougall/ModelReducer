@@ -1,11 +1,20 @@
 /*eslint-env jasmine */
 
+var ModelReducer = require('../index.js');
+var ModelCreator = ModelReducer.ModelCreator;
+
 var MockParent = require('./mock_Parent.js');
 var MockChild = require('./mock_Child.js');
 
 var defaultState = require('./mock_DefaultState.js');
 
-describe('Model: The model returned from the crerator. Used to process state.', function() {
+var wrapFunction = function( func, ...args) {
+    return function() {
+        func(...args);
+    };
+};
+
+describe('Model: The model returned from the creator. Used to process state.', function() {
     describe('listActions: Lists all the actions registered on this model, recursively.', function() {
         it('Should list all the actions on the model.', function() {
             var actions = MockParent.listActions();
@@ -68,6 +77,86 @@ describe('Model: The model returned from the crerator. Used to process state.', 
         });
     });
     describe('createEmpty: Creates an empty state representing this model.', function() {
+        var Model;
+        var ChildModel;
+        var CollectionModel;
+
+        var state;
+
+        beforeAll( function() {
+            var childCreator = new ModelCreator('Child');
+            childCreator.addProperty('StringProp','string');
+            childCreator.addProperty('NumberProp','number');
+            ChildModel = childCreator.finaliseModel();
+
+            var collectionCreator = new ModelCreator('Collection');
+            collectionCreator.setFormsACollection(true);
+            collectionCreator.setCollectionName('Collection');
+            collectionCreator.addProperty('NumberProp','number');
+            CollectionModel = collectionCreator.finaliseModel();
+
+            var modelCreator = new ModelCreator('Model');
+            modelCreator.addProperty('StringProp','string');
+            modelCreator.addProperty('NumberProp','number');
+            modelCreator.addProperty('BooleanProp','boolean');
+            modelCreator.addProperty('ObjectProp','object');
+            modelCreator.addProperty('ArrayProp','array');
+            modelCreator.addProperty('UnknownProp');
+
+            modelCreator.addChildModel( ChildModel );
+            modelCreator.addChildModel( CollectionModel );
+
+            Model = modelCreator.finaliseModel();
+
+            state = Model.createEmpty();
+        });
+        it('Should populate strings with ""', function() {
+            expect( state.StringProp ).toEqual( '' );
+            expect( typeof(state.StringProp) ).toEqual( 'string' );
+        });
+        it('Should populate numbers with 0', function() {
+            expect( state.NumberProp ).toEqual( 0 );
+            expect( typeof(state.NumberProp) ).toEqual( 'number' );
+        });
+        it('Should populate booleans with false', function() {
+            expect( state.BooleanProp ).toEqual( false );
+            expect( typeof(state.BooleanProp) ).toEqual( 'boolean' );
+        });
+        it('Should populate objects with {}', function() {
+            expect( state.ObjectProp ).toEqual( {} );
+            expect( typeof(state.ObjectProp) ).toEqual( 'object' );
+        });
+        it('Should populate arrays with []', function() {
+            expect( state.ArrayProp ).toEqual( [] );
+            expect( typeof(state.ArrayProp) ).toEqual( 'object' );
+            expect( Array.isArray(state.ArrayProp) ).toBe( true );
+        });
+        it('Should populate null types (type not given) with null', function() {
+            expect( state.UnknownProp ).toBeNull();
+        });
+        it('Should populate children recursively.', function() {
+            expect( state.Child ).not.toBeUndefined();
+
+            expect( state.Child.StringProp ).toEqual( '' );
+            expect( typeof(state.Child.StringProp) ).toEqual( 'string' );
+            expect( state.Child.NumberProp ).toEqual( 0 );
+            expect( typeof(state.Child.NumberProp) ).toEqual( 'number' );
+        });
+        it('Should populate child collections with {}', function() {
+            expect( state.Collection ).toEqual( {} );
+        });
+        it('Should set the collection key to null', function() {
+            var collectionState = CollectionModel.createEmpty();
+
+            expect( collectionState ).not.toBeUndefined();
+
+            expect( collectionState.Key ).not.toBeUndefined();
+            expect( collectionState.Key ).toEqual( null );
+
+            expect( collectionState.NumberProp ).toEqual( 0 );
+            expect( typeof(collectionState.NumberProp) ).toEqual( 'number' );
+        });
+
     });
     describe('State (request): Returns the state representing this model from within the given state.', function() {
         var state;
@@ -88,9 +177,13 @@ describe('Model: The model returned from the crerator. Used to process state.', 
         });
     });
     describe('Set[PropertyName] (action): Sets the named property to the given value and returnes the new state.', function() {
+        it('Should set the property to the given value.');
+        it('Should throw if there is a type violation.');
     });
     describe('Add[ChildName] (action): Adds an empty instance of the child, under the given key, and returns the new state.', 
         function() {
+            it('Should add the child a child at the given id.');
+            it('Should overwrite a child if it already exists.');
         });
     describe('Available[ChildName] (request): Returns the available key value for the given child collection in the state.', 
         function() {
