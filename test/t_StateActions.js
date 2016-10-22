@@ -39,8 +39,10 @@ describe('StateActions', function () {
         expect(Parent.reduce('ParentAction',state)).toBe(state);
         expect(Parent.Actions.ParentAction).toHaveBeenCalled();
         expect(Parent.Actions.ParentAction).toHaveBeenCalledWith(state);
+        expect(Parent.Children.MockChild.Actions.ChildAction).not.toHaveBeenCalled();
 
         expect(Parent.reduce('MockChild.ChildAction',state)).toBe(state);
+        expect(Parent.Actions.ParentAction).not.toHaveBeenCalled();
         expect(Parent.Children.MockChild.Actions.ChildAction).toHaveBeenCalled();
         expect(Parent.Children.MockChild.Actions.ChildAction).toHaveBeenCalledWith(state.MockChild);
     });
@@ -68,8 +70,10 @@ describe('StateActions', function () {
         expect(Parent.request('ParentRequest',state)).toEqual('Parent');
         expect(Parent.Requests.ParentRequest).toHaveBeenCalled();
         expect(Parent.Requests.ParentRequest).toHaveBeenCalledWith(state);
+        expect(Parent.Children.MockChild.Requests.ChildRequest).not.toHaveBeenCalled();
 
         expect(Parent.request('MockChild.ChildRequest',state)).toEqual('Child');
+        expect(Parent.Requests.ParentRequest).not.toHaveBeenCalled();
         expect(Parent.Children.MockChild.Requests.ChildRequest).toHaveBeenCalled();
         expect(Parent.Children.MockChild.Requests.ChildRequest).toHaveBeenCalledWith(state.MockChild);
     });

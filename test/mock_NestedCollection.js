@@ -7,10 +7,10 @@ mockChildCreator.setCollectionKey('id');
 mockChildCreator.setCollectionName('MockNestedChildren');
 
 mockChildCreator.addProperty('NestedCollectionProperty');
-mockChildCreator.addAction('NestedCollectionAction', function(state){
+mockChildCreator.addAction('Action', function(state){
     return state;
 });
-mockChildCreator.addRequest('NestedCollectionRequest', function(state){
+mockChildCreator.addRequest('Request', function(state){
     return 'Child';
 });
 

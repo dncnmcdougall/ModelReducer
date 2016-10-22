@@ -4,10 +4,10 @@ var mockChildCreator = new ModelReducer.ModelCreator('MockNestedChild');
 
 mockChildCreator.setFormsACollection(false);
 mockChildCreator.addProperty('NestedChildProperty');
-mockChildCreator.addAction('NestedChildAction', function(state){
+mockChildCreator.addAction('Action', function(state){
     return state;
 });
-mockChildCreator.addRequest('NestedChildRequest', function(state){
+mockChildCreator.addRequest('Request', function(state){
     return 'Child';
 });
 

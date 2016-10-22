@@ -6,44 +6,14 @@ var MockChild = require('./mock_Child.js');
 var MockCollectionChild = require('./mock_CollectionChild.js');
 var MockParent = require('./mock_Parent.js');
 
+var defaultState = require('./mock_DefaultState.js');
+
 describe('StateValidator: A class used for asserting that a given state object fulfills a given model.', function() {
     describe('validateState: asserts that the given object represents a state of the given model.', function () {
 
         var state;
         beforeEach( function() {
-            state = {
-                'ParentProperty': 1,
-                'NumberProperty': 2,
-                'MockChild': {
-                    'ChildProperty': 3,
-                    'NumberProperty': 4,
-                    'MockNestedChild': {
-                        'NestedChildProperty': 5
-                    },
-                    'MockNestedChildren': {
-                        0: {
-                            'id': 0,
-                            'NestedCollectionProperty': 6
-                        }
-                    }
-                },
-                'MockCollectionChildren': {
-                    0: {
-                        'id': 0,
-                        'CollectionChildProperty': 7,
-                        'NumberProperty': 8,
-                        'MockNestedChild': {
-                            'NestedChildProperty': 9
-                        },
-                        'MockNestedChildren': {
-                            0: {
-                                'id': 0,
-                                'NestedCollectionProperty': 10
-                            }
-                        }
-                    }
-                }
-            };
+            state = defaultState();
         });
 
         it('Should return the state and no error when everything is correct.', function() {

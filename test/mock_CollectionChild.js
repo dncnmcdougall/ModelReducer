@@ -10,11 +10,16 @@ mockChildCreator.setCollectionName('MockCollectionChildren');
 
 mockChildCreator.addProperty('CollectionChildProperty');
 mockChildCreator.addProperty('NumberProperty', 'number');
-mockChildCreator.addAction('CollectionChildAction', function(state){
+mockChildCreator.addAction('NullAction', function(state){
     return state;
 });
+mockChildCreator.addAction('IncrementAction', function(state){
+    var newState = Object.assign({},state);
+    newState.NumberProperty++;
+    return newState;
+});
 mockChildCreator.addRequest('CollectionChildRequest', function(state){
-    return 'Child';
+    return 'CollectionChild';
 });
 
 mockChildCreator.addChildModel(mock_NestedChild);

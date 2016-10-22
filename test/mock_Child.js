@@ -7,8 +7,13 @@ var mockChildCreator = new ModelReducer.ModelCreator('MockChild');
 mockChildCreator.setFormsACollection(false);
 mockChildCreator.addProperty('ChildProperty');
 mockChildCreator.addProperty('NumberProperty', 'number');
-mockChildCreator.addAction('ChildAction', function(state){
+mockChildCreator.addAction('NullAction', function(state){
     return state;
+});
+mockChildCreator.addAction('IncrementAction', function(state){
+    var newState = Object.assign({},state);
+    newState.NumberProperty++;
+    return newState;
 });
 mockChildCreator.addRequest('ChildRequest', function(state){
     return 'Child';
