@@ -1,6 +1,7 @@
 /*eslint-env jasmine */
 
-var StateValidator = require('../lib/StateValidator.js');
+var ModelReducer = require('../index.js');
+var StateValidator = ModelReducer.StateValidator;
 
 var MockChild = require('./mock_Child.js');
 var MockCollectionChild = require('./mock_CollectionChild.js');
