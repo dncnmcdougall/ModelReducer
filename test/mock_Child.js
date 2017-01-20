@@ -22,5 +22,6 @@ mockChildCreator.addStateRequest();
 
 mockChildCreator.addChildModel(mock_NestedChild);
 mockChildCreator.addChildModel(mock_NestedCollection);
+mockChildCreator.addAddActionFor(mock_NestedCollection);
 
 module.exports = mockChildCreator.finaliseModel();

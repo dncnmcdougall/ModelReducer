@@ -10,7 +10,6 @@ var wrapFunction = function( func, ...args) {
 };
 
 describe('ModelCreator: A class used for building a model.', function() {
-
     var modelCreator;
 
     beforeEach(function() {
@@ -33,7 +32,6 @@ describe('ModelCreator: A class used for building a model.', function() {
     });
 
     describe('copyFrom: Copies the given model\'s properties, children, actions and requests into this model', function(){
-
         var model;
         var child;
 
@@ -185,7 +183,6 @@ describe('ModelCreator: A class used for building a model.', function() {
 
             expect( wrapFunction(newModelCreator2.copyFrom, model) ).toThrow();
         });
-
     });
 
     describe('setFormsACollection: Declares that this model will form a collection when it is used as a child.', function() {
@@ -316,7 +313,6 @@ describe('ModelCreator: A class used for building a model.', function() {
             modelCreator.addProperty('NumberProp','number');
         });
         it('Should add an action with the specified function to the model.', function() {
-
             modelCreator.addAction('action', testFunc);
             var model = modelCreator.finaliseModel();
 
@@ -324,6 +320,7 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect(state.NumberProp).toBe( 0 );
 
             expect(model.actions['action']).not.toBeUndefined();
+            expect(model.customActions).toContain( 'action' );
             var newState = model.reduce('Model.action',state);
             expect(newState.NumberProp).toBe( 1 );
         });
@@ -360,12 +357,22 @@ describe('ModelCreator: A class used for building a model.', function() {
         };
         beforeEach(function() {
             modelCreator.addAction('action',testFunc);
+            modelCreator.addProperty('Property');
+            modelCreator.addSetPropertyActionFor('Property');
         });
-        it('Should remove the given action from the model.', function() {
+        it('Should remove the given user defined action from the model.', function() {
             modelCreator.removeAction('action');
             var model = modelCreator.finaliseModel();
 
             expect(model.actions['action']).toBeUndefined();
+            expect(model.customActions).not.toContain( 'action' );
+        });
+        it('Should remove the given built in action from the model.', function() {
+            modelCreator.removeAction('SetProperty');
+            var model = modelCreator.finaliseModel();
+
+            expect(model.actions['SetProperty']).toBeUndefined();
+            expect(model.customActions).not.toContain( 'SetProperty' );
         });
         it('Should throw if the action is not defined.', function() {
             expect( wrapFunction(modelCreator.removeAction, 'NotAnAction') ).toThrow();
@@ -381,13 +388,13 @@ describe('ModelCreator: A class used for building a model.', function() {
             return 42;
         };
         it('Should add a request with the specified function to the model.', function() {
-
             modelCreator.addRequest('request', testFunc);
             var model = modelCreator.finaliseModel();
 
             var state = model.createEmpty();
 
             expect(model.requests['request']).not.toBeUndefined();
+            expect(model.customRequests).toContain('request');
             expect( model.request('Model.request', state) ).toBe(42);
         });
         it('Should override a request if it already exists.', function() {
@@ -417,12 +424,21 @@ describe('ModelCreator: A class used for building a model.', function() {
         };
         beforeEach(function() {
             modelCreator.addRequest('request',testFunc);
+            modelCreator.addStateRequest();
         });
-        it('Should remove the given request from the model.', function() {
+        it('Should remove the given user defined request from the model.', function() {
             modelCreator.removeRequest('request');
             var model = modelCreator.finaliseModel();
 
             expect(model.requests['request']).toBeUndefined();
+            expect(model.customRequests).not.toContain('request');
+        });
+        it('Should remove the given built in request from the model.', function() {
+            modelCreator.removeRequest('State');
+            var model = modelCreator.finaliseModel();
+
+            expect(model.requests['State']).toBeUndefined();
+            expect(model.customRequests).not.toContain('State');
         });
         it('Should throw if the request is not defined.', function() {
             expect( wrapFunction(modelCreator.removeRequest, 'NotARequest') ).toThrow();
@@ -511,6 +527,7 @@ describe('ModelCreator: A class used for building a model.', function() {
 
             expect( model.requests['State'] ).not.toBeUndefined();
             expect( typeof(model.requests['State']) ).toEqual('function');
+            expect(model.customRequests).not.toContain('State');
         });
     });
     describe('addAvailableKeyRequestFor: '+
@@ -537,8 +554,11 @@ describe('ModelCreator: A class used for building a model.', function() {
 
             expect( model.requests['AvailableKeyChildKey'] ).not.toBeUndefined();
             expect( typeof(model.requests['AvailableKeyChildKey']) ).toEqual('function');
+            expect(model.customRequests).not.toContain('AvailableKeyChildKey');
+
             expect( model.requests['AvailableIdChildId'] ).not.toBeUndefined();
             expect( typeof(model.requests['AvailableIdChildId']) ).toEqual('function');
+            expect(model.customRequests).not.toContain('AvailableIdChildKey');
         });
         it('Should add an "Available" request with the given name.', function(){
             modelCreator.addAvailableKeyRequestFor( idChild, 'AvailableChildKey' );
@@ -546,6 +566,7 @@ describe('ModelCreator: A class used for building a model.', function() {
 
             expect( model.requests['AvailableChildKey'] ).not.toBeUndefined();
             expect( typeof(model.requests['AvailableChildKey']) ).toEqual('function');
+            expect(model.customRequests).not.toContain('AvailableChildKey');
         });
         it('Should throw if the child does not form a collection.', function(){
             var newChild = (new ModelCreator('NewChild')).finaliseModel();
@@ -577,6 +598,7 @@ describe('ModelCreator: A class used for building a model.', function() {
 
             expect( model.actions['AddChild'] ).not.toBeUndefined();
             expect( typeof(model.actions['AddChild']) ).toEqual('function');
+            expect(model.customActions).not.toContain('AddChild');
         });
         it('Should add an "Add" action with the given name.', function(){
             modelCreator.addAddActionFor( child, 'CreateChild' );
@@ -584,6 +606,7 @@ describe('ModelCreator: A class used for building a model.', function() {
 
             expect( model.actions['CreateChild'] ).not.toBeUndefined();
             expect( typeof(model.actions['CreateChild']) ).toEqual('function');
+            expect(model.customActions).not.toContain('CreateChild');
         });
         it('Should throw if the child does not form a collection.', function(){
             var newChild = (new ModelCreator('NewChild')).finaliseModel();
@@ -610,6 +633,7 @@ describe('ModelCreator: A class used for building a model.', function() {
 
             expect( model.actions['SetProperty'] ).not.toBeUndefined();
             expect( typeof(model.actions['SetProperty']) ).toEqual('function');
+            expect( model.customActions).not.toContain('SetProperty');
         });
         it('Should add a "Set" action with the given name.', function(){
             modelCreator.addSetPropertyActionFor( 'Property', 'set_property' );
@@ -617,6 +641,7 @@ describe('ModelCreator: A class used for building a model.', function() {
 
             expect( model.actions['set_property'] ).not.toBeUndefined();
             expect( typeof(model.actions['set_property']) ).toEqual('function');
+            expect( model.customActions).not.toContain('set_property');
         });
         it('Should throw if the property name is not a string.', function() {
             expect( wrapFunction(modelCreator.addSetPropertyActionFor) ).toThrow();
@@ -627,6 +652,5 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect( wrapFunction(modelCreator.addSetPropertyActionFor, 'Property', 42) ).toThrow();
             expect( wrapFunction(modelCreator.addSetPropertyActionFor, 'Property', true) ).toThrow();
         });
-        
     });
 });
