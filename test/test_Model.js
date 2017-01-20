@@ -156,7 +156,6 @@ describe('Model: The model returned from the creator. Used to process state.', f
             expect( collectionState.NumberProp ).toEqual( 0 );
             expect( typeof(collectionState.NumberProp) ).toEqual( 'number' );
         });
-
     });
     describe('State (request): Returns the state representing this model from within the given state.', function() {
         var state;
@@ -299,7 +298,6 @@ describe('Model: The model returned from the creator. Used to process state.', f
         });
     describe('Available[ChildName] (request): Returns the available key value for the given child collection in the state.', 
         function() {
-
             var count = 9;
             var listName = MockParent.children.MockCollectionChild.propertyName;
             var requestName = 'AvailableMockCollectionChildId';
