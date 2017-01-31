@@ -13,12 +13,15 @@ For building and testing it depends on
 
 Testing with coverage can be run with 
 - npm test 
+
 with the 
 - "npm_test_coverage" environment variable set to 1.
+
 If it is not set, the tests are simply run.
 
 To test without coverage run
 - npm run test_no_cov
+
 To run the linting run
 - npm run lint
 
