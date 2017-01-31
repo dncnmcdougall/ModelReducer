@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/dncnmcdougall/ModelReducer.svg?branch=master)](https://travis-ci.org/dncnmcdougall/ModelReducer)
+[![Coverage Status](https://coveralls.io/repos/github/dncnmcdougall/ModelReducer/badge.svg?branch=master)](https://coveralls.io/github/dncnmcdougall/ModelReducer?branch=master)
 
 # Usage
 ## Dependencies
