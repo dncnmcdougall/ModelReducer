@@ -45,13 +45,12 @@ the case for me, at least).
 Enter Javascript. 
 comment briefly on:
 - JQuery: Easy to mutate DOM state.
--- Complex state stored across different places.
--- Hard to reason about
+  - Complex state stored across different places.
+  - Hard to reason about
 - Enter React:
--- Imutable
--- Redux
--- Procedural:
---- One giant switch
+  - Imutable
+  - Redux
+  - Procedural: One giant switch
 
 Enter <Enter name of library here> 
 
