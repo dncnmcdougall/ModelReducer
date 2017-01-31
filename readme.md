@@ -8,6 +8,8 @@ For building and testing it depends on
 - Jasmine - for testing
 - Istanbul - for code coverage
 - eslint - for linting.
+- coveralls - for code coverage online report. This should not be necessary when
+  building locally.
 
 Testing with coverage can be run with 
 - npm test 
