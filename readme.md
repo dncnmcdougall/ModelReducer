@@ -1,3 +1,25 @@
+# Usage
+## Dependencies
+This library does not directly depend on anything. 
+For building and testing it depends on
+- Jasmine - for testing
+- Istanbul - for code coverage
+- eslint - for linting.
+
+Testing with coverage can be run with 
+- npm test 
+with the 
+- "npm_test_coverage" environment variable set to 1.
+If it is not set, the tests are simply run.
+
+To test without coverage run
+- npm run test_no_cov
+To run the linting run
+- npm run lint
+
+## Examples
+As yet I have not written an example. However the mock objects in the test
+folder should serve in the interum. Start with the "mock_Parent"
 
 # Motivation
 
