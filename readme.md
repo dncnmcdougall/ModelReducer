@@ -1,3 +1,5 @@
+[![Build Status][travis-image]][travis-url]
+
 # Usage
 ## Dependencies
 This library does not directly depend on anything. 
