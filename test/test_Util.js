@@ -64,6 +64,24 @@ describe('Util: a private set of utilities', function() {
                 expect(result.value).toEqual('Value');
             });
         });
+        describe('defaultValue: returns a default value for the given type', function() {
+            it('Should return correct defaults for string, boolean, number, array, object and null types', function() {
+                expect( Util.defaultValue('string') ).toEqual('');
+                expect( Util.defaultValue('boolean') ).toEqual(false);
+                expect( Util.defaultValue('object') ).toEqual({});
+                expect( Util.defaultValue('number') ).toEqual(0.0);
+                expect( Util.defaultValue('array') ).toEqual([]);
+            });
+            it('Should return null given null', function() {
+                expect( Util.defaultValue(null) ).toEqual(null);
+            });
+            it('Should throw for unknown types', function() {
+                expect( wrapFunction(Util.defaultValue, 'platypus' ) ).toThrow(Error('Type platypus not recognised'));
+                expect( wrapFunction(Util.defaultValue, 'platypus', 'name' ) ).toThrow(Error('Type (platypus) of property name not recognised'));
+                expect( wrapFunction(Util.defaultValue, 'null' ) ).toThrow();
+                expect( wrapFunction(Util.defaultValue, undefined ) ).toThrow();
+            });
+        });
 
     });
 });

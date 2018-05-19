@@ -15,7 +15,7 @@ describe('ModelVersioning: A class used in validating to allow different version
     var versioningCreator;
 
     beforeEach(function() {
-        versioningCreator = new VersioningCreator('Model');
+        versioningCreator = new VersioningCreator();
         state = {
             'Prop1': 1,
             'Prop2': 2
@@ -52,6 +52,15 @@ describe('ModelVersioning: A class used in validating to allow different version
         delete newState.version;
 
         expect(newState).toEqual( state);
+    });
+
+    it('lastVersionNumber: gets the larges version in this versioning.', function() {
+        expect( versioningCreator.lastVersionNumber() ).toEqual( 0 );
+        versioningCreator.addVersion(1);
+        expect( versioningCreator.lastVersionNumber() ).toEqual( 1 );
+        versioningCreator.addVersion(2);
+        expect( versioningCreator.lastVersionNumber() ).toEqual( 2 );
+        var versioning = versioningCreator.finalise();
     });
 
     it('should throw if used after finalisation.', function() {
