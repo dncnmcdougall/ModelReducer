@@ -1,6 +1,6 @@
 {
   "name": "model_reducer",
-  "version": "0.0.1",
+  "version": "2.0.0",
   "description": "A reducer based on a Model structure",
   "main": "index.js",
   "scripts": {
