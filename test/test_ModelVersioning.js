@@ -65,6 +65,16 @@ describe('StateValidator: The state validator can be used to update to a newer v
         expect( result.value).toEqual( state );
     });
 
+    it('should fail if the update fails', function() {
+        delete state['ParentProperty'];
+        var result = StateValidator.validateState( MockParent1, state, true );
+        expect(result.value).toBeNull();
+        expect(result.error).toEqual(
+            'Expected to find property "ParentProperty" to rename to "ParentPropertyV1" in version 1, but did not.');
+
+    });
+
+
     describe('validateStateCollection: asserts that the given object represents a collection of state of the given model.', 
         function () {
 

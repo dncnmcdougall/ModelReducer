@@ -69,6 +69,11 @@ describe('ModelVersioning: A class used in validating to allow different version
         expect(wrapFunction(versioningCreator.addVersion,1)).toThrow();
     });
 
+    it('should should throw if a version is not an integer', function() {
+        expect(wrapFunction(versioningCreator.addVersion,'1.1')).toThrow();
+        versioningCreator.finalise();
+    });
+
     it('should handle updates from different base versions', function() {
         var version1 = versioningCreator.addVersion(1);
         version1.add('Add1', 0);
