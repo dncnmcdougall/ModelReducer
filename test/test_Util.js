@@ -1,3 +1,4 @@
+/*eslint-env jasmine */
 var Util = require('../lib/Util.js');
 
 var wrapFunction = function( func, ...args) {
@@ -7,7 +8,7 @@ var wrapFunction = function( func, ...args) {
 };
 
 describe('Util: a private set of utilities', function() {
-    describe('checkType: checkeds that the type of the argument is the type specified', function() {
+    describe('checkType: checks that the type of the argument is the type specified', function() {
         var object = {};
         var array = [2];
         var bool = true;
@@ -47,6 +48,21 @@ describe('Util: a private set of utilities', function() {
             expect( wrapFunction(Util.checkType, bool,   'number') ).toThrow();
             expect( wrapFunction(Util.checkType, string, 'number') ).toThrow();
             expect( wrapFunction(Util.checkType, number, 'number') ).not.toThrow();
+        });
+        describe('wrapResult: wraps the given error and into a result object', function() {
+            it('Should have the error specified', function() {
+                var result = Util.wrapResult('Error', 'Value');
+                expect(result.error).toEqual('Error');
+            });
+            it('Should have a null value if it has a non null error', function() {
+                var result = Util.wrapResult('Error', 'Value');
+                expect(result.value).toBeNull();
+            });
+            it('Should have the value specified, if there is no error', function() {
+                var result = Util.wrapResult(null, 'Value');
+                expect(result.error).toBeNull();
+                expect(result.value).toEqual('Value');
+            });
         });
 
     });
