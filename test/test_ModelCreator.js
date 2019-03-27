@@ -623,7 +623,7 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect( wrapFunction(modelCreator.addAddActionFor, child, true) ).toThrow();
         });
     });
-    describe('AddSetPropertyActionFor: Adds a Set[Property] action to the model', function() {
+    describe('addSetPropertyActionFor: Adds a Set[Property] action to the model', function() {
         beforeEach( function() {
             modelCreator.addProperty('Property');
         });

@@ -1,5 +1,6 @@
 /*eslint no-console: off*/
 
+var fs = require('fs'); 
 var path = require('path'); 
 var Util = require('../lib/Util');
 
@@ -24,11 +25,27 @@ var myReporter = {
     results: {},
     stack: [],
     details: false,
+    markdown: true,
+    outputMarkDown: '',
+
     jasmineStarted: function(suiteInfo) {
         this.startDate =Date.now();
     },
     suiteStarted: function(result) {
         this.stack.push(result.description);
+        if ( this.markdown ) {
+            for( let i = 0 ; i < this.stack.length; i++) {
+                this.outputMarkDown += '#';
+            }
+            let index = result.description.indexOf(':');
+            if ( index >= 0 ) {
+                this.outputMarkDown += ' *'+result.description.slice(0,index)+'*:'+
+                    result.description.slice(index+1)+
+                    '\n';
+            } else {
+                this.outputMarkDown += ' '+result.description+'\n';
+            }
+        }
     },
     specStarted: function(result) {
         this.specStart =Date.now();
@@ -44,6 +61,10 @@ var myReporter = {
             suite: this.stack.slice(0),
             failedExpectations: result.failedExpectations.splice(0)
         };
+
+        if ( this.markdown ) {
+            this.outputMarkDown += '* '+result.description+'\n';
+        }
 
         if(result.status == 'pending') {
             colour('yellow','*');
@@ -129,6 +150,10 @@ var myReporter = {
         print(' passed of '+(stats.total)+' in '+(Math.round(stats.totalTime/10)/100)+' seconds\n');
         var duration= (Date.now()-this.startDate);
         print('Total running time of '+(Math.round(duration/10)/100)+' seconds\n');
+
+        if ( this.markdown ) {
+            fs.writeFileSync('TestOutput.md',this.outputMarkDown);
+        }
     }
 };
 
@@ -165,7 +190,7 @@ module.exports.findSpecFiles = function(testDir) {
     return Util.recurseDirectory(testDir, (file) => {
         return path.extname(file) === '.js' && 
             path.basename(file).indexOf('test_') === 0 && 
-                file !== __filename;
+            file !== __filename;
     });
 };
 

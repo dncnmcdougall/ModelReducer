@@ -30,6 +30,7 @@ For building and testing it depends on
 - eslint - for linting.
 - coveralls - for code coverage online report. This should not be necessary when
   building locally.
+- markdown-to-html - for viewing the documentation as html
 
 ### Building
 Testing with coverage can be run with 
