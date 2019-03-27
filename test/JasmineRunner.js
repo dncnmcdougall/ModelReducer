@@ -25,7 +25,7 @@ var myReporter = {
     results: {},
     stack: [],
     details: false,
-    markdown: true,
+    markdown: false,
     outputMarkDown: '',
 
     jasmineStarted: function(suiteInfo) {
