@@ -33,7 +33,7 @@ module.exports = function(version) {
                 }
             }
         };
-    };
+    }
     if ( version == 0 ) {
         return {
             'version': 0,
@@ -75,7 +75,7 @@ module.exports = function(version) {
                 }
             }
         };
-    };
+    }
     if ( version == 1 ) {
         return {
             'version': 1,
@@ -117,6 +117,6 @@ module.exports = function(version) {
                 }
             }
         };
-    };
+    }
 };
 

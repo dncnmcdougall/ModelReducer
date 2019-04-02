@@ -21,8 +21,8 @@ mockParentCreator.addRequest('ParentRequest', function(state){
 });
 mockParentCreator.addStateRequest();
 
-mockParentCreator.addChildModel(mock_Child);
-mockParentCreator.addChildModel(mock_CollectionChild1);
+mockParentCreator.addChild(mock_Child);
+mockParentCreator.addChildAsCollection(mock_CollectionChild1);
 mockParentCreator.addAddActionFor(mock_CollectionChild1);
 mockParentCreator.addAvailableKeyRequestFor(mock_CollectionChild1);
 
@@ -30,7 +30,7 @@ var version1 = mockParentCreator.addVersion();
 version1.removeProperty('NumberProperty');
 version1.addProperty('NumberPropertyV1', 'number');
 version1.renameProperty('ParentProperty', 'ParentPropertyV1');
-version1.addChildModel(mock_OtherChild);
-version1.removeChildModel(mock_Child);
+version1.addChild(mock_OtherChild);
+version1.removeChild(mock_Child);
 
 module.exports = mockParentCreator.finaliseModel();

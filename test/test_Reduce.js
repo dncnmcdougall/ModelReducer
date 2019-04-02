@@ -4,7 +4,7 @@ var MockParent = require('./mock_Parent.js');
 
 var defaultState = require('./mock_DefaultState.js');
 
-describe('Model: The model returned from the crerator. Used to process state.', function() {
+describe('Model: The model returned from the creator. Used to process state.', function() {
     describe('reduce: Perform the named action on the given state and return the new state.', function() {
 
         var state;

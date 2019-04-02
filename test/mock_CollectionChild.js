@@ -23,7 +23,7 @@ mockChildCreator.addRequest('CollectionChildRequest', function(state){
 });
 mockChildCreator.addStateRequest();
 
-mockChildCreator.addChildModel(mock_NestedChild);
-mockChildCreator.addChildModel(mock_NestedCollection);
+mockChildCreator.addChild(mock_NestedChild);
+mockChildCreator.addChildAsCollection(mock_NestedCollection);
 
 module.exports = mockChildCreator.finaliseModel();

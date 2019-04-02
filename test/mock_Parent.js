@@ -20,8 +20,8 @@ mockParentCreator.addRequest('ParentRequest', function(state){
 });
 mockParentCreator.addStateRequest();
 
-mockParentCreator.addChildModel(mock_Child);
-mockParentCreator.addChildModel(mock_CollectionChild);
+mockParentCreator.addChild(mock_Child);
+mockParentCreator.addChildAsCollection(mock_CollectionChild);
 mockParentCreator.addAddActionFor(mock_CollectionChild);
 mockParentCreator.addAvailableKeyRequestFor(mock_CollectionChild);
 

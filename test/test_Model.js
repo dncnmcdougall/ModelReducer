@@ -162,8 +162,8 @@ describe('Model: The model returned from the creator. Used to process state.', f
             modelCreator.addProperty('ArrayProp','array');
             modelCreator.addProperty('UnknownProp');
 
-            modelCreator.addChildModel( ChildModel );
-            modelCreator.addChildModel( CollectionModel );
+            modelCreator.addChild( ChildModel );
+            modelCreator.addChildAsCollection( CollectionModel );
 
             Model = modelCreator.finaliseModel();
 
@@ -292,7 +292,8 @@ describe('Model: The model returned from the creator. Used to process state.', f
             );
         });
     });
-    describe('Add[ChildName] (action): Adds an empty instance of the child, under the given key, and returns the new state.', 
+    describe('Add[ChildName] (action): Adds an empty instance of the child to its collection'+
+        ', under the given key, and returns the new state.', 
         function() {
             var Model;
             var CollectionModel;
@@ -306,7 +307,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
                 CollectionModel = collectionCreator.finaliseModel();
 
                 var modelCreator = new ModelCreator('Model');
-                modelCreator.addChildModel( CollectionModel );
+                modelCreator.addChildAsCollection( CollectionModel );
                 modelCreator.addAddActionFor( CollectionModel, 'AddCollectionChild' );
                 Model = modelCreator.finaliseModel();
             });
@@ -437,4 +438,72 @@ describe('Model: The model returned from the creator. Used to process state.', f
             testOnRange(count);
             testOnRange(count-1);
         });
+    describe('hasCollection: returns true if the model has the named collection of children.', function() {
+        var Model;
+        var CollectionModel;
+        var SimpleModel;
+        beforeAll( function() {
+
+            var collectionCreator = new ModelCreator('Collection');
+            collectionCreator.setFormsACollection(true);
+            collectionCreator.setCollectionName('Collection');
+            collectionCreator.addProperty('NumberProp','number');
+            collectionCreator.addSetPropertyActionFor('NumberProp');
+            CollectionModel = collectionCreator.finaliseModel();
+
+            var simpleCreator = new ModelCreator('Simple');
+            simpleCreator.addProperty('NumberProp','number');
+            simpleCreator.addSetPropertyActionFor('NumberProp');
+            SimpleModel = simpleCreator.finaliseModel();
+
+            var modelCreator = new ModelCreator('Model');
+            modelCreator.addChildAsCollection( CollectionModel );
+            modelCreator.addAddActionFor( CollectionModel, 'AddCollectionChild' );
+            modelCreator.addChild( SimpleModel );
+            Model = modelCreator.finaliseModel();
+        });
+        it('Should return true if the collection is present.', function() {
+            expect(Model.hasCollection('Collection')).toBe(true);
+        });
+        it('Should return false if the collection is not present.', function() {
+            expect(Model.hasCollection('UnknownCollection')).toBe(false);
+        });
+        it('Should return false if the collection is not present, but is a child.', function() {
+            expect(Model.hasCollection('Simple')).toBe(false);
+        });
+    });
+    describe('hasChild: returns true if the model has the named child.', function() {
+        var Model;
+        var CollectionModel;
+        var SimpleModel;
+        beforeAll( function() {
+
+            var collectionCreator = new ModelCreator('Collection');
+            collectionCreator.setFormsACollection(true);
+            collectionCreator.setCollectionName('Collection');
+            collectionCreator.addProperty('NumberProp','number');
+            collectionCreator.addSetPropertyActionFor('NumberProp');
+            CollectionModel = collectionCreator.finaliseModel();
+
+            var simpleCreator = new ModelCreator('Simple');
+            simpleCreator.addProperty('NumberProp','number');
+            simpleCreator.addSetPropertyActionFor('NumberProp');
+            SimpleModel = simpleCreator.finaliseModel();
+
+            var modelCreator = new ModelCreator('Model');
+            modelCreator.addChildAsCollection( CollectionModel );
+            modelCreator.addAddActionFor( CollectionModel, 'AddCollectionChild' );
+            modelCreator.addChild( SimpleModel );
+            Model = modelCreator.finaliseModel();
+        });
+        it('Should return true if the child is present.', function() {
+            expect(Model.hasChild('Simple')).toBe(true);
+        });
+        it('Should return false if the child is not present.', function() {
+            expect(Model.hasChild('UnknownChild')).toBe(false);
+        });
+        it('Should return true if the child is not present, but is a collection.', function() {
+            expect(Model.hasChild('Collection')).toBe(true);
+        });
+    });
 });

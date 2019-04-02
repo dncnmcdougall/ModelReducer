@@ -77,7 +77,8 @@ describe('Util: a private set of utilities', function() {
             });
             it('Should throw for unknown types', function() {
                 expect( wrapFunction(Util.defaultValue, 'platypus' ) ).toThrow(Error('Type platypus not recognised'));
-                expect( wrapFunction(Util.defaultValue, 'platypus', 'name' ) ).toThrow(Error('Type (platypus) of property name not recognised'));
+                expect( wrapFunction(Util.defaultValue, 'platypus', 'name' ) )
+                    .toThrow(Error('Type (platypus) of property name not recognised'));
                 expect( wrapFunction(Util.defaultValue, 'null' ) ).toThrow();
                 expect( wrapFunction(Util.defaultValue, undefined ) ).toThrow();
             });

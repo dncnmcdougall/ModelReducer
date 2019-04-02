@@ -60,7 +60,7 @@ describe('ModelVersioning: A class used in validating to allow different version
         expect( versioningCreator.lastVersionNumber() ).toEqual( 1 );
         versioningCreator.addVersion(2);
         expect( versioningCreator.lastVersionNumber() ).toEqual( 2 );
-        var versioning = versioningCreator.finalise();
+        versioningCreator.finalise();
     });
 
     it('should throw if used after finalisation.', function() {
