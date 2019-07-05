@@ -28,7 +28,6 @@
     "eslint": "^6.0.1",
     "istanbul": "*",
     "jasmine": "^3.4.0",
-    "markdown-to-html": "*",
     "webpack": "^4.35.2",
     "webpack-cli": "^3.3.5"
   }
