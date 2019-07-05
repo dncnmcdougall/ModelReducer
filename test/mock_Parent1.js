@@ -1,11 +1,10 @@
-var ModelReducer = require('../index.js');
+var ModelReducer = require('../src/index.js');
 var mock_Child = require('./mock_Child.js');
 var mock_OtherChild = require('./mock_OtherChild.js');
 var mock_CollectionChild1 = require('./mock_CollectionChild1.js');
 
 var mockParentCreator = new ModelReducer.ModelCreator('MockParent');
 
-mockParentCreator.setFormsACollection(false);
 mockParentCreator.addProperty('ParentProperty');
 mockParentCreator.addProperty('NumberProperty', 'number');
 mockParentCreator.addAction('NullAction', function(state){

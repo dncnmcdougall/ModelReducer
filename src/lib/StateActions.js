@@ -108,9 +108,12 @@ function StateActions()
         }
 
         constructor.addRequest(requestName, function(state) {
-            var keys = Object.keys(state[child.collectionName]).map( (value) => {
-                return parseInt(value, 10); 
-            });
+            var keys = [];
+            if ( state && state[child.collectionName] ) {
+                keys = Object.keys(state[child.collectionName]).map( (value) => {
+                    return parseInt(value, 10); 
+                });
+            }
             keys.sort( (a,b) => { return a-b; });
             var key = keys.length-1;
             if ( key < 0 ) {

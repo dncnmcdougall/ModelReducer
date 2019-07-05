@@ -17,7 +17,6 @@ function ModelCreator(modelName){
 
     constModel.name = modelName;
 
-    constModel.formsACollection = false;
     constModel.collectionName = modelName+'s';
     constModel.collectionKey = 'Key';
 
@@ -48,25 +47,25 @@ function ModelCreator(modelName){
     constModel.listActions = function() {
         return StateReducer.listActions(constModel, 
             (child) => {return child.actions;}, 
-            (child) => {return child.children;});
+            (child) => {return child.children;}, false);
     };
 
     constModel.listCustomActions = function() {
         return StateReducer.listActions(constModel, 
             (child) => {return child.customActions;}, 
-            (child) => {return child.children;});
+            (child) => {return child.children;}, false);
     };
 
     constModel.listRequests = function() {
         return StateReducer.listActions(constModel, 
             (child) => {return child.requests;}, 
-            (child) => {return child.children;});
+            (child) => {return child.children;}, false);
     };
 
     constModel.listCustomRequests = function() {
         return StateReducer.listActions(constModel, 
             (child) => {return child.customRequests;}, 
-            (child) => {return child.children;});
+            (child) => {return child.children;}, false);
     };
 
     constModel.hasChild = function(childName) {
@@ -77,7 +76,7 @@ function ModelCreator(modelName){
     };
     constModel.hasCollection = function(childName) {
         return this.children.hasOwnProperty(childName) &&
-               this.collections[childName];
+            this.collections[childName];
     };
     this.hasCollection = function(childName) {
         return constModel.hasCollection(childName);
@@ -104,13 +103,6 @@ function ModelCreator(modelName){
         constModel.collections = Object.assign({}, 
             constModel.collections, 
             otherModel.collections);
-    };
-
-    this.setFormsACollection = function(formsACollection) {
-        checkType(formsACollection, 'boolean');
-        throwIfFinalised(finalised);
-
-        // constModel.formsACollection = formsACollection;
     };
 
     this.setCollectionName = function(collectionName) {
@@ -176,6 +168,10 @@ function ModelCreator(modelName){
         checkType(childModel, 'object');
         throwIfFinalised(finalised);
 
+        if ( constModel.children.hasOwnProperty(childModel.name) ) {
+            throw 'The child named "'+childModel.name+'" already exists in this model.'+
+                ' Do you have two models with the same name?';
+        }
         if ( constModel.children.hasOwnProperty(childModel.collectionName) ) {
             throw 'The child named "'+childModel.collectionName+'" already exists in this model.'+
                 ' Do you have two models with the same name?';
@@ -263,19 +259,11 @@ function ModelCreator(modelName){
 
     this.finaliseModel = function() {
         throwIfFinalised(finalised);
-        // constModel.propertyName = constModel.name;
-        // if ( constModel.formsACollection ) {
-        //     constModel.propertyName = constModel.collectionName;
 
-        //     if ( constModel.properties.hasOwnProperty( constModel.collectionKey ) )
-        //     {
-        //         throw 'The property "'+constModel.collectionKey+'" shadows the collection key.';
-        //     }
-        // } else {
-        //     constModel.propertyName = constModel.name;
-        //     delete constModel.collectionKey;
-        // }
-        // delete constModel.collectionName;
+        if ( constModel.properties.hasOwnProperty( constModel.collectionKey ) )
+        {
+            throw 'The property "'+constModel.collectionKey+'" shadows the collection key.';
+        }
 
         constModel.versioning = versioningCreator.finalise();
 

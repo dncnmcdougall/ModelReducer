@@ -1,27 +1,35 @@
 {
-  "name": "model_reducer",
+  "name": "model-reducer",
   "version": "2.0.0",
   "description": "A reducer based on a Model structure",
-  "main": "index.js",
+  "main": "dist/model-reducer.js",
   "scripts": {
     "test": "./node_modules/.bin/istanbul test test/main.js",
     "coveralls": "./node_modules/.bin/istanbul cover test/main.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "lint": "./node_modules/.bin/eslint -c .eslintrc.json ./lib/ ./test/",
-    "test_no_cov": "node test/main.js"
+    "lint": "./node_modules/.bin/eslint -c .eslintrc.json ./src/ ./test/",
+    "test_no_cov": "node test/main.js",
+    "build": "webpack"
   },
   "keywords": [
     "reducer"
   ],
   "files": [
-    "lib/"
+    "src/**/*"
   ],
+  "directories": {
+    "lib": "src/lib",
+    "test": "test"
+  },
   "author": "Duncan McDougall",
   "private": true,
+  "dependencies": {},
   "devDependencies": {
-    "coveralls": "^2.11.15",
-    "eslint": "^3.5.0",
-    "istanbul": "^0.4.5",
-    "jasmine": "^2.5.1",
-    "markdown-to-html": "0.0.13"
+    "coveralls": "^3.0.4",
+    "eslint": "^6.0.1",
+    "istanbul": "*",
+    "jasmine": "^3.4.0",
+    "markdown-to-html": "*",
+    "webpack": "^4.35.2",
+    "webpack-cli": "^3.3.5"
   }
 }

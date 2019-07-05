@@ -1,9 +1,8 @@
 /*eslint-env jasmine */
 
-var ModelReducer = require('../index.js');
+var ModelReducer = require('../src/index.js');
 var StateValidator = ModelReducer.StateValidator;
 
-var MockChild = require('./mock_Child.js');
 var MockCollectionChild = require('./mock_CollectionChild.js');
 var MockParent = require('./mock_Parent.js');
 
@@ -232,15 +231,6 @@ describe('StateValidator: A class used for asserting that a given state object f
                 expect(result.value).toBeNull();
             });
 
-            it('Should return an error when the Model is not a collection.', function () {
-                state[0].id = 1;
-                var result = StateValidator.validateStateCollection( MockChild, state );
-
-                expect(result.error).toEqual(
-                    'MockChild should not be placed in a collection as it is not marked as forming a collection.'
-                );
-                expect(result.value).toBeNull();
-            });
         });
 });
 

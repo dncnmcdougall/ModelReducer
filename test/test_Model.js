@@ -1,6 +1,6 @@
 /*eslint-env jasmine */
 
-var ModelReducer = require('../index.js');
+var ModelReducer = require('../src/index.js');
 var ModelCreator = ModelReducer.ModelCreator;
 
 var MockParent = require('./mock_Parent.js');
@@ -25,13 +25,13 @@ describe('Model: The model returned from the creator. Used to process state.', f
             expect(actions).toContain('MockParent.MockChild.NullAction');
             expect(actions).toContain('MockParent.MockChild.IncrementAction');
             expect(actions).toContain('MockParent.MockChild.MockNestedChild.Action');
-            expect(actions).toContain('MockParent.MockChild.MockNestedCollection.Action');
+            expect(actions).toContain('MockParent.MockChild.MockNestedChildren.Action');
             expect(actions).toContain('MockParent.MockChild.AddMockNestedCollection');
 
-            expect(actions).toContain('MockParent.MockCollectionChild.NullAction');
-            expect(actions).toContain('MockParent.MockCollectionChild.IncrementAction');
-            expect(actions).toContain('MockParent.MockCollectionChild.MockNestedChild.Action');
-            expect(actions).toContain('MockParent.MockCollectionChild.MockNestedCollection.Action');
+            expect(actions).toContain('MockParent.MockCollectionChildren.NullAction');
+            expect(actions).toContain('MockParent.MockCollectionChildren.IncrementAction');
+            expect(actions).toContain('MockParent.MockCollectionChildren.MockNestedChild.Action');
+            expect(actions).toContain('MockParent.MockCollectionChildren.MockNestedChildren.Action');
 
             expect(actions.length).toEqual(12);
         });
@@ -43,7 +43,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
             expect(actions).toContain('MockChild.IncrementAction');
             expect(actions).toContain('MockChild.AddMockNestedCollection');
             expect(actions).toContain('MockChild.MockNestedChild.Action');
-            expect(actions).toContain('MockChild.MockNestedCollection.Action');
+            expect(actions).toContain('MockChild.MockNestedChildren.Action');
 
             expect(actions.length).toEqual(5);
         });
@@ -57,12 +57,12 @@ describe('Model: The model returned from the creator. Used to process state.', f
             expect(actions).toContain('MockParent.MockChild.NullAction');
             expect(actions).toContain('MockParent.MockChild.IncrementAction');
             expect(actions).toContain('MockParent.MockChild.MockNestedChild.Action');
-            expect(actions).toContain('MockParent.MockChild.MockNestedCollection.Action');
+            expect(actions).toContain('MockParent.MockChild.MockNestedChildren.Action');
 
-            expect(actions).toContain('MockParent.MockCollectionChild.NullAction');
-            expect(actions).toContain('MockParent.MockCollectionChild.IncrementAction');
-            expect(actions).toContain('MockParent.MockCollectionChild.MockNestedChild.Action');
-            expect(actions).toContain('MockParent.MockCollectionChild.MockNestedCollection.Action');
+            expect(actions).toContain('MockParent.MockCollectionChildren.NullAction');
+            expect(actions).toContain('MockParent.MockCollectionChildren.IncrementAction');
+            expect(actions).toContain('MockParent.MockCollectionChildren.MockNestedChild.Action');
+            expect(actions).toContain('MockParent.MockCollectionChildren.MockNestedChildren.Action');
 
             expect(actions.length).toEqual(10);
         });
@@ -73,7 +73,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
             expect(actions).toContain('MockChild.NullAction');
             expect(actions).toContain('MockChild.IncrementAction');
             expect(actions).toContain('MockChild.MockNestedChild.Action');
-            expect(actions).toContain('MockChild.MockNestedCollection.Action');
+            expect(actions).toContain('MockChild.MockNestedChildren.Action');
 
             expect(actions.length).toEqual(4);
         });
@@ -88,12 +88,12 @@ describe('Model: The model returned from the creator. Used to process state.', f
             expect(requests).toContain('MockParent.MockChild.ChildRequest');
             expect(requests).toContain('MockParent.MockChild.State');
             expect(requests).toContain('MockParent.MockChild.MockNestedChild.Request');
-            expect(requests).toContain('MockParent.MockChild.MockNestedCollection.Request');
+            expect(requests).toContain('MockParent.MockChild.MockNestedChildren.Request');
 
-            expect(requests).toContain('MockParent.MockCollectionChild.CollectionChildRequest');
-            expect(requests).toContain('MockParent.MockCollectionChild.State');
-            expect(requests).toContain('MockParent.MockCollectionChild.MockNestedChild.Request');
-            expect(requests).toContain('MockParent.MockCollectionChild.MockNestedCollection.Request');
+            expect(requests).toContain('MockParent.MockCollectionChildren.CollectionChildRequest');
+            expect(requests).toContain('MockParent.MockCollectionChildren.State');
+            expect(requests).toContain('MockParent.MockCollectionChildren.MockNestedChild.Request');
+            expect(requests).toContain('MockParent.MockCollectionChildren.MockNestedChildren.Request');
 
             expect(requests.length).toEqual(11);
         });
@@ -104,7 +104,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
             expect(requests).toContain('MockChild.ChildRequest');
             expect(requests).toContain('MockChild.State');
             expect(requests).toContain('MockChild.MockNestedChild.Request');
-            expect(requests).toContain('MockChild.MockNestedCollection.Request');
+            expect(requests).toContain('MockChild.MockNestedChildren.Request');
 
             expect(requests.length).toEqual(4);
         });
@@ -116,11 +116,11 @@ describe('Model: The model returned from the creator. Used to process state.', f
 
             expect(requests).toContain('MockParent.MockChild.ChildRequest');
             expect(requests).toContain('MockParent.MockChild.MockNestedChild.Request');
-            expect(requests).toContain('MockParent.MockChild.MockNestedCollection.Request');
+            expect(requests).toContain('MockParent.MockChild.MockNestedChildren.Request');
 
-            expect(requests).toContain('MockParent.MockCollectionChild.CollectionChildRequest');
-            expect(requests).toContain('MockParent.MockCollectionChild.MockNestedChild.Request');
-            expect(requests).toContain('MockParent.MockCollectionChild.MockNestedCollection.Request');
+            expect(requests).toContain('MockParent.MockCollectionChildren.CollectionChildRequest');
+            expect(requests).toContain('MockParent.MockCollectionChildren.MockNestedChild.Request');
+            expect(requests).toContain('MockParent.MockCollectionChildren.MockNestedChildren.Request');
 
             expect(requests.length).toEqual(7);
         });
@@ -130,7 +130,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
 
             expect(requests).toContain('MockChild.ChildRequest');
             expect(requests).toContain('MockChild.MockNestedChild.Request');
-            expect(requests).toContain('MockChild.MockNestedCollection.Request');
+            expect(requests).toContain('MockChild.MockNestedChildren.Request');
 
             expect(requests.length).toEqual(3);
         });
@@ -149,7 +149,6 @@ describe('Model: The model returned from the creator. Used to process state.', f
             ChildModel = childCreator.finaliseModel();
 
             var collectionCreator = new ModelCreator('Collection');
-            collectionCreator.setFormsACollection(true);
             collectionCreator.setCollectionName('Collection');
             collectionCreator.addProperty('NumberProp','number');
             CollectionModel = collectionCreator.finaliseModel();
@@ -204,17 +203,6 @@ describe('Model: The model returned from the creator. Used to process state.', f
         it('Should populate child collections with {}', function() {
             expect( state.Collection ).toEqual( {} );
         });
-        it('Should set the collection key to null', function() {
-            var collectionState = CollectionModel.createEmpty();
-
-            expect( collectionState ).not.toBeUndefined();
-
-            expect( collectionState.Key ).not.toBeUndefined();
-            expect( collectionState.Key ).toEqual( null );
-
-            expect( collectionState.NumberProp ).toEqual( 0 );
-            expect( typeof(collectionState.NumberProp) ).toEqual( 'number' );
-        });
     });
     describe('State (request): Returns the state representing this model from within the given state.', function() {
         var state;
@@ -231,7 +219,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
         });
         it('Should return the collection child state.', function() {
             var subState =state.MockCollectionChildren[0] ;
-            expect(MockParent.request('MockParent.MockCollectionChild.State',state, 0)).toBe(subState);
+            expect(MockParent.request('MockParent.MockCollectionChildren.State',state, 0)).toBe(subState);
         });
     });
     describe('Set[PropertyName] (action): Sets the named property to the given value and returnes the new state.', function() {
@@ -300,7 +288,6 @@ describe('Model: The model returned from the creator. Used to process state.', f
             beforeAll( function() {
 
                 var collectionCreator = new ModelCreator('Collection');
-                collectionCreator.setFormsACollection(true);
                 collectionCreator.setCollectionName('Collection');
                 collectionCreator.addProperty('NumberProp','number');
                 collectionCreator.addSetPropertyActionFor('NumberProp');
@@ -359,7 +346,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
     describe('Available[ChildName] (request): Returns the available key value for the given child collection in the state.', 
         function() {
             var count = 9;
-            var listName = MockParent.children.MockCollectionChild.propertyName;
+            var listName = MockParent.children.MockCollectionChildren.collectionName;
             var requestName = 'AvailableMockCollectionChildId';
             var modelName = MockParent.name;
             function testOnRange(count){
@@ -445,7 +432,6 @@ describe('Model: The model returned from the creator. Used to process state.', f
         beforeAll( function() {
 
             var collectionCreator = new ModelCreator('Collection');
-            collectionCreator.setFormsACollection(true);
             collectionCreator.setCollectionName('Collection');
             collectionCreator.addProperty('NumberProp','number');
             collectionCreator.addSetPropertyActionFor('NumberProp');
@@ -479,7 +465,6 @@ describe('Model: The model returned from the creator. Used to process state.', f
         beforeAll( function() {
 
             var collectionCreator = new ModelCreator('Collection');
-            collectionCreator.setFormsACollection(true);
             collectionCreator.setCollectionName('Collection');
             collectionCreator.addProperty('NumberProp','number');
             collectionCreator.addSetPropertyActionFor('NumberProp');

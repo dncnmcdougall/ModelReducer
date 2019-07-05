@@ -5,9 +5,6 @@ function StateValidator()
 {
     this.validateStateCollection = (model, collection, shouldUpdate, hasCopied) => {
         var error = null;
-        if ( !model.collectionKey ) {
-            error = model.propertyName+' should not be placed in a collection as it is not marked as forming a collection.';
-        }
 
         if ( shouldUpdate && !hasCopied ) {
             collection = Object.assign({}, collection);
@@ -18,7 +15,7 @@ function StateValidator()
             if ( !error ) {
                 var internalId = collection[id][model.collectionKey];
                 if ( internalId != id ) {
-                    error = 'Expected '+model.propertyName+'['+id+'] to have "'+
+                    error = 'Expected '+model.collectionName+'['+id+'] to have "'+
                         model.collectionKey+'" of '+id+' but found '+internalId+'.';
                 } else {
                     let result = this.validateState(model, collection[id], shouldUpdate, hasCopied);
@@ -41,16 +38,20 @@ function StateValidator()
         var childCount = {};
         var collectionCount = {};
         var propertyCount = {};
+        var collectionKeyCount = {
+            'found': false,
+            'name': model.collectionKey,
+            'type': null
+        };
 
         Object.keys(children).forEach( (childName) => { 
-            var child = children[childName];
-            if ( child.formsACollection ) {
-                collectionCount[child.propertyName] = {
+            if ( model.hasCollection(childName) ) {
+                collectionCount[childName] = {
                     'found': false,
                     'name': childName
                 }; 
             } else {
-                childCount[child.propertyName] = {
+                childCount[childName] = {
                     'found': false,
                     'name': childName
                 };
@@ -64,13 +65,6 @@ function StateValidator()
             };
         });
 
-        if ( model.formsACollection ) {
-            propertyCount[model.collectionKey] = {
-                'found': false,
-                'type': null
-            }; 
-        }
-
         if ( shouldUpdate ) {
             var result = model.versioning.update( state );
             if ( result.error ) {
@@ -83,10 +77,10 @@ function StateValidator()
 
         var error = null;
 
-        var modelName = model.propertyName;
-        if ( model.formsACollection ) {
+        var modelName = model.name;
+        if ( state.hasOwnProperty(model.collectionKey) ) {
             let id = state[ model.collectionKey];
-            modelName = modelName+'['+id+']';
+            modelName = model.collectionName+'['+id+']';
         } 
 
         Object.keys(state).forEach( (key) => {
@@ -130,6 +124,8 @@ function StateValidator()
                     }
                     collectionCount[key].found = true;
                 }
+            } else if ( collectionKeyCount.name == key ) {
+                collectionKeyCount.found = true;
             } else {
                 error= 'Did not expecte to find a property named '+modelName+'.'+key+', but did.';
             }

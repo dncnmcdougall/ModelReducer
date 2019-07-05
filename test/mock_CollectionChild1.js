@@ -1,10 +1,9 @@
-var ModelReducer = require('../index.js');
+var ModelReducer = require('../src/index.js');
 var mock_NestedChild = require('./mock_NestedChild.js');
 var mock_NestedCollection = require('./mock_NestedCollection.js');
 
 var mockChildCreator = new ModelReducer.ModelCreator('MockCollectionChild');
 
-mockChildCreator.setFormsACollection(true);
 mockChildCreator.setCollectionKey('id');
 mockChildCreator.setCollectionName('MockCollectionChildren');
 

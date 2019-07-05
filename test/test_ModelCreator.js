@@ -1,6 +1,6 @@
 /*eslint-env jasmine */
 
-var ModelReducer = require('../index.js');
+var ModelReducer = require('../src/index.js');
 var ModelCreator = ModelReducer.ModelCreator;
 
 var wrapFunction = function( func, ...args) {
@@ -59,19 +59,6 @@ describe('ModelCreator: A class used for building a model.', function() {
 
             newModelCreator1 = new ModelCreator('NewModel');
             newModelCreator2 = new ModelCreator('NewModel');
-        });
-
-        it('Should not change the collection state of the current model.', function() {
-            newModelCreator1.setFormsACollection(true);
-            newModelCreator2.setFormsACollection(true);
-
-            newModelCreator2.copyFrom(model);
-
-            newModel1 = newModelCreator1.finaliseModel();
-            newModel2 = newModelCreator2.finaliseModel();
-
-            expect(newModel1.formsACollection).toBe(true);
-            expect(newModel2.formsACollection).toBe(true);
         });
 
         it('Should add the properties to the current model.', function() {
@@ -185,40 +172,18 @@ describe('ModelCreator: A class used for building a model.', function() {
         });
     });
 
-    describe('setFormsACollection: Declares that this model will form a collection when it is used as a child.', function() {
-        it('Should declare that this model forms a collection.', function() {
-            modelCreator.setFormsACollection(true);
-            var model = modelCreator.finaliseModel();
-
-            expect( model.formsACollection ).toEqual( true );
-        });
-        it('Should declare that this model does not form a collection.', function() {
-            modelCreator.setFormsACollection(true);
-            modelCreator.setFormsACollection(false);
-            var model = modelCreator.finaliseModel();
-
-            expect( model.formsACollection ).toEqual( false );
-        });
-        it('Should throw if not given a boolean', function() {
-            expect( wrapFunction(modelCreator.setFormsACollection) ).toThrow();
-            expect( wrapFunction(modelCreator.setFormsACollection,42) ).toThrow();
-            expect( wrapFunction(modelCreator.setFormsACollection,'Hello world') ).toThrow();
-        });
-    });
     describe('setCollectionName: Sets the name of the collection that this child becomes in the parent.', function() {
-        it('Should set the property name of the model, if it is a collection', function() {
-            modelCreator.setFormsACollection(true);
+        it('Should set the collection name of the model.', function() {
             modelCreator.setCollectionName('Collection');
             var model = modelCreator.finaliseModel();
 
-            expect( model.propertyName ).toEqual( 'Collection' );
+            expect( model.collectionName ).toEqual( 'Collection' );
         });
-        it('Should not set the property name of the model, if it is not a collection', function() {
-            modelCreator.setFormsACollection(false);
+        it('Should not set the name of the model.', function() {
             modelCreator.setCollectionName('Collection');
             var model = modelCreator.finaliseModel();
 
-            expect( model.propertyName ).not.toEqual( 'Collection' );
+            expect( model.name ).not.toEqual( 'Collection' );
         });
         it('Should throw if not given a string', function() {
             expect( wrapFunction(modelCreator.setCollectionName) ).toThrow();
@@ -229,19 +194,11 @@ describe('ModelCreator: A class used for building a model.', function() {
     describe('setCollectionKeyField: Sets the name of the field which is used to store the numberic '+
         'identifier of an instance of this model in a collection.', 
         function() {
-            it('Should set the name of the key, if the model is a collection', function() {
-                modelCreator.setFormsACollection(true);
+            it('Should set the name of the key', function() {
                 modelCreator.setCollectionKey('key');
                 var model = modelCreator.finaliseModel();
 
                 expect( model.collectionKey ).toEqual( 'key' );
-            });
-            it('Should not set the property name of the model, if it is not a collection', function() {
-                modelCreator.setFormsACollection(false);
-                modelCreator.setCollectionKey('key');
-                var model = modelCreator.finaliseModel();
-
-                expect( model.collectionKey ).toBeUndefined();
             });
             it('Should throw if not given a string', function() {
                 expect( wrapFunction(modelCreator.setCollectionKey) ).toThrow();
@@ -472,30 +429,49 @@ describe('ModelCreator: A class used for building a model.', function() {
         });
     });
     describe('addChildAsCollection: Adds a child model to this model as a collection.', function() {
-        var testModel = (new ModelCreator('TestModel')).finaliseModel();
 
-        it('Should add a child with the specified function to the model.', function() {
+        var testModel;
+        var secondTestModel;
+
+        beforeAll(function() {
+            let testModelCreator = new ModelCreator('TestModel');
+            testModelCreator.setCollectionName('TestModelCollection');
+            testModel = testModelCreator.finaliseModel();
+
+            let secondTestModelCreator = new ModelCreator('TestModel');
+            secondTestModelCreator.setCollectionName('TestModelCollection');
+            secondTestModel = secondTestModelCreator.finaliseModel();
+        });
+
+
+        it('Should add a child with the collection name to the model.', function() {
 
             modelCreator.addChildAsCollection(testModel);
             var model = modelCreator.finaliseModel();
 
-            expect(model.children['TestModel']).not.toBeUndefined();
-            expect(model.children['TestModel']).toBe(testModel);
+            expect(model.children['TestModelCollection']).not.toBeUndefined();
+            expect(model.children['TestModelCollection']).toBe(testModel);
+        });
+        it('Should not add a child with the model name to the model.', function() {
+
+            modelCreator.addChildAsCollection(testModel);
+            var model = modelCreator.finaliseModel();
+
+            expect(model.children['TestModel']).toBeUndefined();
         });
         it('Should throw if a child is added that already exists.', function() {
-            var newModel = (new ModelCreator('TestModel')).finaliseModel();
-            modelCreator.addChild( newModel);
+            // CBB: It would be nice for this not to be true
+            modelCreator.addChild( secondTestModel);
             expect( wrapFunction(modelCreator.addChildAsCollection, testModel )).toThrow();
         });
         it('Should throw if a child is added that already exists as a collection.', function() {
-            var newModel = (new ModelCreator('TestModel')).finaliseModel();
-            modelCreator.addChildAsCollection( newModel);
+            modelCreator.addChildAsCollection( secondTestModel);
             expect( wrapFunction(modelCreator.addChildAsCollection, testModel )).toThrow();
         });
         it('Should throw if the child is not an object.', function() {
-            expect( wrapFunction(modelCreator.addChild) ).toThrow();
-            expect( wrapFunction(modelCreator.addChild,42) ).toThrow();
-            expect( wrapFunction(modelCreator.addChild,true) ).toThrow();
+            expect( wrapFunction(modelCreator.addChildAsCollection) ).toThrow();
+            expect( wrapFunction(modelCreator.addChildAsCollection,42) ).toThrow();
+            expect( wrapFunction(modelCreator.addChildAsCollection,true) ).toThrow();
         });
     });
     describe('removeChild: Removes a child model from this model.', function() {
@@ -540,11 +516,7 @@ describe('ModelCreator: A class used for building a model.', function() {
             modelCreator.addProperty('key','integer');
             modelCreator.setCollectionKey('key');
 
-            modelCreator.setFormsACollection(true);
             expect( modelCreator.finaliseModel ).toThrow();
-
-            modelCreator.setFormsACollection(false);
-            expect( modelCreator.finaliseModel ).not.toThrow();
         });
     });
     describe('addStateRequest: adds the "State" request.', function() {
@@ -559,60 +531,57 @@ describe('ModelCreator: A class used for building a model.', function() {
     });
     describe('addAvailableKeyRequestFor: '+
         'Should add an "Available[ChildName][ChildCollectionKey]" request for a collection.', function(){
-        var collectionCreator = new ModelCreator('KeyChild');
-        collectionCreator.setFormsACollection(true);
-        var keyChild = collectionCreator.finaliseModel();
+            var collectionCreator = new ModelCreator('KeyChild');
+            var keyChild = collectionCreator.finaliseModel();
 
-        collectionCreator = new ModelCreator('IdChild');
-        collectionCreator.setFormsACollection(true);
-        collectionCreator.setCollectionKey('Id');
-        var idChild = collectionCreator.finaliseModel();
+            collectionCreator = new ModelCreator('IdChild');
+            collectionCreator.setCollectionKey('Id');
+            var idChild = collectionCreator.finaliseModel();
 
-        beforeEach(function() {
-            modelCreator.addChild( keyChild );
-            modelCreator.addChild( idChild );
+            beforeEach(function() {
+                modelCreator.addChildAsCollection( keyChild );
+                modelCreator.addChildAsCollection( idChild );
+            });
+
+            it('Should add an "Available" request with the correct default name: '+
+                'Available[ChildName][ChildCollectionKey].', function(){
+                    modelCreator.addAvailableKeyRequestFor( idChild );
+                    modelCreator.addAvailableKeyRequestFor( keyChild );
+                    var model = modelCreator.finaliseModel();
+
+                    expect( model.requests['AvailableKeyChildKey'] ).not.toBeUndefined();
+                    expect( typeof(model.requests['AvailableKeyChildKey']) ).toEqual('function');
+                    expect(model.customRequests).not.toContain('AvailableKeyChildKey');
+
+                    expect( model.requests['AvailableIdChildId'] ).not.toBeUndefined();
+                    expect( typeof(model.requests['AvailableIdChildId']) ).toEqual('function');
+                    expect(model.customRequests).not.toContain('AvailableIdChildKey');
+                });
+            it('Should add an "Available" request with the given name.', function(){
+                modelCreator.addAvailableKeyRequestFor( idChild, 'AvailableChildKey' );
+                var model = modelCreator.finaliseModel();
+
+                expect( model.requests['AvailableChildKey'] ).not.toBeUndefined();
+                expect( typeof(model.requests['AvailableChildKey']) ).toEqual('function');
+                expect(model.customRequests).not.toContain('AvailableChildKey');
+            });
+            it('Should throw if the child does not form a collection.', function(){
+                var newChild = (new ModelCreator('NewChild')).finaliseModel();
+
+                expect( wrapFunction( modelCreator.addAvailableKeyRequestFor, newChild) ).toThrow();
+            });
+            it('Should throw if the child is not an object.', function() {
+                expect( wrapFunction(modelCreator.addAvailableKeyRequestFor) ).toThrow();
+                expect( wrapFunction(modelCreator.addAvailableKeyRequestFor,42) ).toThrow();
+                expect( wrapFunction(modelCreator.addAvailableKeyRequestFor,true) ).toThrow();
+            });
+            it('Should throw if the request name is not a string.', function() {
+                expect( wrapFunction(modelCreator.addAvailableKeyRequestFor, idChild, 42) ).toThrow();
+                expect( wrapFunction(modelCreator.addAvailableKeyRequestFor, idChild, true) ).toThrow();
+            });
         });
-
-        it('Should add an "Available" request with the correct default name: '+
-            'Available[ChildName][ChildCollectionKey].', function(){
-            modelCreator.addAvailableKeyRequestFor( idChild );
-            modelCreator.addAvailableKeyRequestFor( keyChild );
-            var model = modelCreator.finaliseModel();
-
-            expect( model.requests['AvailableKeyChildKey'] ).not.toBeUndefined();
-            expect( typeof(model.requests['AvailableKeyChildKey']) ).toEqual('function');
-            expect(model.customRequests).not.toContain('AvailableKeyChildKey');
-
-            expect( model.requests['AvailableIdChildId'] ).not.toBeUndefined();
-            expect( typeof(model.requests['AvailableIdChildId']) ).toEqual('function');
-            expect(model.customRequests).not.toContain('AvailableIdChildKey');
-        });
-        it('Should add an "Available" request with the given name.', function(){
-            modelCreator.addAvailableKeyRequestFor( idChild, 'AvailableChildKey' );
-            var model = modelCreator.finaliseModel();
-
-            expect( model.requests['AvailableChildKey'] ).not.toBeUndefined();
-            expect( typeof(model.requests['AvailableChildKey']) ).toEqual('function');
-            expect(model.customRequests).not.toContain('AvailableChildKey');
-        });
-        it('Should throw if the child does not form a collection.', function(){
-            var newChild = (new ModelCreator('NewChild')).finaliseModel();
-
-            expect( wrapFunction( modelCreator.addAvailableKeyRequestFor, newChild) ).toThrow();
-        });
-        it('Should throw if the child is not an object.', function() {
-            expect( wrapFunction(modelCreator.addAvailableKeyRequestFor) ).toThrow();
-            expect( wrapFunction(modelCreator.addAvailableKeyRequestFor,42) ).toThrow();
-            expect( wrapFunction(modelCreator.addAvailableKeyRequestFor,true) ).toThrow();
-        });
-        it('Should throw if the request name is not a string.', function() {
-            expect( wrapFunction(modelCreator.addAvailableKeyRequestFor, idChild, 42) ).toThrow();
-            expect( wrapFunction(modelCreator.addAvailableKeyRequestFor, idChild, true) ).toThrow();
-        });
-    });
     describe('addAddActionFor: Adds an "Add[ChildName]" action for a collection.', function(){
         var collectionCreator = new ModelCreator('Child');
-        collectionCreator.setFormsACollection(true);
         var child = collectionCreator.finaliseModel();
 
         beforeEach(function() {

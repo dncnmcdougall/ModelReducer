@@ -38,12 +38,15 @@
         "no-new": [
             "error"
         ],
+        "no-prototype-builtins": [
+            "off"
+        ],
         "radix": [
             "error",
             "always"
         ],
         "indent": [
-            "error",
+            "off",
             4
         ],
         "linebreak-style": [

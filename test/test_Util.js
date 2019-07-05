@@ -1,5 +1,5 @@
 /*eslint-env jasmine */
-var Util = require('../lib/Util.js');
+var Util = require('../src/lib/Util.js');
 
 var wrapFunction = function( func, ...args) {
     return function() {

@@ -2,7 +2,7 @@
 
 var fs = require('fs'); 
 var path = require('path'); 
-var Util = require('../lib/Util');
+var Util = require('./Util.js');
 
 var print = function(str) {
     process.stdout.write(str);
@@ -92,7 +92,7 @@ var myReporter = {
     jasmineDone: function() {
         process.stdout.write('\n');
 
-        this.specResults.forEach( function(spec) {
+        this.specResults.forEach( function(spec, index) {
             if( spec.status == 'failed' ) {
                 console.log( spec.suite.join(' ')+'\n-> '+spec.description);
                 for(var i = 0; i < spec.failedExpectations.length; i++) {
@@ -165,6 +165,7 @@ module.exports.runTests = function(testDir, specFiles, callback) {
     var jasmineConfig = {
         'spec_dir': relativePath,
         'spec_files': specFiles,
+        'random': false,
         'helpers': []
     };
 
