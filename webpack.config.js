@@ -6,7 +6,8 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'model-reducer.js',
-        library: 'modelReducer',
-        libraryTarget: 'umd'
+        library: 'ModelReducer',
+        libraryTarget: 'umd',
+        globalObject: 'this'
     }
 };

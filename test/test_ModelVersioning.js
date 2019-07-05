@@ -1,6 +1,6 @@
 /*eslint-env jasmine */
 
-var ModelReducer = require('../src/index.js');
+var ModelReducer = process.env.NODE_ENV =='production' ? require('../dist/model-reducer.js') : require('../src/index.js');
 var StateValidator = ModelReducer.StateValidator;
 
 var MockCollectionChild = require('./mock_CollectionChild.js');

@@ -1,4 +1,4 @@
-var ModelReducer = require('../src/index.js');
+var ModelReducer = process.env.NODE_ENV =='production' ? require('../dist/model-reducer.js') : require('../src/index.js');
 
 var mockChildCreator = new ModelReducer.ModelCreator('MockNestedCollection');
 
