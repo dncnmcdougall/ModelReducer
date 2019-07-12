@@ -2,9 +2,12 @@ var ModelReducer = process.env.NODE_ENV =='production' ? require('../dist/model-
 var mock_NestedChild = require('./mock_NestedChild.js');
 var mock_NestedCollection = require('./mock_NestedCollection.js');
 
-var mockChildCreator = new ModelReducer.ModelCreator('MockChild');
+var mockChildCreator = new ModelReducer.ModelCreator('MockOtherCollectionChild');
 
-mockChildCreator.addProperty('ChildProperty');
+mockChildCreator.setCollectionKey('id');
+mockChildCreator.setCollectionName('OtherCollectionChildren');
+
+mockChildCreator.addProperty('CollectionChildProperty');
 mockChildCreator.addProperty('NumberProperty', 'number');
 mockChildCreator.addAction('NullAction', function(state){
     return state;
@@ -14,13 +17,17 @@ mockChildCreator.addAction('IncrementAction', function(state){
     newState.NumberProperty++;
     return newState;
 });
-mockChildCreator.addRequest('ChildRequest', function(state){
-    return 'Child';
+mockChildCreator.addRequest('CollectionChildRequest', function(state){
+    return 'CollectionChild';
 });
 mockChildCreator.addStateRequest();
 
 mockChildCreator.addChild(mock_NestedChild);
 mockChildCreator.addChildAsCollection(mock_NestedCollection);
-mockChildCreator.addAddActionFor(mock_NestedCollection);
+
+var version1 = mockChildCreator.addVersion();
+version1.removeProperty('NumberProperty');
+version1.addProperty('NumberPropertyV1', 'number');
+version1.renameProperty('CollectionChildProperty','CollectionChildPropertyV1');
 
 module.exports = mockChildCreator.finaliseModel();

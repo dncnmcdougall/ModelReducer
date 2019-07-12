@@ -14,10 +14,6 @@ function StateActions()
                 emptyState[prop] = value;
             }
 
-            if ( this.formsACollection ) {
-                emptyState[this.collectionKey] = null;
-            }
-
             for( let childName in this.children ) {
                 let child = this.children[childName];
                 if ( constModel.hasCollection(child.collectionName) ) {

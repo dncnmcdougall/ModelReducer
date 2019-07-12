@@ -13,7 +13,7 @@ function StateValidator()
 
         Object.keys(collection).forEach( (id) => {
             if ( !error ) {
-                var internalId = collection[id][model.collectionKey];
+               var internalId = collection[id][model.collectionKey];
                 if ( internalId != id ) {
                     error = 'Expected '+model.collectionName+'['+id+'] to have "'+
                         model.collectionKey+'" of '+id+' but found '+internalId+'.';

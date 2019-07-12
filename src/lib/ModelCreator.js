@@ -185,11 +185,15 @@ function ModelCreator(modelName){
         checkType(childModel, 'object');
         throwIfFinalised(finalised);
 
-        if ( !constModel.children.hasOwnProperty(childModel.name) ) {
+        if ( constModel.children.hasOwnProperty( childModel.name ) ) {
+            delete constModel.children[childModel.name];
+            delete constModel.collections[childModel.name];
+        } else if ( constModel.children.hasOwnProperty( childModel.collectionName ) ) {
+            delete constModel.children[childModel.collectionName];
+            delete constModel.collections[childModel.collectionName];
+        }else {
             throw 'The child named "'+childModel.name+'" could not be removed because it is not contained.';
         }
-        delete constModel.children[childModel.name];
-        delete constModel.collections[childModel.name];
     };
 
     this.addAction = function(name, func, isNotCustom) {

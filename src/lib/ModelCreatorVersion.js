@@ -27,12 +27,16 @@ function ModelCreatorVersion(version, modelCreator){
 
     this.addChildAsCollection = function(childModel) {
         modelCreator.addChildAsCollection(childModel);
-        version.add(childModel.propertyName, {});
+        version.add(childModel.collectionName, {});
     };
 
     this.removeChild = function(childModel) {
+        if ( modelCreator.hasCollection( childModel.collectionName ) ) {
+            version.remove(childModel.collectionName);
+        } else {
+            version.remove(childModel.name);
+        }
         modelCreator.removeChild(childModel);
-        version.remove(childModel.name);
     };
 }
 

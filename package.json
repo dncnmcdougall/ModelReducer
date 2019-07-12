@@ -5,7 +5,7 @@
   "main": "dist/model-reducer.js",
   "scripts": {
     "test": "./node_modules/.bin/istanbul test test/main.js",
-    "coveralls": "./node_modules/.bin/istanbul cover test/main.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "coveralls": "./node_modules/.bin/istanbul cover test/main.js && cat ./coverage/lcov.info | ./node_modules/.bin/coveralls && rm -rf ./coverage",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.json ./src/ ./test/",
     "test_no_cov": "node test/main.js",
     "build": "webpack"
