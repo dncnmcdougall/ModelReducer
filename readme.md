@@ -43,7 +43,7 @@ ToDoItemCreator.setCollectionName('ToDoItems');
 
 // Add some properties
 ToDoItemCreator.addProperty('Description', 'string');
-ToDoItemCreator.addProperty('Done', 'bool');
+ToDoItemCreator.addProperty('Done', 'boolean');
 
 // Set the state of this ToDo item to complete.
 // An action does modifies (copies) the state and must return a state object.
@@ -58,16 +58,16 @@ var ToDoItem = ToDoItemCreator.finaliseModel();
 // Create a ToDo list.
 var ToDoListCreator = new ModelReducer.ModelCreator('ToDoList');
 ToDoListCreator.addChildAsCollection(ToDoItem);
-ToDoList.addAddActionFor(ToDoItem);
-ToDoList.addAvailableKeyRequestFor(ToDoItem);
+ToDoListCreator.addAddActionFor(ToDoItem);
+ToDoListCreator.addAvailableKeyRequestFor(ToDoItem);
 
 // Count the  number of complete ToDo items
 // A request does not modify the state, rather it is a query run on the state.
 // Note: that this is the state object representing the entire list.
 ToDoListCreator.addRequest('CountToDos', function(state) {
-    return Object.keys( state['ToDoItems] ).reduce(result, value) => {
+    return Object.keys( state['ToDoItems'] ).reduce( (result, value) => {
         return result + (state['ToDoItems'][value].Done ? 0 : 1 );
-    });
+    }, 0);
 });
 var ToDoList = ToDoListCreator.finaliseModel();
 
@@ -92,7 +92,7 @@ state = ToDoList.reduce('ToDoList.AddToDoItem', state, 1);
         }
 } */
 
-ToDoList.request('ToDoList.CountToDos', state); // = 2
+var stillToDo = ToDoList.request('ToDoList.CountToDos', state); // = 2
 
 state = ToDoList.reduce('ToDoList.ToDoItems.Complete', state, 0);
 /* {
@@ -109,7 +109,7 @@ state = ToDoList.reduce('ToDoList.ToDoItems.Complete', state, 0);
         }
 } */
 
-ToDoList.request('ToDoList.CountToDos', state); // = 1
+stillToDo = ToDoList.request('ToDoList.CountToDos', state); // = 1
 ```
 # Why?
 When using a reducer function a natural part of the process of deiling with the
