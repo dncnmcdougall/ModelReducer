@@ -34,7 +34,7 @@ Installing
 npm install https://github.com/dncnmcdougall/ModelReducer
 
 ## ToDo Example
-
+```javascript
 var ModelReducer = require('model-reducer') 
 
 // Create a ToDo item.
@@ -72,11 +72,9 @@ ToDoListCreator.addRequest('CountToDos', function(state) {
 var ToDoList = ToDoListCreator.finaliseModel();
 
 var state = ToDoList.createEmpty();
-
-state:
-{
+/* {
     ToDoItems: {}
-}
+} */
 
 state = ToDoList.reduce('ToDoList.AddToDoItem', state, 0);
 state = ToDoList.reduce('ToDoList.AddToDoItem', state, 1);
@@ -112,7 +110,7 @@ state = ToDoList.reduce('ToDoList.ToDoItems.Complete', state, 0);
 } */
 
 ToDoList.request('ToDoList.CountToDos', state); // = 1
-
+```
 # Why?
 When using a reducer function a natural part of the process of deiling with the
 global state is extracting the part of intertest, creating a mutated version and
