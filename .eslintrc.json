@@ -10,7 +10,35 @@
             "experimentalObjectRestSpread": true
         }
     },
+    "plugins" :[
+        "spellcheck"
+    ],
     "rules": {
+        "spellcheck/spell-checker":[1, {
+            "comments": true,
+            "strings": true,
+            "identifiers": true,
+            "lang": "en_GB",
+            "minLength": 3,
+            "skipWords": [
+                "args",
+                "const",
+                "dict",
+                "dir",
+                "dist",
+                "eslint",
+                "func",
+                "int",
+                "src",
+                "stdout",
+                "str",
+                "util"
+            ],
+            "skipIfMatch": [
+                "http://[^s]*",
+                "^[-\\w]+\/[-\\w\\.]+$"
+            ]
+        }],
         "no-console": [
             "warn"
         ],

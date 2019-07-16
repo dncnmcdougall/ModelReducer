@@ -26,6 +26,7 @@
   "devDependencies": {
     "coveralls": "^3.0.4",
     "eslint": "^6.0.1",
+    "eslint-plugin-spellcheck": "0.0.11",
     "istanbul": "*",
     "jasmine": "^3.4.0",
     "webpack": "^4.35.2",

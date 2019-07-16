@@ -133,6 +133,7 @@ For building and testing it depends on
 - Jasmine - for testing
 - Istanbul - for code coverage
 - eslint - for linting.
+- eslint-plugin-spellcheck - for spelling.
 - coveralls - for code coverage online report. This should not be necessary when
   building locally.
 - webpack - for minifying and packaging the library.
