@@ -47,8 +47,8 @@ function StateReducer() {
             assert(id != undefined,expectMessage+'undefined');
 
             const childState = state[child.collectionName][id];
-            assert(childState != null, 'The object refered to by the id was null');
-            assert(childState != undefined, 'The object refered to by the id was undefined');
+            assert(childState != null, 'The object referred to by the id was null');
+            assert(childState != undefined, 'The object referred to by the id was undefined');
             return { 
                 'State': childState,
                 'Args': args.slice(1)

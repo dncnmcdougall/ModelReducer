@@ -22,17 +22,27 @@
             "minLength": 3,
             "skipWords": [
                 "args",
+                "ansi",
+                "basename",
+                "booleans",
+                "bool",
                 "const",
+                "cwd",
                 "dict",
                 "dir",
                 "dist",
                 "eslint",
+                "extname",
                 "func",
                 "int",
+                "readdir",
+                "stat",
                 "src",
                 "stdout",
                 "str",
-                "util"
+                "typeless",
+                "util",
+                "val"
             ],
             "skipIfMatch": [
                 "http://[^s]*",

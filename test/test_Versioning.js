@@ -54,7 +54,7 @@ describe('ModelVersioning: A class used in validating to allow different version
         expect(newState).toEqual( state);
     });
 
-    it('lastVersionNumber: gets the larges version in this versioning.', function() {
+    it('lastVersionNumber: gets the largest version in this versioning.', function() {
         expect( versioningCreator.lastVersionNumber() ).toEqual( 0 );
         versioningCreator.addVersion(1);
         expect( versioningCreator.lastVersionNumber() ).toEqual( 1 );
@@ -79,13 +79,13 @@ describe('ModelVersioning: A class used in validating to allow different version
         version1.add('Add1', 0);
         version1.add('Add1R', 5);
         version1.add('Add1D', 0);
-        version1.rename('Prop1R', 'Ren1');
+        version1.rename('Prop1R', 'Rename1');
         version1.remove('Prop1D');
 
         var version2 = versioningCreator.addVersion(2);
         version2.add('Add2', 0);
-        version2.rename('Prop2R', 'Ren2');
-        version2.rename('Add1R', 'Ren12');
+        version2.rename('Prop2R', 'Rename2');
+        version2.rename('Add1R', 'Rename12');
         version2.remove('Prop2D');
         version2.remove('Add1D');
         var versioning = versioningCreator.finalise();
@@ -102,7 +102,7 @@ describe('ModelVersioning: A class used in validating to allow different version
         var state1 = {
             'Prop1': 1,
             'Prop2': 2,
-            'Ren1': 3,
+            'Rename1': 3,
             'Prop2R': 4,
             'Prop2D': 0,
             'Add1': 0,
@@ -114,10 +114,10 @@ describe('ModelVersioning: A class used in validating to allow different version
         var state2 = {
             'Prop1': 1,
             'Prop2': 2,
-            'Ren1': 3,
-            'Ren2': 4,
+            'Rename1': 3,
+            'Rename2': 4,
             'Add1': 0,
-            'Ren12': 5,
+            'Rename12': 5,
             'Add2': 0,
             'version': 2
         };
@@ -173,7 +173,7 @@ describe('ModelVersioning: A class used in validating to allow different version
             expect( state.V2Prop ).toBeUndefined();
             expect( newState.V2Prop ).toBe(2);
         });
-        it('should fail to add the propery if it already exists.', function() {
+        it('should fail to add the property if it already exists.', function() {
             var version1 = versioningCreator.addVersion(1);
             version1.add('Prop1');
             var versioning = versioningCreator.finalise();
@@ -181,7 +181,7 @@ describe('ModelVersioning: A class used in validating to allow different version
             var result = versioning.update(state);
             expect(result.value).toBeNull();
             expect(result.error).toEqual(
-                'Could not add "Prop1" because it aleardy exists, in version 1.');
+                'Could not add "Prop1" because it already exists, in version 1.');
 
         });
     });
@@ -231,13 +231,13 @@ describe('ModelVersioning: A class used in validating to allow different version
 
         it('should fail rename if the property does not exists', function() {
             var version1 = versioningCreator.addVersion(1);
-            version1.rename('NonExistantProp', 'PropV1');
+            version1.rename('NonExistentProp', 'PropV1');
             var versioning = versioningCreator.finalise();
 
             var result = versioning.update(state);
             expect(result.value).toBeNull();
             expect(result.error).toEqual(
-                'Expected to find property "NonExistantProp" to rename to "PropV1" in version 1, but did not.');
+                'Expected to find property "NonExistentProp" to rename to "PropV1" in version 1, but did not.');
 
         });
 
@@ -245,13 +245,13 @@ describe('ModelVersioning: A class used in validating to allow different version
             var version1 = versioningCreator.addVersion(1);
             version1.rename('Prop1', 'PropV1');
             var version2 = versioningCreator.addVersion(2);
-            version2.rename('NonExistantProp', 'PropV2');
+            version2.rename('NonExistentProp', 'PropV2');
             var versioning = versioningCreator.finalise();
 
             var result = versioning.update(state);
             expect(result.value).toBeNull();
             expect(result.error).toEqual(
-                'Expected to find property "NonExistantProp" to rename to "PropV2" in version 2, but did not.');
+                'Expected to find property "NonExistentProp" to rename to "PropV2" in version 2, but did not.');
 
         });
 
@@ -263,12 +263,12 @@ describe('ModelVersioning: A class used in validating to allow different version
             var result = versioning.update(state);
             expect(result.value).toBeNull();
             expect(result.error).toEqual(
-                'Could not rename "Prop1" to "Prop2" because it aleardy exists, in version 1.');
+                'Could not rename "Prop1" to "Prop2" because it already exists, in version 1.');
 
         });
     });
 
-    describe('remove: specifies a poperty to remove at a version', function() {
+    describe('remove: specifies a property to remove at a version', function() {
         it('should rename the properties', function() {
             var version1 = versioningCreator.addVersion(1);
             version1.remove('Prop1');
@@ -304,26 +304,26 @@ describe('ModelVersioning: A class used in validating to allow different version
 
         it('should fail renames if the property does not exists', function() {
             var version1 = versioningCreator.addVersion(1);
-            version1.remove('NonExistantProp');
+            version1.remove('NonExistentProp');
             var versioning = versioningCreator.finalise();
 
             var result = versioning.update(state);
             expect(result.value).toBeNull();
             expect(result.error).toEqual(
-                'Expected to find property "NonExistantProp" to remove in version 1, but did not.');
+                'Expected to find property "NonExistentProp" to remove in version 1, but did not.');
 
         });
 
         it('should fail renames if the property does not exists', function() {
             versioningCreator.addVersion(1);
             var version2 = versioningCreator.addVersion(2);
-            version2.remove('NonExistantProp');
+            version2.remove('NonExistentProp');
             var versioning = versioningCreator.finalise();
 
             var result = versioning.update(state);
             expect(result.value).toBeNull();
             expect(result.error).toEqual(
-                'Expected to find property "NonExistantProp" to remove in version 2, but did not.');
+                'Expected to find property "NonExistentProp" to remove in version 2, but did not.');
 
         });
     });

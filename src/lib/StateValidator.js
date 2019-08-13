@@ -127,7 +127,7 @@ function StateValidator()
             } else if ( collectionKeyCount.name == key ) {
                 collectionKeyCount.found = true;
             } else {
-                error= 'Did not expecte to find a property named '+modelName+'.'+key+', but did.';
+                error= 'Did not expect to find a property named '+modelName+'.'+key+', but did.';
             }
         }
         );

@@ -191,7 +191,7 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect( wrapFunction(modelCreator.setCollectionName,true) ).toThrow();
         });
     });
-    describe('setCollectionKeyField: Sets the name of the field which is used to store the numberic '+
+    describe('setCollectionKeyField: Sets the name of the field which is used to store the numeric '+
         'identifier of an instance of this model in a collection.', 
         function() {
             it('Should set the name of the key', function() {

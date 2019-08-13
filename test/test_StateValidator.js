@@ -8,7 +8,7 @@ var MockParent = require('./mock_Parent.js');
 
 var defaultState = require('./mock_DefaultState.js');
 
-describe('StateValidator: A class used for asserting that a given state object fulfills a given model.', function() {
+describe('StateValidator: A class used for asserting that a given state object fulfils a given model.', function() {
     describe('validateState: asserts that the given object represents a state of the given model.', function () {
 
         var state;
@@ -78,7 +78,7 @@ describe('StateValidator: A class used for asserting that a given state object f
             state.ExtraProperty = 'An extra property';
 
             var result = StateValidator.validateState( MockParent, state );
-            expect(result.error).toEqual( 'Did not expecte to find a property named MockParent.ExtraProperty, but did.');
+            expect(result.error).toEqual( 'Did not expect to find a property named MockParent.ExtraProperty, but did.');
             expect(result.value).toBeNull();
         });
 
@@ -107,7 +107,7 @@ describe('StateValidator: A class used for asserting that a given state object f
             state.MockChild.ExtraProperty = 'An extra property';
 
             var result = StateValidator.validateState( MockParent, state );
-            expect(result.error).toEqual( 'Did not expecte to find a property named MockChild.ExtraProperty, but did.');
+            expect(result.error).toEqual( 'Did not expect to find a property named MockChild.ExtraProperty, but did.');
             expect(result.value).toBeNull();
         });
 
@@ -143,7 +143,7 @@ describe('StateValidator: A class used for asserting that a given state object f
 
             var result = StateValidator.validateState( MockParent, state );
             expect(result.error).toEqual( 
-                'Did not expecte to find a property named MockCollectionChildren[0].ExtraProperty, but did.'
+                'Did not expect to find a property named MockCollectionChildren[0].ExtraProperty, but did.'
             );
             expect(result.value).toBeNull();
         });
@@ -218,7 +218,7 @@ describe('StateValidator: A class used for asserting that a given state object f
 
                 var result = StateValidator.validateStateCollection( MockCollectionChild, state );
                 expect(result.error).toEqual( 
-                    'Did not expecte to find a property named MockCollectionChildren[0].ExtraProperty, but did.'
+                    'Did not expect to find a property named MockCollectionChildren[0].ExtraProperty, but did.'
                 );
                 expect(result.value).toBeNull();
             });

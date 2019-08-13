@@ -222,7 +222,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
             expect(MockParent.request('MockParent.MockCollectionChildren.State',state, 0)).toBe(subState);
         });
     });
-    describe('Set[PropertyName] (action): Sets the named property to the given value and returnes the new state.', function() {
+    describe('Set[PropertyName] (action): Sets the named property to the given value and returns the new state.', function() {
         var Model;
         beforeAll( function() {
             var modelCreator = new ModelCreator('Model');
@@ -356,7 +356,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
                 } else {
                     name = 'odd';
                 }
-                describe('Should return the missing id of an '+name+' lengthed array', function() {
+                describe('Should return the missing id of an '+name+' element array', function() {
                     var state = {};
                     var id;
                     var i;

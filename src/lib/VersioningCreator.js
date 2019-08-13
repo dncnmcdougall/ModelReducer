@@ -110,7 +110,7 @@ function VersioningCreator(){
                 } else if ( newState.hasOwnProperty( rename.newName) ) {
                     error = 'Could not rename "'+rename.name+
                         '" to "'+rename.newName+
-                        '" because it aleardy exists, in version 1.';
+                        '" because it already exists, in version 1.';
                 } else {
                     newState[rename.newName] = newState[rename.name];
                     delete newState[rename.name];
@@ -125,7 +125,7 @@ function VersioningCreator(){
                 }
                 if ( newState.hasOwnProperty( addition.name) ) {
                     error = 'Could not add "'+addition.name+
-                        '" because it aleardy exists, in version 1.';
+                        '" because it already exists, in version 1.';
                 } else {
                     newState[addition.name] = addition.value;
                 }
