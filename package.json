@@ -19,7 +19,7 @@
   "private": true,
   "devDependencies": {
     "coveralls": "^2.11.15",
-    "eslint": "^3.5.0",
+    "eslint": "^6.6.0",
     "istanbul": "^0.4.5",
     "jasmine": "^2.5.1",
     "markdown-to-html": "0.0.13"
