@@ -12,12 +12,13 @@ In particular the goal is to allow programmers to simply impose a structure on
 the state of their applications while still using a library like
 [Redux](http://redux.js.org).
 
-This is achieved by creating models (conceptually classes) but they are not
-instanced, rather their state is a part of the global state object. So state
-management is still immutable and state manipulation is still done with pure
-functions, however structural decomposition is handled by this library.
+This is achieved by creating models which are conceptually the same as classes
+but they are not instanced, rather their state is a part of the global state
+object. So state management is still immutable and state manipulation is still
+done with pure functions, however structural decomposition is handled by this
+library.
 
-Each model then its own actions (which mutate the state) and requests (which
+Each model then has its own actions (which mutate the state) and requests (which
 do calculations on the state). However the model will not receive the global state
 object, and does not have to deal with reintegrating the new state object with
 the whole. Rather it will receive a state object that matches the model.
@@ -26,16 +27,21 @@ This means that the mutation functions can still be pure. While at the same time
 a model's actions and requests do not need to deal with the global state object.
 This simplifies writing the functions.
 
-# Usage
-This is a library that has no dependencies when not in development.
+This library has no dependencies when not in development.
 
-Installing
+# Usage
+
+## Installing
 
 npm install https://github.com/dncnmcdougall/ModelReducer
 
 Or you can download it from the dist folder.
 
+## Using 
+### Importing
 ```javascript
+var ModelReducer = require('./model-reducer.node.js)'
+// or
 import * as ModelReducer from './model-reducer.umd.js'
 // or
 import {ModelCreator, StateValidator, VersioningCreator} from 'model-reducer.mjs'
@@ -46,10 +52,40 @@ import ModelReducer from 'model-reducer.mjs'
 Note that model-reducer.umd.js has to use the default import like above. 
 This is a result of the webpack build.
 
+### Workflow
+The basic workflow is:
+1. Create a model creator to define your model.
+```javascript
+var modelCreator = new ModelCreator('ModelName');
+```
+    - add properties. 
+```javascript
+modelCreator.addProperty('firstProperty');
+modelCreator.addProperty('secondProperty', 'string'); //Optionally provide basic runtime type checking.
+```
+    - add actions: (state) -> state
+```javascript
+// Must return a state object.
+modelCreator.addAction('nullAction', function(state) { return state; });
+    - add requests: (state) -> value
+```javascript
+// Can return anything.
+modelCreator.addRequest('someRequest', function(state) { return state.secondProperty.toUpperCase(); });
+```
+2. Finalise the creation which returns the model. 
+```javascript
+var Model = modelCreator.finaliseModel();
+```
+3. Use the model to manage the state object.
+```javascript
+var state = Model.createEmpty()
+var newState = Model.reduce('Model.nullAction', state);
+```
+
 ## ToDo Example
 ```javascript
 // Create a ToDo item.
-// A soimple item with a description and a done state.
+// A simple item with a description and a done state.
 // It has one action that marks a todo item as complete.
 var ToDoItemCreator = new ModelReducer.ModelCreator('ToDoItem');
 ToDoItemCreator.setCollectionName('ToDoItems');
@@ -60,12 +96,13 @@ ToDoItemCreator.addProperty('Done', 'boolean');
 
 // Set the state of this ToDo item to complete.
 // An action is used to change the state and so must return a state object.
-// Note: that the ToDoItem recieves a ToDoItem state object. It does not know
+// Notice that the ToDoItem recieves a ToDoItem state object. It does not know
 // about the list.
 ToDoItemCreator.addAction('Complete', function(state) {
     return Object.assign({}, state, { 'Done': true } );
 });
 
+// Finalise the model returing model object.
 var ToDoItem = ToDoItemCreator.finaliseModel();
 
 // Create a ToDo list.
@@ -85,6 +122,7 @@ ToDoListCreator.addRequest('CountToDos', function(state) {
 });
 var ToDoList = ToDoListCreator.finaliseModel();
 
+//Now create an empty state object using the model.
 var state = ToDoList.createEmpty();
 /* {
     ToDoItems: {}
@@ -108,6 +146,11 @@ state = ToDoList.reduce('ToDoList.AddToDoItem', state, 1);
 
 var stillToDo = ToDoList.request('ToDoList.CountToDos', state); // = 2
 
+// Here the parameters are: 
+// full name of action, 
+// state, 
+// ids of objects in collections (0 in this case) and
+// arbitary parameters passed to the action (none in this case).
 state = ToDoList.reduce('ToDoList.ToDoItems.Complete', state, 0);
 /* {
     ToDoItems: {
@@ -143,7 +186,7 @@ ToDoItemCreator.addAction('Complete', function(state) {
 With a conventional function:
 ```javascript
 function completeToDo(full_state, todoItemId) {
-    // Extract todo and mutate todo item
+    // Extract and mutate the todo item
     newItem = Object.assign({}, full_state[todoItemId], { 'Done': true })
     // Re-integrate into global state and return
     return Object.assign( {}, full_state, {
@@ -152,7 +195,7 @@ function completeToDo(full_state, todoItemId) {
 }
 ```
 This is a bit of a trivial example, but any experience will show you how this
-automatic extraction and reintegration is a boon.
+automatic extraction and reintegration is a big deal.
 
 # Features
 ## Separates model and state.
@@ -193,6 +236,22 @@ The validation module can parse old state and update it to the new model.
 - The Model.reduce and Model.request can be compressed togetehr into Model.r as
   the model stores whether it is a request or a reduce.
 - The AddItem methods could automatically generate a unique id by default.
+- The runtime type checking is very rudamentory and probably slow. 
+    - Add custom types.
+- The overall syntax for creating models is very different from JavaScript. Can
+  we do better?
+  - Perhaps a preprocessor, similar to JSX?
+  - Perhaps supper fancy proxy objects.
+- The usage of Model.reduce('...', state, identifiers, parameters) is clumsy.
+  - Perhaps replace with proxy objects?
+
+# Documentation
+The extensive test suit is a form of documentation, though this is not ideal as
+it is hard to read. To make this better markdown is generated off the tests and
+placed in doc/ this is a bit better but not ideal.
+
+Probably the best place to start is in the mock objects in test/. The
+mock_Parent is the root model used.
 
 # Development
 
