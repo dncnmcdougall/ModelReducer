@@ -18,17 +18,6 @@ object. So state management is still immutable and state manipulation is still
 done with pure functions, however structural decomposition is handled by this
 library.
 
-Each model then has its own actions (which mutate the state) and requests (which
-do calculations on the state). However the model will not receive the global state
-object, and does not have to deal with reintegrating the new state object with
-the whole. Rather it will receive a state object that matches the model.
-
-This means that the mutation functions can still be pure. While at the same time
-a model's actions and requests do not need to deal with the global state object.
-This simplifies writing the functions.
-
-This library has no dependencies when not in development.
-
 # Usage
 
 ## Installing
@@ -36,6 +25,8 @@ This library has no dependencies when not in development.
 npm install https://github.com/dncnmcdougall/ModelReducer
 
 Or you can download it from the dist folder.
+
+This library has no dependencies when not in development.
 
 ## Using 
 ### Importing
@@ -58,16 +49,20 @@ The basic workflow is:
 ```javascript
 var modelCreator = new ModelCreator('ModelName');
 ```
-    - add properties. 
+- add properties. 
+There are like properties on a class.
 ```javascript
 modelCreator.addProperty('firstProperty');
 modelCreator.addProperty('secondProperty', 'string'); //Optionally provide basic runtime type checking.
 ```
-    - add actions: (state) -> state
+- add actions: (state) -> state
+Actions are methods that change the state of an object. They recieve a state object and arbitary parameters and must return a mutated copy of that state. This mutated state object is re-integrated into the whole state object.
 ```javascript
 // Must return a state object.
 modelCreator.addAction('nullAction', function(state) { return state; });
-    - add requests: (state) -> value
+```
+- add requests: (state) -> value
+Requests are functions that don't change the state but query it. They recive a state object and can return anything. This result is returned directly to the caller without changing any state.
 ```javascript
 // Can return anything.
 modelCreator.addRequest('someRequest', function(state) { return state.secondProperty.toUpperCase(); });
@@ -84,6 +79,18 @@ var newState = Model.reduce('Model.nullAction', state);
 
 ## ToDo Example
 ```javascript
+/**
+* Overview:
+* We will create a ToDoItem model, then 
+* Ww will create a ToDoList model and add the ToDoItem as a child.
+* 
+* After creating the models we will use them to create an empty state,
+* add 2 todo items,
+* count the outstanding todos then,
+* complete one
+* and count the outstanding todos again.
+*/
+
 // Create a ToDo item.
 // A simple item with a description and a done state.
 // It has one action that marks a todo item as complete.
@@ -205,10 +212,10 @@ State is a pure JSON object. The models are a hierarchy of pure functions.
 ```javascript
 var result = StateValidator.validateState( ToDoItems, state );
 ```
-This will throw with a sensible warning if the state object does not match the
-model.
+This will return with a sensible error if the state object does not match the
+model. (If there is no error it will return the state.)
 As an example: if the model has properties that the JSON does not have then this
-with throw telling you which.
+with throw telling you which properties were missing.
 Or _vice versa_.
 
 ## Versioning
@@ -230,20 +237,6 @@ version1.addProperty('Date');
 var ToDoItem = ToDoItemCreator.finaliseModel();
 ```
 The validation module can parse old state and update it to the new model.
-
-# To Improve
-- The api for adding items to a collection is rather obscure.
-- The Model.reduce and Model.request can be compressed togetehr into Model.r as
-  the model stores whether it is a request or a reduce.
-- The AddItem methods could automatically generate a unique id by default.
-- The runtime type checking is very rudamentory and probably slow. 
-    - Add custom types.
-- The overall syntax for creating models is very different from JavaScript. Can
-  we do better?
-  - Perhaps a preprocessor, similar to JSX?
-  - Perhaps supper fancy proxy objects.
-- The usage of Model.reduce('...', state, identifiers, parameters) is clumsy.
-  - Perhaps replace with proxy objects?
 
 # Documentation
 The extensive test suit is a form of documentation, though this is not ideal as
@@ -269,12 +262,7 @@ For building and testing it depends on
 ## Building
 Tests can be run with
 - npm test 
-
-with the 
-- "npm_test_coverage" environment variable set to 1.
-the tests will produce a coverage report.
-
-If it is not set, the tests are simply run.
+which will produce a coverage report.
 
 To test without coverage run
 - npm run test_no_cov
@@ -285,3 +273,21 @@ To run the linting run
 To build run
 - npm run build
 
+## To Improve
+- Performance. This has not been performance tested.
+- The api for adding items to a collection is rather obscure.
+- The Model.reduce and Model.request can be compressed togetehr into Model.r as
+  the model stores whether it is a request or a reduce.
+- The AddItem methods could automatically generate a unique id by default.
+- The runtime type checking is very rudamentory and probably slow. 
+    - Add custom types.
+- The overall syntax for creating models is very different from JavaScript. Can
+  we do better?
+  - Perhaps a preprocessor, similar to JSX?
+  - Perhaps supper fancy proxy objects.
+- The usage of Model.reduce('...', state, identifiers, parameters) is clumsy.
+  - Perhaps replace with proxy objects?
+- The immutable nature of the state is preserved by convention. There is no reason that the actions cannot mutate the input state object.
+  - perhaps freeze it? 
+  - perhaps copy it for the user? Will this negativly affect performance?
+ 
