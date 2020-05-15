@@ -12,15 +12,15 @@ In particular the goal is to allow programmers to simply impose a structure on
 the state of their applications while still using a library like
 [Redux](http://redux.js.org).
 
-This is achived by creating models (conceptually classes) but they are not
+This is achieved by creating models (conceptually classes) but they are not
 instanced, rather their state is a part of the global state object. So state
-management is still imutable and state manipulation is still done with pure
+management is still immutable and state manipulation is still done with pure
 functions, however structural decomposition is handled by this library.
 
 Each model then its own actions (which mutate the state) and requests (which
-do calculations on the state). However the model will not recieve the global state
+do calculations on the state). However the model will not receive the global state
 object, and does not have to deal with reintegrating the new state object with
-the whole. Rather it will recive a state object that matches the model.
+the whole. Rather it will receive a state object that matches the model.
 
 This means that the mutation functions can still be pure. While at the same time
 a model's actions and requests do not need to deal with the global state object.
@@ -33,11 +33,24 @@ Installing
 
 npm install https://github.com/dncnmcdougall/ModelReducer
 
+Or you can download it from the dist folder.
+
+```javascript
+import * as ModelReducer from './model-reducer.umd.js'
+// or
+import {ModelCreator, StateValidator, VersioningCreator} from 'model-reducer.mjs'
+// or
+import ModelReducer from 'model-reducer.mjs'
+'./model-reducer.mjs'
+```
+Note that model-reducer.umd.js has to use the default import like above. 
+This is a result of the webpack build.
+
 ## ToDo Example
 ```javascript
-var ModelReducer = require('model-reducer') 
-
 // Create a ToDo item.
+// A soimple item with a description and a done state.
+// It has one action that marks a todo item as complete.
 var ToDoItemCreator = new ModelReducer.ModelCreator('ToDoItem');
 ToDoItemCreator.setCollectionName('ToDoItems');
 
@@ -46,7 +59,7 @@ ToDoItemCreator.addProperty('Description', 'string');
 ToDoItemCreator.addProperty('Done', 'boolean');
 
 // Set the state of this ToDo item to complete.
-// An action does modifies (copies) the state and must return a state object.
+// An action is used to change the state and so must return a state object.
 // Note: that the ToDoItem recieves a ToDoItem state object. It does not know
 // about the list.
 ToDoItemCreator.addAction('Complete', function(state) {
@@ -56,6 +69,7 @@ ToDoItemCreator.addAction('Complete', function(state) {
 var ToDoItem = ToDoItemCreator.finaliseModel();
 
 // Create a ToDo list.
+// A list of todos that has a request to count the number of todos that are not done.
 var ToDoListCreator = new ModelReducer.ModelCreator('ToDoList');
 ToDoListCreator.addChildAsCollection(ToDoItem);
 ToDoListCreator.addAddActionFor(ToDoItem);
@@ -112,18 +126,73 @@ state = ToDoList.reduce('ToDoList.ToDoItems.Complete', state, 0);
 stillToDo = ToDoList.request('ToDoList.CountToDos', state); // = 1
 ```
 # Why?
-When using a reducer function a natural part of the process of deiling with the
-global state is extracting the part of intertest, creating a mutated version and
+When using a reducer function a natural part of the process of dealing with the
+global state is extracting the part of interest, creating a mutated version and
 reintegrating it. This is tedious and error prone.
 
 This library aims to do that for you.
 
-# Features
-- Seperate models and state
-- Pure actions and requests
-- State validation agains a model
-- Versioning
+Compare the above action:
 
+```javascript
+ToDoItemCreator.addAction('Complete', function(state) {
+    // mutate todo item and return
+    return Object.assign({}, state, { 'Done': true } );
+});
+```
+With a conventional function:
+```javascript
+function completeToDo(full_state, todoItemId) {
+    // Extract todo and mutate todo item
+    newItem = Object.assign({}, full_state[todoItemId], { 'Done': true })
+    // Re-integrate into global state and return
+    return Object.assign( {}, full_state, {
+        todoItemId: newItem
+        })
+}
+```
+This is a bit of a trivial example, but any experience will show you how this
+automatic extraction and reintegration is a boon.
+
+# Features
+## Separates model and state.
+State is a pure JSON object. The models are a hierarchy of pure functions.
+
+## State validation again a model
+```javascript
+var result = StateValidator.validateState( ToDoItems, state );
+```
+This will throw with a sensible warning if the state object does not match the
+model.
+As an example: if the model has properties that the JSON does not have then this
+with throw telling you which.
+Or _vice versa_.
+
+## Versioning
+Allows modifying models with versioning to allow for backwards compatibility:
+```javascript
+var ToDoItemCreator = new ModelReducer.ModelCreator('ToDoItem');
+ToDoItemCreator.setCollectionName('ToDoItems');
+// Add some properties
+ToDoItemCreator.addProperty('Description', 'string');
+ToDoItemCreator.addProperty('Done', 'boolean');
+// Add an action
+ToDoItemCreator.addAction('Complete', function(state) {
+    return Object.assign({}, state, { 'Done': true } );
+});
+
+var version1 = ToDoItemCreator.addVersion();
+version1.addProperty('Date');
+
+var ToDoItem = ToDoItemCreator.finaliseModel();
+```
+The validation module can parse old state and update it to the new model.
+
+# To Improve
+- The api for adding items to a collection is rather obscure.
+- The Model.reduce and Model.request can be compressed togetehr into Model.r as
+  the model stores whether it is a request or a reduce.
+- The AddItem methods could automatically generate a unique id by default.
 
 # Development
 
@@ -131,7 +200,7 @@ This library aims to do that for you.
 This library does not directly depend on anything. 
 For building and testing it depends on
 - Jasmine - for testing
-- Istanbul - for code coverage
+- nyc - for code coverage
 - eslint - for linting.
 - eslint-plugin-spellcheck - for spelling.
 - coveralls - for code coverage online report. This should not be necessary when

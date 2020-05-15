@@ -1,13 +1,26 @@
 const path =require('path');
 
-module.exports = {
+const webConfig = {
+    target: 'web',
     mode: 'production',
     entry: './src/index.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'model-reducer.js',
+        filename: 'model-reducer.umd.js',
         library: 'ModelReducer',
-        libraryTarget: 'umd',
-        globalObject: 'this'
+        libraryTarget: 'umd'
     }
 };
+const nodeConfig = {
+    target: 'node',
+    mode: 'production',
+    entry: './src/index.js',
+    output: {
+        path: path.resolve(__dirname, 'dist'),
+        filename: 'model-reducer.node.js',
+        library: 'ModelReducer',
+        libraryTarget: 'umd'
+    }
+};
+
+module.exports = [webConfig, nodeConfig];

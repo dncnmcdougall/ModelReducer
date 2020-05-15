@@ -1,6 +1,6 @@
 /*eslint-env jasmine */
 
-var ModelReducer = process.env.NODE_ENV =='production' ? require('../dist/model-reducer.js') : require('../src/index.js');
+var ModelReducer = require('./Util.js').ModelReducer
 var VersioningCreator = ModelReducer.VersioningCreator;
 
 var wrapFunction = function( func, ...args) {

@@ -4,11 +4,11 @@
   "description": "A reducer based on a Model structure",
   "main": "dist/model-reducer.js",
   "scripts": {
-    "test": "./node_modules/.bin/istanbul test test/main.js",
-    "coveralls": "./node_modules/.bin/istanbul cover test/main.js && cat ./coverage/lcov.info | ./node_modules/.bin/coveralls && rm -rf ./coverage",
+    "test": "./node_modules/.bin/nyc npm run test_no_cov",
+    "coveralls": "./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.json ./src/ ./test/",
     "test_no_cov": "node test/main.js",
-    "build": "webpack"
+    "build": "webpack && cat dist/model-reducer.umd.js src/model-tail.mjs > dist/model-reducer.mjs"
   },
   "keywords": [
     "reducer"
@@ -25,10 +25,10 @@
   "dependencies": {},
   "devDependencies": {
     "coveralls": "^3.0.4",
-    "eslint": "^6.0.1",
-    "eslint-plugin-spellcheck": "0.0.11",
-    "istanbul": "*",
+    "eslint": "^7.0.0",
+    "eslint-plugin-spellcheck": "0.0.16",
     "jasmine": "^3.4.0",
+    "nyc": "^15.0.1",
     "webpack": "^4.35.2",
     "webpack-cli": "^3.3.5"
   }

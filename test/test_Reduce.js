@@ -1,6 +1,6 @@
 /*eslint-env jasmine */
 
-var MockParent = require('./mock_Parent.js');
+var ModelReducer = require('./Util.js').ModelReducer
 
 var defaultState = require('./mock_DefaultState.js');
 

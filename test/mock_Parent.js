@@ -1,4 +1,4 @@
-var ModelReducer = process.env.NODE_ENV =='production' ? require('../dist/model-reducer.js') : require('../src/index.js');
+var ModelReducer = require('./Util.js').ModelReducer
 var mock_Child = require('./mock_Child.js');
 var mock_CollectionChild = require('./mock_CollectionChild.js');
 
