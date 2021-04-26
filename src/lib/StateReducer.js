@@ -6,7 +6,7 @@ function StateReducer() {
         shouldExpandState, actionString, state, ...args) {
         let name = null;
         const actionParts = actionString.split('.');
-        assert.ok(state, 'Expected state not to be undefined'); 
+        assert(state, 'Expected state not to be undefined'); 
         if ( actionParts[0] == current.collectionName ) {
             name = current.collectionName;
         } else {

@@ -5,7 +5,7 @@
   "main": "dist/model-reducer.js",
   "scripts": {
     "test": "./node_modules/.bin/nyc npm run test_no_cov",
-    "coveralls": "./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls",
+    "coveralls": "npm run test && ./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.json ./src/ ./test/",
     "test_no_cov": "node test/main.js",
     "build": "webpack && cat dist/model-reducer.umd.js src/model-tail.mjs > dist/model-reducer.mjs"
@@ -24,7 +24,7 @@
   "private": true,
   "dependencies": {},
   "devDependencies": {
-    "coveralls": "^3.0.4",
+    "coveralls": "^3.1.0",
     "eslint": "^7.25.0",
     "eslint-plugin-spellcheck": "0.0.16",
     "jasmine": "^3.7.0",

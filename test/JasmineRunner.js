@@ -84,7 +84,7 @@ var myReporter = {
     results: {},
     stack: [],
     details: false,
-    markdown: true,
+    markdown: false,
     outputMarkDown: new MarkdownOutputter(),
 
     jasmineStarted: function(suiteInfo) {
