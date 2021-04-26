@@ -64,7 +64,6 @@
 * Should call the correct parent action
 * Should call the correct child action
 * Should call the correct collection action
-# *Model*: The model returned from the creator. Used to process state.
 ## *reduce*: Perform the named action on the given state and return the new state.
 * Should pass the correct the correct parent action and return the same state
 * Should pass the correct the correct parent action and return the new state
@@ -72,6 +71,59 @@
 * Should call the correct child action and return the new state
 * Should call the correct collection action and return the same state
 * Should call the correct collection action and return the new state
+## *listActions*: Lists all the actions registered on this model, recursively.
+* Should list all the actions on the model.
+* Should list only the actions on the given model.
+## *listCustomActions*: Lists all the user defined actions registered on this model, recursively.
+* Should list all the user defined actions on the model.
+* Should list only the user defined actions on the given model.
+## *listRequests*: Lists all the requests registered on this model, recursively.
+* Should list all the requests on the model.
+* Should list only the requests on the given model.
+## *listCustomRequests*: Lists all the user defined requests registered on this model, recursively.
+* Should list all the user defined requests on the model.
+* Should list only the user defined requests on the given model.
+## *createEmpty*: Creates an empty state representing this model.
+* Should populate strings with ""
+* Should populate numbers with 0
+* Should populate booleans with false
+* Should populate objects with {}
+* Should populate arrays with []
+* Should populate null types (type not given) with null
+* Should populate children recursively.
+* Should populate child collections with {}
+## *State (request)*: Returns the state representing this model from within the given state.
+* Should return the parent state.
+* Should return the child state.
+* Should return the collection child state.
+## *Set[PropertyName] (action)*: Sets the named property to the given value and returns the new state.
+* Should set the property to the given value.
+* Should do nothing if the value is the same.
+* Should set the property to any value if the type is not give.
+* Should throw if there is a type violation.
+* Should throw if the property does not exist.
+## *Add[ChildName] (action)*: Adds an empty instance of the child to its collection, under the given key, and returns the new state.
+* Should add the child a child at the given id.
+* Should overwrite a child if it already exists.
+## *Available[ChildName] (request)*: Returns the available key value for the given child collection in the state.
+* Should handle an empty list
+* Should handle a list with only one item
+### Should return the missing id of an odd element array
+* Should return a missing id if the list has a hole.
+* Should return a missing id if the list a has big hole.
+* Should return a missing id if the list has two holes.
+### Should return the missing id of an even element array
+* Should return a missing id if the list has a hole.
+* Should return a missing id if the list a has big hole.
+* Should return a missing id if the list has two holes.
+## *hasCollection*: returns true if the model has the named collection of children.
+* Should return true if the collection is present.
+* Should return false if the collection is not present.
+* Should return false if the collection is not present, but is a child.
+## *hasChild*: returns true if the model has the named child.
+* Should return true if the child is present.
+* Should return false if the child is not present.
+* Should return true if the child is not present, but is a collection.
 # *StateValidator*: The state validator can be used to update to a newer version.
 * should work with old models as expected
 * should error on updated state with old models
@@ -169,57 +221,3 @@
 * Should add a "Set" action with the given name.
 * Should throw if the property name is not a string.
 * Should throw if the action name is not a string.
-# *Model*: The model returned from the creator. Used to process state.
-## *listActions*: Lists all the actions registered on this model, recursively.
-* Should list all the actions on the model.
-* Should list only the actions on the given model.
-## *listCustomActions*: Lists all the user defined actions registered on this model, recursively.
-* Should list all the user defined actions on the model.
-* Should list only the user defined actions on the given model.
-## *listRequests*: Lists all the requests registered on this model, recursively.
-* Should list all the requests on the model.
-* Should list only the requests on the given model.
-## *listCustomRequests*: Lists all the user defined requests registered on this model, recursively.
-* Should list all the user defined requests on the model.
-* Should list only the user defined requests on the given model.
-## *createEmpty*: Creates an empty state representing this model.
-* Should populate strings with ""
-* Should populate numbers with 0
-* Should populate booleans with false
-* Should populate objects with {}
-* Should populate arrays with []
-* Should populate null types (type not given) with null
-* Should populate children recursively.
-* Should populate child collections with {}
-## *State (request)*: Returns the state representing this model from within the given state.
-* Should return the parent state.
-* Should return the child state.
-* Should return the collection child state.
-## *Set[PropertyName] (action)*: Sets the named property to the given value and returns the new state.
-* Should set the property to the given value.
-* Should do nothing if the value is the same.
-* Should set the property to any value if the type is not give.
-* Should throw if there is a type violation.
-* Should throw if the property does not exist.
-## *Add[ChildName] (action)*: Adds an empty instance of the child to its collection, under the given key, and returns the new state.
-* Should add the child a child at the given id.
-* Should overwrite a child if it already exists.
-## *Available[ChildName] (request)*: Returns the available key value for the given child collection in the state.
-* Should handle an empty list
-* Should handle a list with only one item
-### Should return the missing id of an odd element array
-* Should return a missing id if the list has a hole.
-* Should return a missing id if the list a has big hole.
-* Should return a missing id if the list has two holes.
-### Should return the missing id of an even element array
-* Should return a missing id if the list has a hole.
-* Should return a missing id if the list a has big hole.
-* Should return a missing id if the list has two holes.
-## *hasCollection*: returns true if the model has the named collection of children.
-* Should return true if the collection is present.
-* Should return false if the collection is not present.
-* Should return false if the collection is not present, but is a child.
-## *hasChild*: returns true if the model has the named child.
-* Should return true if the child is present.
-* Should return false if the child is not present.
-* Should return true if the child is not present, but is a collection.

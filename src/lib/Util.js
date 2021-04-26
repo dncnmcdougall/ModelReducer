@@ -46,3 +46,9 @@ module.exports.defaultValue = function(type, name) {
             }
     }
 };
+
+module.exports.assert = function(check, message) {
+    if ( !check ) {
+        throw new Error(message);
+    }
+};
