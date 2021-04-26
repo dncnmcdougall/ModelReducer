@@ -25,11 +25,11 @@
   "dependencies": {},
   "devDependencies": {
     "coveralls": "^3.0.4",
-    "eslint": "^7.0.0",
+    "eslint": "^7.25.0",
     "eslint-plugin-spellcheck": "0.0.16",
-    "jasmine": "^3.4.0",
-    "nyc": "^15.0.1",
-    "webpack": "^4.35.2",
-    "webpack-cli": "^3.3.5"
+    "jasmine": "^3.7.0",
+    "nyc": "^15.1.0",
+    "webpack": "^4.46.0",
+    "webpack-cli": "^3.3.12"
   }
 }

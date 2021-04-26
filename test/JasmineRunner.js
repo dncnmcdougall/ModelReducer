@@ -18,6 +18,65 @@ var colour = function(colour, str) {
     process.stdout.write( ansi[colour] + str + ansi.none);
 };
 
+let MarkdownOutputter  = function() {
+    this.outputObject = {};
+    this.beginSuite = function(result, stack) {
+        let obj = this.outputObject;
+        for( let i = 0 ; i < stack.length; i++) {
+            if ( obj.hasOwnProperty(stack[i]) !== true ) {
+                obj[stack[i]] = {'specs': []}
+            }
+            obj = obj[stack[i]]
+        }
+    };
+    this.endSuite = function(result) {
+        // Do nothing
+    };
+    this.beginSpec = function(result) {
+        // Do nothing
+    };
+    this.endSpec = function(result, stack) {
+        let obj = this.outputObject;
+        for( let i = 0 ; i < stack.length; i++) {
+            if ( obj.hasOwnProperty(stack[i]) !== true ) {
+                obj[stack[i]] = {'specs': []}
+            }
+            obj = obj[stack[i]]
+        }
+        obj['specs'].push(result.description);
+
+    };
+    this.finalise = function() {
+        let output = '';
+        try {
+            output = this.recurseTree(this.outputObject, '#').join('\n');
+        } catch(e) {
+            console.error(e);
+        }
+        return output;
+    };
+    this.recurseTree = function(obj, prefex) {
+        let mapFunc = (key) => {
+            if ( key === 'specs' ){
+                return obj.specs.map( (spec) => { return '* '+spec; } );
+            } else {
+                let heading =  prefex;
+                let index = key.indexOf(':');
+                if ( index >= 0 ) {
+                    heading += ' *'+key.slice(0,index)+'*:'+ key.slice(index+1);
+                } else {
+                    heading += ' '+key;
+                }
+                let out = [heading];
+                out.push(...this.recurseTree(obj[key],prefex+'#'));
+                return out;
+            }
+        };
+        let lines = Object.keys(obj).reduce( (acc, key) => acc.concat(mapFunc(key)), []);
+        return lines;
+    };
+};
+
 var myReporter = {
     startDate: null,
     specStart: null,
@@ -25,8 +84,8 @@ var myReporter = {
     results: {},
     stack: [],
     details: false,
-    markdown: false,
-    outputMarkDown: '',
+    markdown: true,
+    outputMarkDown: new MarkdownOutputter(),
 
     jasmineStarted: function(suiteInfo) {
         this.startDate =Date.now();
@@ -34,17 +93,7 @@ var myReporter = {
     suiteStarted: function(result) {
         this.stack.push(result.description);
         if ( this.markdown ) {
-            for( let i = 0 ; i < this.stack.length; i++) {
-                this.outputMarkDown += '#';
-            }
-            let index = result.description.indexOf(':');
-            if ( index >= 0 ) {
-                this.outputMarkDown += ' *'+result.description.slice(0,index)+'*:'+
-                    result.description.slice(index+1)+
-                    '\n';
-            } else {
-                this.outputMarkDown += ' '+result.description+'\n';
-            }
+            this.outputMarkDown.beginSuite(result, this.stack);
         }
     },
     specStarted: function(result) {
@@ -63,7 +112,7 @@ var myReporter = {
         };
 
         if ( this.markdown ) {
-            this.outputMarkDown += '* '+result.description+'\n';
+            this.outputMarkDown.endSpec(result, this.stack);
         }
 
         if(result.status == 'pending') {
@@ -152,7 +201,7 @@ var myReporter = {
         print('Total running time of '+(Math.round(duration/10)/100)+' seconds\n');
 
         if ( this.markdown ) {
-            fs.writeFileSync('TestOutput.md',this.outputMarkDown);
+            fs.writeFileSync('TestOutput.md',this.outputMarkDown.finalise());
         }
     }
 };

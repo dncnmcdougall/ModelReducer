@@ -2,6 +2,8 @@
 
 var ModelReducer = require('./Util.js').ModelReducer
 
+var MockParent = require('./mock_Parent.js');
+
 var defaultState = require('./mock_DefaultState.js');
 
 describe('Model: The model returned from the creator. Used to process state.', function() {
