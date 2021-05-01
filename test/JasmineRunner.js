@@ -18,15 +18,15 @@ var colour = function(colour, str) {
     process.stdout.write( ansi[colour] + str + ansi.none);
 };
 
-let MarkdownOutputter  = function() {
+let MarkdownWriter  = function() {
     this.outputObject = {};
     this.beginSuite = function(result, stack) {
         let obj = this.outputObject;
         for( let i = 0 ; i < stack.length; i++) {
             if ( obj.hasOwnProperty(stack[i]) !== true ) {
-                obj[stack[i]] = {'specs': []}
+                obj[stack[i]] = {'specs': []};
             }
-            obj = obj[stack[i]]
+            obj = obj[stack[i]];
         }
     };
     this.endSuite = function(result) {
@@ -39,9 +39,9 @@ let MarkdownOutputter  = function() {
         let obj = this.outputObject;
         for( let i = 0 ; i < stack.length; i++) {
             if ( obj.hasOwnProperty(stack[i]) !== true ) {
-                obj[stack[i]] = {'specs': []}
+                obj[stack[i]] = {'specs': []};
             }
-            obj = obj[stack[i]]
+            obj = obj[stack[i]];
         }
         obj['specs'].push(result.description);
 
@@ -55,25 +55,24 @@ let MarkdownOutputter  = function() {
         }
         return output;
     };
-    this.recurseTree = function(obj, prefex) {
-        let mapFunc = (key) => {
-            if ( key === 'specs' ){
-                return obj.specs.map( (spec) => { return '* '+spec; } );
-            } else {
-                let heading =  prefex;
-                let index = key.indexOf(':');
-                if ( index >= 0 ) {
-                    heading += ' *'+key.slice(0,index)+'*:'+ key.slice(index+1);
+    this.recurseTree = function(obj, prefix) {
+        return Object.keys(obj).flatMap( 
+            (key) => {
+                if ( key === 'specs' ){
+                    return obj.specs.map( (spec) => { return '* '+spec; } );
                 } else {
-                    heading += ' '+key;
+                    let heading =  prefix;
+                    let index = key.indexOf(':');
+                    if ( index >= 0 ) {
+                        heading += ' *'+key.slice(0,index)+'*:'+ key.slice(index+1);
+                    } else {
+                        heading += ' '+key;
+                    }
+                    let out = [heading];
+                    out.push(...this.recurseTree(obj[key],prefix+'#'));
+                    return out;
                 }
-                let out = [heading];
-                out.push(...this.recurseTree(obj[key],prefex+'#'));
-                return out;
-            }
-        };
-        let lines = Object.keys(obj).reduce( (acc, key) => acc.concat(mapFunc(key)), []);
-        return lines;
+            });
     };
 };
 
@@ -84,8 +83,8 @@ var myReporter = {
     results: {},
     stack: [],
     details: false,
-    markdown: false,
-    outputMarkDown: new MarkdownOutputter(),
+    markdown: true,
+    outputMarkDown: new MarkdownWriter(),
 
     jasmineStarted: function(suiteInfo) {
         this.startDate =Date.now();

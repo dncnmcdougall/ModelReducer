@@ -35,6 +35,7 @@
                 "extname",
                 "func",
                 "int",
+                "obj",
                 "readdir",
                 "stat",
                 "src",

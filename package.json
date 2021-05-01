@@ -29,7 +29,7 @@
     "eslint-plugin-spellcheck": "0.0.16",
     "jasmine": "^3.7.0",
     "nyc": "^15.1.0",
-    "webpack": "^5.35.1",
+    "webpack": "^5.36.2",
     "webpack-cli": "^4.6.0"
   }
 }
