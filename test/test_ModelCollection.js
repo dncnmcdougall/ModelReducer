@@ -4,11 +4,7 @@
 var ModelReducer = require('./Util.js').ModelReducer;
 var ModelCreator = ModelReducer.ModelCreator;
 
-var wrapFunction = function( func, ...args) {
-    return function() {
-        func(...args);
-    };
-};
+var wrapFunction = require('./Util.js').wrapFunction;
 
 describe('ModelCreator: A class used for building a model.', function() {
     var modelCreator;
@@ -47,16 +43,16 @@ describe('ModelCreator: A class used for building a model.', function() {
         it('Should throw if a child is added that already exists.', function() {
             // CBB: It would be nice for this not to be true
             modelCreator.addChild( secondTestModel, 'TestModel[]');
-            expect( wrapFunction(modelCreator.addChildAsCollection, testModel )).toThrow();
+            expect( wrapFunction(modelCreator,'addChildAsCollection', testModel )).toThrow();
         });
         it('Should throw if a child is added that already exists as a collection.', function() {
             modelCreator.addChildAsCollection( secondTestModel);
-            expect( wrapFunction(modelCreator.addChildAsCollection, testModel )).toThrow();
+            expect( wrapFunction(modelCreator,'addChildAsCollection', testModel )).toThrow();
         });
         it('Should throw if the child is not an object.', function() {
-            expect( wrapFunction(modelCreator.addChildAsCollection) ).toThrow();
-            expect( wrapFunction(modelCreator.addChildAsCollection,42) ).toThrow();
-            expect( wrapFunction(modelCreator.addChildAsCollection,true) ).toThrow();
+            expect( wrapFunction(modelCreator,'addChildAsCollection') ).toThrow();
+            expect( wrapFunction(modelCreator,'addChildAsCollection',42) ).toThrow();
+            expect( wrapFunction(modelCreator,'addChildAsCollection',true) ).toThrow();
         });
     });
 
@@ -98,13 +94,13 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect( wrapFunction( modelCreator.addAddActionFor, newChild) ).toThrow();
         });
         it('Should throw if the child is not an object.', function() {
-            expect( wrapFunction(modelCreator.addAddActionFor) ).toThrow();
-            expect( wrapFunction(modelCreator.addAddActionFor,42) ).toThrow();
-            expect( wrapFunction(modelCreator.addAddActionFor,true) ).toThrow();
+            expect( wrapFunction(modelCreator,'addAddActionFor') ).toThrow();
+            expect( wrapFunction(modelCreator,'addAddActionFor',42) ).toThrow();
+            expect( wrapFunction(modelCreator,'addAddActionFor',true) ).toThrow();
         });
         it('Should throw if the request name is not a string.', function() {
-            expect( wrapFunction(modelCreator.addAddActionFor, child, 42) ).toThrow();
-            expect( wrapFunction(modelCreator.addAddActionFor, child, true) ).toThrow();
+            expect( wrapFunction(modelCreator,'addAddActionFor', child, 42) ).toThrow();
+            expect( wrapFunction(modelCreator,'addAddActionFor', child, true) ).toThrow();
         });
     });
 
@@ -151,13 +147,13 @@ describe('ModelCreator: A class used for building a model.', function() {
                 expect( wrapFunction( modelCreator.addAvailableKeyRequestFor, newChild) ).toThrow();
             });
             it('Should throw if the child is not an object.', function() {
-                expect( wrapFunction(modelCreator.addAvailableKeyRequestFor) ).toThrow();
-                expect( wrapFunction(modelCreator.addAvailableKeyRequestFor,42) ).toThrow();
-                expect( wrapFunction(modelCreator.addAvailableKeyRequestFor,true) ).toThrow();
+                expect( wrapFunction(modelCreator,'addAvailableKeyRequestFor') ).toThrow();
+                expect( wrapFunction(modelCreator,'addAvailableKeyRequestFor',42) ).toThrow();
+                expect( wrapFunction(modelCreator,'addAvailableKeyRequestFor',true) ).toThrow();
             });
             it('Should throw if the request name is not a string.', function() {
-                expect( wrapFunction(modelCreator.addAvailableKeyRequestFor, idChild, 42) ).toThrow();
-                expect( wrapFunction(modelCreator.addAvailableKeyRequestFor, idChild, true) ).toThrow();
+                expect( wrapFunction(modelCreator,'addAvailableKeyRequestFor', idChild, 42) ).toThrow();
+                expect( wrapFunction(modelCreator,'addAvailableKeyRequestFor', idChild, true) ).toThrow();
             });
         });
 });

@@ -147,14 +147,6 @@ function StateValidator()
             }
         });
 
-        if ( error ) {
-        console.log();
-        console.log(error);
-        console.log(collectionCount);
-        console.log(Object.keys(state));
-        console.log();
-        }
-
         return wrapResult( error, state);
     };
 }

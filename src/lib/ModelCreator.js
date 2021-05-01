@@ -1,7 +1,7 @@
-var StateReducer = require('./StateReducer.js');
 var StateActions = require('./StateActions.js');
 var VersioningCreator = require('./VersioningCreator.js');
 var ModelCreatorVersion = require('./ModelCreatorVersion.js');
+var Model = require('./Model.js');
 
 var checkType = require('./Util.js').checkType;
 var objectOrString = require('./Util.js').objectOrString;
@@ -15,76 +15,16 @@ var throwIfFinalised = function( finalised ) {
 function ModelCreator(modelName){
     var versioningCreator = new VersioningCreator();
     var finalised = false;
-    var constModel = {};
+    var constModel = new Model(modelName);
 
-    constModel.name = modelName;
-
-    constModel.collectionKey = 'id';
-
-    // constModel.propertyName = modelName;
-    constModel.properties = {};
-    constModel.actions = {};
-    constModel.requests = {};
-    constModel.children = {};
-    constModel.collections = {};
-
-    constModel.customActions = [];
-    constModel.customRequests = [];
-
-    constModel.reduce = function(actionString, state, ...args) {
-        return StateReducer.reduce(constModel.name, constModel, 
-            (child) => child.actions, 
-            (child) => child.children, 
-            true, actionString, state, ...args);
-    };
-
-    constModel.request = function(requestString, state, ...args) {
-        return StateReducer.reduce(constModel.name, constModel, 
-            (child) => child.requests, 
-            (child) => child.children, 
-            false, requestString, state, ...args);
-    };
-
-    constModel.listActions = function() {
-        return StateReducer.listActions(constModel.name, constModel, 
-            (child) => child.actions, 
-            (child) => child.children, false);
-    };
-
-    constModel.listCustomActions = function() {
-        return StateReducer.listActions(constModel.name, constModel, 
-            (child) => child.customActions, 
-            (child) => child.children, false);
-    };
-
-    constModel.listRequests = function() {
-        return StateReducer.listActions(constModel.name, constModel, 
-            (child) => child.requests, 
-            (child) => child.children, false);
-    };
-
-    constModel.listCustomRequests = function() {
-        return StateReducer.listActions(constModel.name, constModel, 
-            (child) => child.customRequests, 
-            (child) => child.children, false);
-    };
-
-    constModel.hasChild = function(childName) {
-        return this.children.hasOwnProperty(childName);
-    };
     this.hasChild = function(childName) {
         return constModel.hasChild(childName);
-    };
-    constModel.hasCollection = function(childName) {
-        return this.children.hasOwnProperty(childName) &&
-            this.collections[childName];
     };
     this.hasCollection = function(childName) {
         return constModel.hasCollection(childName);
     };
 
-
-    StateActions.addCreateEmpty( constModel );
+    // StateActions.addCreateEmpty( constModel );
 
     this.copyFrom = function(otherModel) {
         throwIfFinalised(finalised);
@@ -105,13 +45,6 @@ function ModelCreator(modelName){
             constModel.collections, 
             otherModel.collections);
     };
-
-    // this.setCollectionName = function(collectionName) {
-    //     checkType(collectionName, 'string');
-    //     throwIfFinalised(finalised);
-
-    //     constModel.collectionName = collectionName;
-    // };
 
     this.setCollectionKey = function(keyField) {
         checkType(keyField, 'string');

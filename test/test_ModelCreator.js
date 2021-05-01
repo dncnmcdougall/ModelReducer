@@ -3,11 +3,7 @@
 var ModelReducer = require('./Util.js').ModelReducer;
 var ModelCreator = ModelReducer.ModelCreator;
 
-var wrapFunction = function( func, ...args) {
-    return function() {
-        func(...args);
-    };
-};
+var wrapFunction = require('./Util.js').wrapFunction;
 
 describe('ModelCreator: A class used for building a model.', function() {
     var modelCreator;
@@ -27,7 +23,7 @@ describe('ModelCreator: A class used for building a model.', function() {
     it('Should throw if used after the model was finalised.', function () {
         modelCreator.finaliseModel();
 
-        expect(wrapFunction(modelCreator.addProperty,'property')).toThrow();
+        expect(wrapFunction(modelCreator,'addProperty','property')).toThrow();
     });
 
     describe('copyFrom: Copies the given model\'s properties, children, actions and requests into this model', function(){
@@ -167,7 +163,7 @@ describe('ModelCreator: A class used for building a model.', function() {
         it('Should throw if the model is already finalised.', function() {
             newModel2 = newModelCreator2.finaliseModel();
 
-            expect( wrapFunction(newModelCreator2.copyFrom, model) ).toThrow();
+            expect( wrapFunction(newModelCreator2,'copyFrom', model) ).toThrow();
         });
     });
     describe('setCollectionKeyField: Sets the name of the field which is used to store the numeric '+
@@ -185,9 +181,9 @@ describe('ModelCreator: A class used for building a model.', function() {
                 expect( model.collectionKey ).toEqual( 'key' );
             });
             it('Should throw if not given a string', function() {
-                expect( wrapFunction(modelCreator.setCollectionKey) ).toThrow();
-                expect( wrapFunction(modelCreator.setCollectionKey,42) ).toThrow();
-                expect( wrapFunction(modelCreator.setCollectionKey,true) ).toThrow();
+                expect( wrapFunction(modelCreator,'setCollectionKey') ).toThrow();
+                expect( wrapFunction(modelCreator,'setCollectionKey',42) ).toThrow();
+                expect( wrapFunction(modelCreator,'setCollectionKey',true) ).toThrow();
             });
         });
 
@@ -217,13 +213,13 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect(model.properties['property']).toEqual('boolean');
         });
         it('Should throw if the property name is not a string.', function() {
-            expect( wrapFunction(modelCreator.addProperty) ).toThrow();
-            expect( wrapFunction(modelCreator.addProperty,42) ).toThrow();
-            expect( wrapFunction(modelCreator.addProperty,true) ).toThrow();
+            expect( wrapFunction(modelCreator,'addProperty') ).toThrow();
+            expect( wrapFunction(modelCreator,'addProperty',42) ).toThrow();
+            expect( wrapFunction(modelCreator,'addProperty',true) ).toThrow();
         });
         it('Should throw if the property type is not a string.', function() {
-            expect( wrapFunction(modelCreator.addProperty,'property',42) ).toThrow();
-            expect( wrapFunction(modelCreator.addProperty,'property',true) ).toThrow();
+            expect( wrapFunction(modelCreator,'addProperty','property',42) ).toThrow();
+            expect( wrapFunction(modelCreator,'addProperty','property',true) ).toThrow();
         });
     });
     describe('removeProperty: Removes a property from the model.', function() {
@@ -237,12 +233,12 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect(model.properties['property']).toBeUndefined();
         });
         it('Should throw if the property is not defined.', function() {
-            expect( wrapFunction(modelCreator.removeProperty, 'NotAProperty') ).toThrow();
+            expect( wrapFunction(modelCreator,'removeProperty', 'NotAProperty') ).toThrow();
         });
         it('Should throw if the property name is not a string.', function() {
-            expect( wrapFunction(modelCreator.removeProperty) ).toThrow();
-            expect( wrapFunction(modelCreator.removeProperty,42) ).toThrow();
-            expect( wrapFunction(modelCreator.removeProperty,true) ).toThrow();
+            expect( wrapFunction(modelCreator,'removeProperty') ).toThrow();
+            expect( wrapFunction(modelCreator,'removeProperty',42) ).toThrow();
+            expect( wrapFunction(modelCreator,'removeProperty',true) ).toThrow();
         });
     });
     describe('addAction: Adds an action to the model.', function() {
@@ -283,14 +279,14 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect(newState.NumberProp).toBe( -1 );
         });
         it('Should throw if the action name is not a string.', function() {
-            expect( wrapFunction(modelCreator.addAction) ).toThrow();
-            expect( wrapFunction(modelCreator.addAction,42) ).toThrow();
-            expect( wrapFunction(modelCreator.addAction,true) ).toThrow();
+            expect( wrapFunction(modelCreator,'addAction') ).toThrow();
+            expect( wrapFunction(modelCreator,'addAction',42) ).toThrow();
+            expect( wrapFunction(modelCreator,'addAction',true) ).toThrow();
         });
         it('Should throw if the action is not a function.', function() {
-            expect( wrapFunction(modelCreator.addAction,'action') ).toThrow();
-            expect( wrapFunction(modelCreator.addAction,'action',42) ).toThrow();
-            expect( wrapFunction(modelCreator.addAction,'action',true) ).toThrow();
+            expect( wrapFunction(modelCreator,'addAction','action') ).toThrow();
+            expect( wrapFunction(modelCreator,'addAction','action',42) ).toThrow();
+            expect( wrapFunction(modelCreator,'addAction','action',true) ).toThrow();
         });
     });
     describe('removeAction: Removes an action from the model.', function() {
@@ -317,12 +313,12 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect(model.customActions).not.toContain( 'SetProperty' );
         });
         it('Should throw if the action is not defined.', function() {
-            expect( wrapFunction(modelCreator.removeAction, 'NotAnAction') ).toThrow();
+            expect( wrapFunction(modelCreator,'removeAction', 'NotAnAction') ).toThrow();
         });
         it('Should throw if the action name is not a string.', function() {
-            expect( wrapFunction(modelCreator.removeAction) ).toThrow();
-            expect( wrapFunction(modelCreator.removeAction,42) ).toThrow();
-            expect( wrapFunction(modelCreator.removeAction,true) ).toThrow();
+            expect( wrapFunction(modelCreator,'removeAction') ).toThrow();
+            expect( wrapFunction(modelCreator,'removeAction',42) ).toThrow();
+            expect( wrapFunction(modelCreator,'removeAction',true) ).toThrow();
         });
     });
     describe('addRequest: Adds a request to the model.', function() {
@@ -341,7 +337,7 @@ describe('ModelCreator: A class used for building a model.', function() {
         });
         it('Should override a request if it already exists.', function() {
             modelCreator.addRequest('request', testFunc );
-            modelCreator.addRequest('request', (state) => {return 49;});
+            modelCreator.addRequest('request', (state) => 49 );
             var model = modelCreator.finaliseModel();
 
             var state = model.createEmpty();
@@ -350,14 +346,14 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect( model.request('Model.request', state) ).toBe(49);
         });
         it('Should throw if the request name is not a string.', function() {
-            expect( wrapFunction(modelCreator.addRequest) ).toThrow();
-            expect( wrapFunction(modelCreator.addRequest,42) ).toThrow();
-            expect( wrapFunction(modelCreator.addRequest,true) ).toThrow();
+            expect( wrapFunction(modelCreator,'addRequest') ).toThrow();
+            expect( wrapFunction(modelCreator,'addRequest',42) ).toThrow();
+            expect( wrapFunction(modelCreator,'addRequest',true) ).toThrow();
         });
         it('Should throw if the request is not a function.', function() {
-            expect( wrapFunction(modelCreator.addRequest,'request') ).toThrow();
-            expect( wrapFunction(modelCreator.addRequest,'request',42) ).toThrow();
-            expect( wrapFunction(modelCreator.addRequest,'request',true) ).toThrow();
+            expect( wrapFunction(modelCreator,'addRequest','request') ).toThrow();
+            expect( wrapFunction(modelCreator,'addRequest','request',42) ).toThrow();
+            expect( wrapFunction(modelCreator,'addRequest','request',true) ).toThrow();
         });
     });
     describe('removeRequest: Removes a request from the model.', function() {
@@ -383,12 +379,12 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect(model.customRequests).not.toContain('State');
         });
         it('Should throw if the specified request is not defined.', function() {
-            expect( wrapFunction(modelCreator.removeRequest, 'NotARequest') ).toThrow();
+            expect( wrapFunction(modelCreator,'removeRequest', 'NotARequest') ).toThrow();
         });
         it('Should throw if the given request name is not a string.', function() {
-            expect( wrapFunction(modelCreator.removeRequest) ).toThrow();
-            expect( wrapFunction(modelCreator.removeRequest,42) ).toThrow();
-            expect( wrapFunction(modelCreator.removeRequest,true) ).toThrow();
+            expect( wrapFunction(modelCreator,'removeRequest') ).toThrow();
+            expect( wrapFunction(modelCreator,'removeRequest',42) ).toThrow();
+            expect( wrapFunction(modelCreator,'removeRequest',true) ).toThrow();
         });
     });
     describe('addChild: Adds a child model to this model.', function() {
@@ -413,16 +409,16 @@ describe('ModelCreator: A class used for building a model.', function() {
         });
         it('Should throw if a child that already exists is added again.', function() {
             modelCreator.addChild( testModel);
-            expect( wrapFunction(modelCreator.addChild, testModel )).toThrow();
+            expect( wrapFunction(modelCreator,'addChild', testModel )).toThrow();
         });
         it('Should not throw if a child that already exists is added with a different name.', function() {
             modelCreator.addChild( testModel);
-            expect( wrapFunction(modelCreator.addChild, testModel, 'NewChild' )).not.toThrow();
+            expect( wrapFunction(modelCreator,'addChild', testModel, 'NewChild' )).not.toThrow();
         });
         it('Should throw if the child is not an object.', function() {
-            expect( wrapFunction(modelCreator.addChild) ).toThrow();
-            expect( wrapFunction(modelCreator.addChild,42) ).toThrow();
-            expect( wrapFunction(modelCreator.addChild,true) ).toThrow();
+            expect( wrapFunction(modelCreator,'addChild') ).toThrow();
+            expect( wrapFunction(modelCreator,'addChild',42) ).toThrow();
+            expect( wrapFunction(modelCreator,'addChild',true) ).toThrow();
         });
     });
     describe('removeChild: Removes a child model from this model.', function() {
@@ -439,12 +435,12 @@ describe('ModelCreator: A class used for building a model.', function() {
         });
         it('Should throw if the child is not defined.', function() {
             var newModel = (new ModelCreator('NewModel')).finaliseModel();
-            expect( wrapFunction(modelCreator.removeChild,newModel) ).toThrow();
+            expect( wrapFunction(modelCreator,'removeChild',newModel) ).toThrow();
         });
         it('Should throw if the child is not an object.', function() {
-            expect( wrapFunction(modelCreator.removeChild) ).toThrow();
-            expect( wrapFunction(modelCreator.removeChild,42) ).toThrow();
-            expect( wrapFunction(modelCreator.removeChild,true) ).toThrow();
+            expect( wrapFunction(modelCreator,'removeChild') ).toThrow();
+            expect( wrapFunction(modelCreator,'removeChild',42) ).toThrow();
+            expect( wrapFunction(modelCreator,'removeChild',true) ).toThrow();
         });
     });
     describe('finaliseModel: Finalises and returns the model.', function() {
@@ -511,13 +507,13 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect( model.customActions).not.toContain('set_property');
         });
         it('Should throw if the property name is not a string.', function() {
-            expect( wrapFunction(modelCreator.addSetActionFor) ).toThrow();
-            expect( wrapFunction(modelCreator.addSetActionFor,42) ).toThrow();
-            expect( wrapFunction(modelCreator.addSetActionFor,true) ).toThrow();
+            expect( wrapFunction(modelCreator,'addSetActionFor') ).toThrow();
+            expect( wrapFunction(modelCreator,'addSetActionFor',42) ).toThrow();
+            expect( wrapFunction(modelCreator,'addSetActionFor',true) ).toThrow();
         });
         it('Should throw if the action name is not a string.', function() {
-            expect( wrapFunction(modelCreator.addSetActionFor, 'Property', 42) ).toThrow();
-            expect( wrapFunction(modelCreator.addSetActionFor, 'Property', true) ).toThrow();
+            expect( wrapFunction(modelCreator,'addSetActionFor', 'Property', 42) ).toThrow();
+            expect( wrapFunction(modelCreator,'addSetActionFor', 'Property', true) ).toThrow();
         });
     });
 });

@@ -1,32 +1,9 @@
 /* eslint complexity: [ "warn" ] */
 var checkType = require('./Util.js').checkType;
-var defaultValue = require('./Util.js').defaultValue;
 var objectOrString = require('./Util.js').objectOrString;
 
 function StateActions()
 {
-    this.addCreateEmpty = function (constModel) {
-        constModel.createEmpty = function() {
-            let emptyState = {};
-            for( let prop in this.properties ) {
-
-                let value = defaultValue(this.properties[prop], prop);
-
-                emptyState[prop] = value;
-            }
-
-            for( let childName in this.children ) {
-                let child = this.children[childName];
-                if ( constModel.hasCollection(childName) ) {
-                    emptyState[childName] = {};
-                } else {
-                    emptyState[childName] = child.createEmpty();
-                }
-            }
-
-            return emptyState;
-        };
-    };
 
     this.addStateRequest = function(constructor, actionName) {
         if ( actionName ) {
@@ -116,11 +93,9 @@ function StateActions()
         constructor.addRequest(requestName, function(state) {
             var keys = [];
             if ( state && state[childName] ) {
-                keys = Object.keys(state[childName]).map( (value) => {
-                    return parseInt(value, 10); 
-                });
+                keys = Object.keys(state[childName]).map( (value) => parseInt(value, 10));
             }
-            keys.sort( (a,b) => { return a-b; });
+            keys.sort( (a,b) => a-b );
             var key = keys.length-1;
             if ( key < 0 ) {
                 return 0;
@@ -144,7 +119,7 @@ function StateActions()
                         }
                         dir = 1;
                     } else {
-                        throw 'This should not happen: ===, <';
+                        throw new Error('This should not happen: ===, <');
                     }
                 } else if ( keys[key] > key ) {
                     if ( key === 0 ) {
@@ -158,10 +133,10 @@ function StateActions()
                         }
                         dir = -1;
                     } else {
-                        throw 'This should not happen: >, <';
+                        throw new Error('This should not happen: >, <');
                     }
                 } else {
-                    throw 'This should not happen: <';
+                    throw new Error('This should not happen: <');
                 }
                 if ( delta < 1 ) {
                     delta = 1;
@@ -169,10 +144,10 @@ function StateActions()
                 if ( key < 0 ) {
                     key = 0;
                 } else if ( key >= keys.length ) {
-                    throw 'This should not happen: Out of bounds';
+                    throw new Error('This should not happen: Out of bounds');
                 }
             }
-            throw 'This should not happen: delta === 0';
+            throw new Error('This should not happen: delta === 0');
         }, true);
     };
 }

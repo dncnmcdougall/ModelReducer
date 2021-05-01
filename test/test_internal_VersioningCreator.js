@@ -36,7 +36,7 @@ describe('VersioningCreator: A class used in validating to allow different versi
     it('should throw if used after finalisation.', function() {
         versioningCreator.finalise();
 
-        expect(wrapFunction(versioningCreator.addVersion,1)).toThrow();
+        expect(wrapFunction(versioningCreator,'addVersion',1)).toThrow();
     });
 
     it('should handle updates from different base versions', function() {
@@ -120,7 +120,7 @@ describe('VersioningCreator: A class used in validating to allow different versi
             expect(newState).toEqual( state);
         });
         it('should throw if a version is not an integer', function() {
-            expect(wrapFunction(versioningCreator.addVersion,'1.1')).toThrow();
+            expect(wrapFunction(versioningCreator,'addVersion','1.1')).toThrow();
             versioningCreator.finalise();
         });
     });

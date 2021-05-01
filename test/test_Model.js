@@ -8,11 +8,7 @@ var MockChild = require('./mock_Child.js');
 
 var defaultState = require('./mock_DefaultState.js');
 
-var wrapFunction = function( func, ...args) {
-    return function() {
-        func(...args);
-    };
-};
+var wrapFunction = require('./Util.js').wrapFunction;
 
 describe('Model: The model returned from the creator. Used to process state.', function() {
     describe('listActions: Lists all the actions registered on this model, recursively.', function() {
@@ -270,13 +266,13 @@ describe('Model: The model returned from the creator. Used to process state.', f
         });
         it('Should throw if there is a type violation.', function() {
             var state = Model.createEmpty();
-            expect( wrapFunction(Model.reduce, 'Model.SetNumberProp', state, 'A String') ).toThrow(
+            expect( wrapFunction(Model,'reduce', 'Model.SetNumberProp', state, 'A String') ).toThrow(
                 new Error('Expected parameter to be of type "number" but received "string".')
             );
         });
         it('Should throw if the property does not exist.', function() {
             var state = Model.createEmpty();
-            expect( wrapFunction(Model.reduce, 'Model.SetUnknownProp', state, 'A String') ).toThrow(
+            expect( wrapFunction(Model,'reduce', 'Model.SetUnknownProp', state, 'A String') ).toThrow(
                 new Error('The property "UnknownProp" was not defined on the model')
             );
         });
