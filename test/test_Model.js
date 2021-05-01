@@ -1,6 +1,6 @@
 /*eslint-env jasmine */
 
-var ModelReducer = require('./Util.js').ModelReducer
+var ModelReducer = require('./Util.js').ModelReducer;
 var ModelCreator = ModelReducer.ModelCreator;
 
 var MockParent = require('./mock_Parent.js');

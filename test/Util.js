@@ -1,7 +1,13 @@
 var fs = require('fs');
 var path = require('path'); 
 
-module.exports.ModelReducer = process.env.NODE_ENV =='production' ? require('../dist/model-reducer.node.js') : require('../src/index.js');
+module.exports.production = process.env.NODE_ENV == 'production';
+
+if ( module.exports.production === true ) {
+    module.exports.ModelReducer = require('../dist/model-reducer.node.js') ;
+} else {
+    module.exports.ModelReducer = require('../src/index_internal.js');
+}
 
 module.exports.recurseDirectory = function(baseDir, acceptFile, acceptDir)
 {

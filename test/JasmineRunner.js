@@ -235,11 +235,15 @@ module.exports.runTests = function(testDir, specFiles, callback) {
     jasmine.execute();
 };
 
-module.exports.findSpecFiles = function(testDir) {
+module.exports.findSpecFiles = function(testDir, includeInternal) {
     return Util.recurseDirectory(testDir, (file) => {
-        return path.extname(file) === '.js' && 
+        let isTestFile = path.extname(file) === '.js' && 
             path.basename(file).indexOf('test_') === 0 && 
             file !== __filename;
+        if ( isTestFile && !includeInternal ) {
+            isTestFile = path.basename(file).indexOf('_internal_') === -1;
+        }
+        return isTestFile;
     });
 };
 
