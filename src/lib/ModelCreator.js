@@ -18,7 +18,7 @@ function ModelCreator(modelName){
     constModel.name = modelName;
 
     constModel.collectionName = modelName+'s';
-    constModel.collectionKey = 'Key';
+    constModel.collectionKey = 'id';
 
     // constModel.propertyName = modelName;
     constModel.properties = {};
@@ -151,17 +151,23 @@ function ModelCreator(modelName){
         delete constModel.properties[name];
     };
 
-    this.addChild = function(childModel) {
+    this.addChild = function(childModel, childName) {
+        if ( childName ) {
+            checkType(childName, 'string');
+        } else {
+            childName = childModel.name;
+        }
+
         checkType(childModel, 'object');
         throwIfFinalised(finalised);
 
-        if ( constModel.children.hasOwnProperty(childModel.name) ) {
-            throw 'The child named "'+childModel.name+'" already exists in this model.'+
+        if ( constModel.children.hasOwnProperty(childName) ) {
+            throw 'The child named "'+childName+'" already exists in this model.'+
                 ' Do you have two models with the same name?';
         }
 
-        constModel.children[childModel.name] = childModel;
-        constModel.collections[childModel.name] = false;
+        constModel.children[childName] = childModel;
+        constModel.collections[childName] = false;
     };
 
     this.addChildAsCollection = function(childModel) {
@@ -245,12 +251,12 @@ function ModelCreator(modelName){
         }
     };
 
-    this.addStateRequest = function() {
-        StateActions.addStateRequest(this);
+    this.addStateRequest = function(actionName) {
+        StateActions.addStateRequest(this, actionName);
     };
 
-    this.addSetPropertyActionFor = function(propertyName, actionName) {
-        StateActions.addSetPropertyActionFor( this, propertyName, actionName);
+    this.addSetActionFor = function(propertyName, actionName) {
+        StateActions.addSetActionFor( this, propertyName, actionName);
     };
 
     this.addAddActionFor = function(child, actionName) {

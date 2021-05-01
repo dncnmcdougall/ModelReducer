@@ -11,8 +11,6 @@ try {
 
     let testDir = __dirname;
     let specFiles = JasmineRunner.findSpecFiles(testDir, includeInternal);
-    console.log('includeInternal: ' + includeInternal);
-    console.log(specFiles);
     JasmineRunner.runTests(testDir, specFiles,onDone);
 } catch(err) {
     console.error('Error in tests: '+err);

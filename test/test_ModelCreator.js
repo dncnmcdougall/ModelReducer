@@ -315,7 +315,7 @@ describe('ModelCreator: A class used for building a model.', function() {
         beforeEach(function() {
             modelCreator.addAction('action',testFunc);
             modelCreator.addProperty('Property');
-            modelCreator.addSetPropertyActionFor('Property');
+            modelCreator.addSetActionFor('Property');
         });
         it('Should remove the given user defined action from the model.', function() {
             modelCreator.removeAction('action');
@@ -397,10 +397,10 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect(model.requests['State']).toBeUndefined();
             expect(model.customRequests).not.toContain('State');
         });
-        it('Should throw if the request is not defined.', function() {
+        it('Should throw if the specified request is not defined.', function() {
             expect( wrapFunction(modelCreator.removeRequest, 'NotARequest') ).toThrow();
         });
-        it('Should throw if the request name is not a string.', function() {
+        it('Should throw if the given request name is not a string.', function() {
             expect( wrapFunction(modelCreator.removeRequest) ).toThrow();
             expect( wrapFunction(modelCreator.removeRequest,42) ).toThrow();
             expect( wrapFunction(modelCreator.removeRequest,true) ).toThrow();
@@ -409,7 +409,7 @@ describe('ModelCreator: A class used for building a model.', function() {
     describe('addChild: Adds a child model to this model.', function() {
         var testModel = (new ModelCreator('TestModel')).finaliseModel();
 
-        it('Should add a child with the specified function to the model.', function() {
+        it('Should add a child to the model.', function() {
 
             modelCreator.addChild(testModel);
             var model = modelCreator.finaliseModel();
@@ -417,10 +417,22 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect(model.children['TestModel']).not.toBeUndefined();
             expect(model.children['TestModel']).toBe(testModel);
         });
-        it('Should throw if a child is added that already exists.', function() {
-            var newModel = (new ModelCreator('TestModel')).finaliseModel();
-            modelCreator.addChild( newModel);
+        it('Should add a child to the model with the specified name.', function() {
+
+            modelCreator.addChild(testModel, 'NewChild');
+            var model = modelCreator.finaliseModel();
+
+            expect(model.children['TestModel']).toBeUndefined();
+            expect(model.children['NewChild']).not.toBeUndefined();
+            expect(model.children['NewChild']).toBe(testModel);
+        });
+        it('Should throw if a child that already exists is added again.', function() {
+            modelCreator.addChild( testModel);
             expect( wrapFunction(modelCreator.addChild, testModel )).toThrow();
+        });
+        it('Should not throw if a child that already exists is added with a different name.', function() {
+            modelCreator.addChild( testModel);
+            expect( wrapFunction(modelCreator.addChild, testModel, 'NewChild' )).not.toThrow();
         });
         it('Should throw if the child is not an object.', function() {
             expect( wrapFunction(modelCreator.addChild) ).toThrow();
@@ -528,10 +540,20 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect( typeof(model.requests['State']) ).toEqual('function');
             expect(model.customRequests).not.toContain('State');
         });
+        it('Should add the "State" request with the given name.', function() {
+            modelCreator.addStateRequest('get_state');
+            var model = modelCreator.finaliseModel();
+
+            expect( model.requests['State'] ).toBeUndefined();
+            expect( model.requests['get_state'] ).not.toBeUndefined();
+            expect( typeof(model.requests['get_state']) ).toEqual('function');
+            expect(model.customRequests).not.toContain('get_state');
+        });
     });
     describe('addAvailableKeyRequestFor: '+
         'Should add an "Available[ChildName][ChildCollectionKey]" request for a collection.', function(){
             var collectionCreator = new ModelCreator('KeyChild');
+            collectionCreator.setCollectionKey('Key');
             var keyChild = collectionCreator.finaliseModel();
 
             collectionCreator = new ModelCreator('IdChild');
@@ -627,12 +649,12 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect( wrapFunction(modelCreator.addAddActionFor, child, true) ).toThrow();
         });
     });
-    describe('addSetPropertyActionFor: Adds a Set[Property] action to the model', function() {
+    describe('addSetActionFor: Adds a Set[Property] action to the model', function() {
         beforeEach( function() {
             modelCreator.addProperty('Property');
         });
         it('Should add a "Set" action with the correct default name: Set[Property].', function(){
-            modelCreator.addSetPropertyActionFor( 'Property' );
+            modelCreator.addSetActionFor( 'Property' );
             var model = modelCreator.finaliseModel();
 
             expect( model.actions['SetProperty'] ).not.toBeUndefined();
@@ -640,7 +662,7 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect( model.customActions).not.toContain('SetProperty');
         });
         it('Should add a "Set" action with the given name.', function(){
-            modelCreator.addSetPropertyActionFor( 'Property', 'set_property' );
+            modelCreator.addSetActionFor( 'Property', 'set_property' );
             var model = modelCreator.finaliseModel();
 
             expect( model.actions['set_property'] ).not.toBeUndefined();
@@ -648,13 +670,13 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect( model.customActions).not.toContain('set_property');
         });
         it('Should throw if the property name is not a string.', function() {
-            expect( wrapFunction(modelCreator.addSetPropertyActionFor) ).toThrow();
-            expect( wrapFunction(modelCreator.addSetPropertyActionFor,42) ).toThrow();
-            expect( wrapFunction(modelCreator.addSetPropertyActionFor,true) ).toThrow();
+            expect( wrapFunction(modelCreator.addSetActionFor) ).toThrow();
+            expect( wrapFunction(modelCreator.addSetActionFor,42) ).toThrow();
+            expect( wrapFunction(modelCreator.addSetActionFor,true) ).toThrow();
         });
         it('Should throw if the action name is not a string.', function() {
-            expect( wrapFunction(modelCreator.addSetPropertyActionFor, 'Property', 42) ).toThrow();
-            expect( wrapFunction(modelCreator.addSetPropertyActionFor, 'Property', true) ).toThrow();
+            expect( wrapFunction(modelCreator.addSetActionFor, 'Property', 42) ).toThrow();
+            expect( wrapFunction(modelCreator.addSetActionFor, 'Property', true) ).toThrow();
         });
     });
 });

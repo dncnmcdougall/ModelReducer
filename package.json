@@ -5,6 +5,7 @@
   "main": "dist/model-reducer.js",
   "scripts": {
     "test": "./node_modules/.bin/nyc npm run test_no_cov",
+    "test_report": "npm run test && ./node_modules/.bin/nyc report --reporter=html-spa",
     "coveralls": "npm run test && ./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.json ./src/ ./test/",
     "test_no_cov": "node test/main.js",

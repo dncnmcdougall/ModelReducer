@@ -228,9 +228,9 @@ describe('Model: The model returned from the creator. Used to process state.', f
             var modelCreator = new ModelCreator('Model');
             modelCreator.addProperty('NumberProp','number');
             modelCreator.addProperty('TypelessProp');
-            modelCreator.addSetPropertyActionFor('NumberProp');
-            modelCreator.addSetPropertyActionFor('TypelessProp');
-            modelCreator.addSetPropertyActionFor('UnknownProp');
+            modelCreator.addSetActionFor('NumberProp');
+            modelCreator.addSetActionFor('TypelessProp');
+            modelCreator.addSetActionFor('UnknownProp');
             Model = modelCreator.finaliseModel();
         });
 
@@ -263,9 +263,9 @@ describe('Model: The model returned from the creator. Used to process state.', f
             expect( state.TypelessProp ).toBe( null );
             expect( newState.TypelessProp ).toBe( false );
 
-            newState = Model.reduce('Model.SetTypelessProp', state, {'Key':'value'});
+            newState = Model.reduce('Model.SetTypelessProp', state, {'id':'value'});
             expect( state.TypelessProp ).toBe( null );
-            expect( newState.TypelessProp ).toEqual( {'Key':'value'} );
+            expect( newState.TypelessProp ).toEqual( {'id':'value'} );
         });
         it('Should throw if there is a type violation.', function() {
             var state = Model.createEmpty();
@@ -290,7 +290,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
                 var collectionCreator = new ModelCreator('Collection');
                 collectionCreator.setCollectionName('Collection');
                 collectionCreator.addProperty('NumberProp','number');
-                collectionCreator.addSetPropertyActionFor('NumberProp');
+                collectionCreator.addSetActionFor('NumberProp');
                 CollectionModel = collectionCreator.finaliseModel();
 
                 var modelCreator = new ModelCreator('Model');
@@ -306,18 +306,18 @@ describe('Model: The model returned from the creator. Used to process state.', f
                 var newState = Model.reduce('Model.AddCollectionChild', state, 2 );
                 expect( newState.Collection ).toEqual( {
                     '2': {
-                        'Key': 2,
+                        'id': 2,
                         'NumberProp': 0
                     }
                 });
                 newState = Model.reduce('Model.AddCollectionChild', newState, 1 );
                 expect( newState.Collection ).toEqual( {
                     '1': {
-                        'Key': 1,
+                        'id': 1,
                         'NumberProp': 0
                     },
                     '2': {
-                        'Key': 2,
+                        'id': 2,
                         'NumberProp': 0
                     }
                 });
@@ -329,7 +329,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
                 newState = Model.reduce('Model.Collection.SetNumberProp', newState, 2, 4);
                 expect( newState.Collection ).toEqual( {
                     '2': {
-                        'Key': 2,
+                        'id': 2,
                         'NumberProp': 4
                     }
                 });
@@ -337,7 +337,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
                 newState = Model.reduce('Model.AddCollectionChild', state, 2 );
                 expect( newState.Collection ).toEqual( {
                     '2': {
-                        'Key': 2,
+                        'id': 2,
                         'NumberProp': 0
                     }
                 });
@@ -434,12 +434,12 @@ describe('Model: The model returned from the creator. Used to process state.', f
             var collectionCreator = new ModelCreator('Collection');
             collectionCreator.setCollectionName('Collection');
             collectionCreator.addProperty('NumberProp','number');
-            collectionCreator.addSetPropertyActionFor('NumberProp');
+            collectionCreator.addSetActionFor('NumberProp');
             CollectionModel = collectionCreator.finaliseModel();
 
             var simpleCreator = new ModelCreator('Simple');
             simpleCreator.addProperty('NumberProp','number');
-            simpleCreator.addSetPropertyActionFor('NumberProp');
+            simpleCreator.addSetActionFor('NumberProp');
             SimpleModel = simpleCreator.finaliseModel();
 
             var modelCreator = new ModelCreator('Model');
@@ -467,12 +467,12 @@ describe('Model: The model returned from the creator. Used to process state.', f
             var collectionCreator = new ModelCreator('Collection');
             collectionCreator.setCollectionName('Collection');
             collectionCreator.addProperty('NumberProp','number');
-            collectionCreator.addSetPropertyActionFor('NumberProp');
+            collectionCreator.addSetActionFor('NumberProp');
             CollectionModel = collectionCreator.finaliseModel();
 
             var simpleCreator = new ModelCreator('Simple');
             simpleCreator.addProperty('NumberProp','number');
-            simpleCreator.addSetPropertyActionFor('NumberProp');
+            simpleCreator.addSetActionFor('NumberProp');
             SimpleModel = simpleCreator.finaliseModel();
 
             var modelCreator = new ModelCreator('Model');

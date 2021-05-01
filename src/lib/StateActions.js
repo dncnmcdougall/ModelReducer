@@ -27,13 +27,18 @@ function StateActions()
         };
     };
 
-    this.addStateRequest = function(constructor) {
-        constructor.addRequest('State', function(state) {
+    this.addStateRequest = function(constructor, actionName) {
+        if ( actionName ) {
+            checkType(actionName, 'string');
+        } else {
+            actionName = 'State';
+        }
+        constructor.addRequest(actionName, function(state) {
             return state;
         }, true);
     };
 
-    this.addSetPropertyActionFor = function(constructor, propertyName, actionName) {
+    this.addSetActionFor = function(constructor, propertyName, actionName) {
         checkType(constructor, 'object');
         checkType(propertyName, 'string');
         if ( actionName ) {

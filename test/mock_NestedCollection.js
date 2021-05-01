@@ -1,4 +1,4 @@
-var ModelReducer = require('./Util.js').ModelReducer
+var ModelReducer = require('./Util.js').ModelReducer;
 
 var mockChildCreator = new ModelReducer.ModelCreator('MockNestedCollection');
 

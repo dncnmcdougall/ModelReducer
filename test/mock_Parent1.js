@@ -1,4 +1,4 @@
-var ModelReducer = require('./Util.js').ModelReducer
+var ModelReducer = require('./Util.js').ModelReducer;
 var mock_Child = require('./mock_Child.js');
 var mock_OtherChild = require('./mock_OtherChild.js');
 var mock_CollectionChild1 = require('./mock_CollectionChild1.js');
@@ -30,6 +30,7 @@ version1.addProperty('NumberPropertyV1', 'number');
 version1.renameProperty('ParentProperty', 'ParentPropertyV1');
 version1.addChild(mock_OtherChild);
 version1.removeChild(mock_Child);
+
 version1.addChildAsCollection(mock_OtherCollectionChild);
 version1.removeChild(mock_CollectionChild1);
 
