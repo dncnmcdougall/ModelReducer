@@ -6,16 +6,22 @@ module.exports.production = process.env.NODE_ENV == 'production';
 if ( module.exports.production === true ) {
     module.exports.ModelReducer = require('../dist/model-reducer.node.js') ;
 } else {
-    module.exports.ModelReducer = require('../src/index_internal.js');
+    module.exports.ModelReducer = require('../src/index.js');
 }
+
+module.exports.wrapFunction = function( object, funcName, ...args) {
+    return function() {
+        object[funcName](...args);
+    };
+};
 
 module.exports.recurseDirectory = function(baseDir, acceptFile, acceptDir)
 {
     if ( !acceptFile ) {
-        acceptFile = () => {return true;};
+        acceptFile = () => true;
     }
     if ( !acceptDir ) {
-        acceptDir = () => {return true;};
+        acceptDir = () => true;
     }
     var files = fs.readdirSync(baseDir);
     var acceptedFiles = [];
@@ -25,9 +31,7 @@ module.exports.recurseDirectory = function(baseDir, acceptFile, acceptDir)
         var absFile = path.join(baseDir,file);
         if ( fs.statSync(absFile).isDirectory() && acceptDir(absFile) )
         {
-            var newFiles = fs.readdirSync(absFile).map( (f) => {
-                return path.join(file,f);
-            });
+            var newFiles = fs.readdirSync(absFile).map( (f) => path.join(file,f));
             files.push(...newFiles);
         }
         else if( acceptFile(file) )

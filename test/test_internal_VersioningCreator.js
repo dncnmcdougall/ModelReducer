@@ -1,14 +1,9 @@
 /*eslint-env jasmine */
 
 
-var ModelReducer = require('./Util.js').ModelReducer;
-var VersioningCreator = ModelReducer.VersioningCreator;
+var VersioningCreator = require('../src/lib/VersioningCreator.js');
 
-var wrapFunction = function( func, ...args) {
-    return function() {
-        func(...args);
-    };
-};
+var wrapFunction = require('./Util.js').wrapFunction;
 
 describe('VersioningCreator: A class used in validating to allow different versions of an object.', function() {
 
