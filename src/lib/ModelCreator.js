@@ -2,7 +2,9 @@ var StateReducer = require('./StateReducer.js');
 var StateActions = require('./StateActions.js');
 var VersioningCreator = require('./VersioningCreator.js');
 var ModelCreatorVersion = require('./ModelCreatorVersion.js');
+
 var checkType = require('./Util.js').checkType;
+var objectOrString = require('./Util.js').objectOrString;
 
 var throwIfFinalised = function( finalised ) {
     if ( finalised ) {
@@ -17,7 +19,6 @@ function ModelCreator(modelName){
 
     constModel.name = modelName;
 
-    constModel.collectionName = modelName+'s';
     constModel.collectionKey = 'id';
 
     // constModel.propertyName = modelName;
@@ -31,41 +32,41 @@ function ModelCreator(modelName){
     constModel.customRequests = [];
 
     constModel.reduce = function(actionString, state, ...args) {
-        return StateReducer.reduce(constModel, 
-            (child) => {return child.actions;}, 
-            (child) => {return child.children;}, 
+        return StateReducer.reduce(constModel.name, constModel, 
+            (child) => child.actions, 
+            (child) => child.children, 
             true, actionString, state, ...args);
     };
 
     constModel.request = function(requestString, state, ...args) {
-        return StateReducer.reduce(constModel, 
-            (child) => {return child.requests;}, 
-            (child) => {return child.children;}, 
+        return StateReducer.reduce(constModel.name, constModel, 
+            (child) => child.requests, 
+            (child) => child.children, 
             false, requestString, state, ...args);
     };
 
     constModel.listActions = function() {
-        return StateReducer.listActions(constModel, 
-            (child) => {return child.actions;}, 
-            (child) => {return child.children;}, false);
+        return StateReducer.listActions(constModel.name, constModel, 
+            (child) => child.actions, 
+            (child) => child.children, false);
     };
 
     constModel.listCustomActions = function() {
-        return StateReducer.listActions(constModel, 
-            (child) => {return child.customActions;}, 
-            (child) => {return child.children;}, false);
+        return StateReducer.listActions(constModel.name, constModel, 
+            (child) => child.customActions, 
+            (child) => child.children, false);
     };
 
     constModel.listRequests = function() {
-        return StateReducer.listActions(constModel, 
-            (child) => {return child.requests;}, 
-            (child) => {return child.children;}, false);
+        return StateReducer.listActions(constModel.name, constModel, 
+            (child) => child.requests, 
+            (child) => child.children, false);
     };
 
     constModel.listCustomRequests = function() {
-        return StateReducer.listActions(constModel, 
-            (child) => {return child.customRequests;}, 
-            (child) => {return child.children;}, false);
+        return StateReducer.listActions(constModel.name, constModel, 
+            (child) => child.customRequests, 
+            (child) => child.children, false);
     };
 
     constModel.hasChild = function(childName) {
@@ -105,12 +106,12 @@ function ModelCreator(modelName){
             otherModel.collections);
     };
 
-    this.setCollectionName = function(collectionName) {
-        checkType(collectionName, 'string');
-        throwIfFinalised(finalised);
+    // this.setCollectionName = function(collectionName) {
+    //     checkType(collectionName, 'string');
+    //     throwIfFinalised(finalised);
 
-        constModel.collectionName = collectionName;
-    };
+    //     constModel.collectionName = collectionName;
+    // };
 
     this.setCollectionKey = function(keyField) {
         checkType(keyField, 'string');
@@ -146,7 +147,7 @@ function ModelCreator(modelName){
         throwIfFinalised(finalised);
 
         if ( !constModel.properties.hasOwnProperty(name) ) {
-            throw 'The property "'+name+'" could not be removed because it is not contained.';
+            throw Error('The property "'+name+'" could not be removed because it is not contained.');
         }
         delete constModel.properties[name];
     };
@@ -162,8 +163,8 @@ function ModelCreator(modelName){
         throwIfFinalised(finalised);
 
         if ( constModel.children.hasOwnProperty(childName) ) {
-            throw 'The child named "'+childName+'" already exists in this model.'+
-                ' Do you have two models with the same name?';
+            throw new Error('The child named "'+childName+'" already exists in this model.'+
+                ' Do you have two models with the same name?');
         }
 
         constModel.children[childName] = childModel;
@@ -173,32 +174,33 @@ function ModelCreator(modelName){
     this.addChildAsCollection = function(childModel) {
         checkType(childModel, 'object');
         throwIfFinalised(finalised);
+        let collectionName = childModel.name+'[]';
 
-        if ( constModel.children.hasOwnProperty(childModel.name) ) {
-            throw 'The child named "'+childModel.name+'" already exists in this model.'+
-                ' Do you have two models with the same name?';
-        }
-        if ( constModel.children.hasOwnProperty(childModel.collectionName) ) {
-            throw 'The child named "'+childModel.collectionName+'" already exists in this model.'+
-                ' Do you have two models with the same name?';
+        // if ( constModel.children.hasOwnProperty(childModel.name) ) {
+        //     throw 'The child named "'+childModel.name+'" already exists in this model.'+
+        //         ' Do you have two models with the same name?';
+        // }
+        if ( constModel.children.hasOwnProperty(collectionName) ) {
+            throw new Error('The child named "'+collectionName+'" already exists in this model.'+
+                ' Do you have two models with the same name?');
         }
 
-        constModel.children[childModel.collectionName] = childModel;
-        constModel.collections[childModel.collectionName] = true;
+        constModel.children[collectionName] = childModel;
+        constModel.collections[collectionName] = true;
     };
 
     this.removeChild = function(childModel) {
-        checkType(childModel, 'object');
+        let childName = objectOrString(childModel, (c) => c.name);
         throwIfFinalised(finalised);
 
-        if ( constModel.children.hasOwnProperty( childModel.name ) ) {
-            delete constModel.children[childModel.name];
-            delete constModel.collections[childModel.name];
-        } else if ( constModel.children.hasOwnProperty( childModel.collectionName ) ) {
-            delete constModel.children[childModel.collectionName];
-            delete constModel.collections[childModel.collectionName];
+        if ( constModel.children.hasOwnProperty(childName) ) {
+            delete constModel.children[childName];
+            delete constModel.collections[childName];
+        }else if ( constModel.children.hasOwnProperty(childName+'[]') ) {
+            delete constModel.children[childName];
+            delete constModel.collections[childName];
         }else {
-            throw 'The child named "'+childModel.name+'" could not be removed because it is not contained.';
+            throw new Error('The child named "'+childName+'" could not be removed because it is not contained.');
         }
     };
 
@@ -218,7 +220,7 @@ function ModelCreator(modelName){
         throwIfFinalised(finalised);
 
         if ( !constModel.actions.hasOwnProperty(name) ) {
-            throw 'The action "'+name+'"+ could not be removed because it is not contained.';
+            throw new Error('The action "'+name+'"+ could not be removed because it is not contained.');
         }
         delete constModel.actions[name];
         var index = constModel.customActions.indexOf(name);
@@ -242,7 +244,7 @@ function ModelCreator(modelName){
         throwIfFinalised(finalised);
 
         if ( !constModel.requests.hasOwnProperty(name) ) {
-            throw 'The request "'+name+'" could not be removed because it is not contained.';
+            throw new Error('The request "'+name+'" could not be removed because it is not contained.');
         }
         delete constModel.requests[name];
         var index = constModel.customRequests.indexOf(name);
@@ -260,6 +262,7 @@ function ModelCreator(modelName){
     };
 
     this.addAddActionFor = function(child, actionName) {
+
         StateActions.addAddActionFor( this, child, actionName);
     };
 
@@ -272,7 +275,7 @@ function ModelCreator(modelName){
 
         if ( constModel.properties.hasOwnProperty( constModel.collectionKey ) )
         {
-            throw 'The property "'+constModel.collectionKey+'" shadows the collection key.';
+            throw new Error('The property "'+constModel.collectionKey+'" shadows the collection key.');
         }
 
         constModel.versioning = versioningCreator.finalise();

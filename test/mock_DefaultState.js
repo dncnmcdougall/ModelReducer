@@ -9,14 +9,14 @@ module.exports = function(version) {
                 'MockNestedChild': {
                     'NestedChildProperty': 5
                 },
-                'MockNestedChildren': {
+                'MockNestedChild[]': {
                     0: {
                         'id': 0,
-                        'NestedCollectionProperty': 6
+                        'NestedChildProperty': 6
                     }
                 }
             },
-            'MockCollectionChildren': {
+            'MockCollectionChild[]': {
                 0: {
                     'id': 0,
                     'CollectionChildProperty': 7,
@@ -24,10 +24,10 @@ module.exports = function(version) {
                     'MockNestedChild': {
                         'NestedChildProperty': 9
                     },
-                    'MockNestedChildren': {
+                    'MockNestedChild[]': {
                         0: {
                             'id': 0,
-                            'NestedCollectionProperty': 10
+                            'NestedChildProperty': 10
                         }
                     }
                 }
@@ -47,15 +47,15 @@ module.exports = function(version) {
                     'version': 0,
                     'NestedChildProperty': 5
                 },
-                'MockNestedChildren': {
+                'MockNestedChild[]': {
                     0: {
                         'version': 0,
                         'id': 0,
-                        'NestedCollectionProperty': 6
+                        'NestedChildProperty': 6
                     }
                 }
             },
-            'MockCollectionChildren': {
+            'MockCollectionChild[]': {
                 0: {
                     'version': 0,
                     'id': 0,
@@ -65,11 +65,11 @@ module.exports = function(version) {
                         'version': 0,
                         'NestedChildProperty': 9
                     },
-                    'MockNestedChildren': {
+                    'MockNestedChild[]': {
                         0: {
                             'version': 0,
                             'id': 0,
-                            'NestedCollectionProperty': 10
+                            'NestedChildProperty': 10
                         }
                     }
                 }
@@ -89,15 +89,15 @@ module.exports = function(version) {
                     'version': 0,
                     'NestedChildProperty': 5
                 },
-                'MockNestedChildren': {
+                'MockNestedChild[]': {
                     0: {
                         'version': 0,
                         'id': 0,
-                        'NestedCollectionProperty': 6
+                        'NestedChildProperty': 6
                     }
                 }
             },
-            'OtherCollectionChildren': {
+            'MockOtherCollectionChild[]': {
                 0: {
                     'version': 1,
                     'id': 0,
@@ -107,11 +107,11 @@ module.exports = function(version) {
                         'version': 0,
                         'NestedChildProperty': 9
                     },
-                    'MockNestedChildren': {
+                    'MockNestedChild[]': {
                         0: {
                             'version': 0,
                             'id': 0,
-                            'NestedCollectionProperty': 10
+                            'NestedChildProperty': 10
                         }
                     }
                 }

@@ -1,6 +1,7 @@
 /* eslint complexity: [ "warn" ] */
 var checkType = require('./Util.js').checkType;
 var defaultValue = require('./Util.js').defaultValue;
+var objectOrString = require('./Util.js').objectOrString;
 
 function StateActions()
 {
@@ -16,10 +17,10 @@ function StateActions()
 
             for( let childName in this.children ) {
                 let child = this.children[childName];
-                if ( constModel.hasCollection(child.collectionName) ) {
-                    emptyState[child.collectionName] = {};
+                if ( constModel.hasCollection(childName) ) {
+                    emptyState[childName] = {};
                 } else {
-                    emptyState[child.name] = child.createEmpty();
+                    emptyState[childName] = child.createEmpty();
                 }
             }
 
@@ -68,8 +69,10 @@ function StateActions()
 
     this.addAddActionFor = function(constructor, child, actionName) {
         checkType(constructor, 'object');
-        checkType(child, 'object');
-        if ( !constructor.hasCollection(child.collectionName) ) {
+
+        let childName = objectOrString(child, (c) => c.name+'[]');
+
+        if ( !constructor.hasCollection(childName) ) {
             throw new Error('Add actions can only be created for children'+
                 ' which form a collection');
         }
@@ -83,7 +86,7 @@ function StateActions()
             var childObject = child.createEmpty();
             childObject[child.collectionKey] = key;
 
-            var modName = child.collectionName;
+            var modName = childName;
             var merger = {};
             merger[modName] = {};
             Object.assign(merger[modName], state[modName]);
@@ -95,8 +98,10 @@ function StateActions()
 
     this.addAvailableKeyRequestFor = function(constructor, child, requestName) {
         checkType(constructor, 'object');
-        checkType(child, 'object');
-        if ( !constructor.hasCollection(child.collectionName) ) {
+
+        let childName = objectOrString(child, (c) => c.name+'[]');
+
+        if ( !constructor.hasCollection(childName) ) {
             throw new Error('AvailableKey requests can only be created for children'+
                 ' which form a collection');
         }
@@ -110,8 +115,8 @@ function StateActions()
 
         constructor.addRequest(requestName, function(state) {
             var keys = [];
-            if ( state && state[child.collectionName] ) {
-                keys = Object.keys(state[child.collectionName]).map( (value) => {
+            if ( state && state[childName] ) {
+                keys = Object.keys(state[childName]).map( (value) => {
                     return parseInt(value, 10); 
                 });
             }

@@ -1,3 +1,14 @@
+
+module.exports.objectOrString = function(thing, func) {
+    if ( typeof(thing) === 'object' ) {
+        return func(thing);
+    } else if ( typeof(thing) === 'string' ) {
+        return thing;
+    } else {
+        throw new Error('Expected parameter to be of type "object" or "string" but received "'+typeof(thing)+'".');
+    }
+};
+
 module.exports.checkType = function(thing, type) {
     if ( type === 'array' ) {
         if ( Array.isArray(thing) !== true) {

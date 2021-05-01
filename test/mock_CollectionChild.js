@@ -1,11 +1,9 @@
 var ModelReducer = require('./Util.js').ModelReducer;
 var mock_NestedChild = require('./mock_NestedChild.js');
-var mock_NestedCollection = require('./mock_NestedCollection.js');
 
 var mockChildCreator = new ModelReducer.ModelCreator('MockCollectionChild');
 
 mockChildCreator.setCollectionKey('id');
-mockChildCreator.setCollectionName('MockCollectionChildren');
 
 mockChildCreator.addProperty('CollectionChildProperty');
 mockChildCreator.addProperty('NumberProperty', 'number');
@@ -23,6 +21,6 @@ mockChildCreator.addRequest('CollectionChildRequest', function(state){
 mockChildCreator.addStateRequest();
 
 mockChildCreator.addChild(mock_NestedChild);
-mockChildCreator.addChildAsCollection(mock_NestedCollection);
+mockChildCreator.addChildAsCollection(mock_NestedChild);
 
 module.exports = mockChildCreator.finaliseModel();

@@ -59,7 +59,7 @@ let MarkdownWriter  = function() {
         return Object.keys(obj).flatMap( 
             (key) => {
                 if ( key === 'specs' ){
-                    return obj.specs.map( (spec) => { return '* '+spec; } );
+                    return obj.specs.map( (spec) => '* '+spec );
                 } else {
                     let heading =  prefix;
                     let index = key.indexOf(':');
@@ -142,7 +142,7 @@ var myReporter = {
 
         this.specResults.forEach( function(spec, index) {
             if( spec.status == 'failed' ) {
-                console.log( spec.suite.join(' ')+'\n-> '+spec.description);
+                console.log( spec.suite.join('\n->')+'\n-> '+spec.description);
                 for(var i = 0; i < spec.failedExpectations.length; i++) {
                     colour('red',spec.failedExpectations[i].message);
                     print('\n');
@@ -150,7 +150,7 @@ var myReporter = {
                     console.log();
                 }
             } else if (spec.status == 'pending' ) {
-                colour( 'yellow', spec.suite.join(' ')+'\n-> '+spec.description);
+                colour( 'yellow', spec.suite.join('\n->')+'\n-> '+spec.description);
                 print('\n');
             }
         });

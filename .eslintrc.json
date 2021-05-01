@@ -116,7 +116,7 @@
         ],
         "arrow-body-style": [
             "error",
-            "always"
+            "as-needed"
         ],
         "arrow-parens": [
             "error",
@@ -128,6 +128,9 @@
         "complexity": [
             "warn",
             10
+        ],
+        "no-throw-literal": [
+            "error"
         ],
         "max-depth": [
             "error",

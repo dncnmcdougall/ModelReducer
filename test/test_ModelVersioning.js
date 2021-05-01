@@ -89,10 +89,10 @@ describe('StateValidator: A class used for asserting that a given state object f
                         'MockNestedChild': {
                             'NestedChildProperty': 3
                         },
-                        'MockNestedChildren': {
+                        'MockNestedChild[]': {
                             0: {
                                 'id': 0,
-                                'NestedCollectionProperty': 4
+                                'NestedChildProperty': 4
                             }
                         }
                     },
@@ -103,10 +103,10 @@ describe('StateValidator: A class used for asserting that a given state object f
                         'MockNestedChild': {
                             'NestedChildProperty': 7
                         },
-                        'MockNestedChildren': {
+                        'MockNestedChild[]': {
                             0: {
                                 'id': 0,
-                                'NestedCollectionProperty': 8
+                                'NestedChildProperty': 8
                             }
                         }
                     }

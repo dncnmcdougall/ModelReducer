@@ -2,17 +2,12 @@ var assert = require('./Util.js').assert;
 
 function StateReducer() {
 
-    this.reduce = function(current, getActions, getChildren, 
+    this.reduce = function(name, current, getActions, getChildren, 
         shouldExpandState, actionString, state, ...args) {
-        let name = null;
         const actionParts = actionString.split('.');
         assert(state, 'Expected state not to be undefined'); 
-        if ( actionParts[0] == current.collectionName ) {
-            name = current.collectionName;
-        } else {
-            name = current.name;
-        }
         assert( actionParts[0] == name, 'Expected the first part of the command to be '+name+' but found "'+actionParts[0]+'"');
+
         if ( actionParts.length == 2 ) {
             const actions = getActions(current);
             assert( actions.hasOwnProperty(actionParts[1]),
@@ -23,30 +18,34 @@ function StateReducer() {
             const children = getChildren(current);
             assert( children.hasOwnProperty(actionParts[1]),
                 'Did not find the child '+actionParts[1]+ ' in '+ name); 
-            const child = children[actionParts[1]];
-            const childStateAndArgs = this.reduceState(isCollectionChild, state, child, ...args);
+            const childName = actionParts[1];
+            const child = children[childName];
+
+            const childStateAndArgs = this.reduceState(childName, child, isCollectionChild, state, ...args);
             const newActionString = actionParts.slice(1).join('.');
-            const newChildState = this.reduce(child, getActions, getChildren,
+
+            const newChildState = this.reduce(childName, child, getActions, getChildren,
                 shouldExpandState, newActionString, 
                 childStateAndArgs['State'], ...(childStateAndArgs['Args'])
             );
 
             if ( shouldExpandState ) {
-                return this.expandState(isCollectionChild, state,newChildState,child);
+                return this.expandState(childName, child, isCollectionChild, state,newChildState);
             } else {
                 return newChildState;
             }
         }
     };
 
-    this.reduceState = function(isCollectionModel, state, child, ...args) {
+    this.reduceState = function(childName, child, isCollectionModel, state, ...args) {
+        assert(state.hasOwnProperty(childName), 'Expected the state to contain the property "'+childName+'"');
         if ( isCollectionModel ) {
             const id = args[0];
-            const expectMessage = 'The id given for the '+child.collectionName+' was ';
+            const expectMessage = 'The '+child.collectionKey+' given for '+childName+' was ';
             assert(id != null, expectMessage+'null');
             assert(id != undefined,expectMessage+'undefined');
 
-            const childState = state[child.collectionName][id];
+            const childState = state[childName][id];
             assert(childState != null, 'The object referred to by the id was null');
             assert(childState != undefined, 'The object referred to by the id was undefined');
             return { 
@@ -55,38 +54,38 @@ function StateReducer() {
             };
         } else {
             return { 
-                'State': state[child.name],
+                'State': state[childName],
                 'Args': args
             };
         }
     };
 
-    this.expandState = function(isCollectionModel, state, childState, child) {
+    this.expandState = function(childName, child, isCollectionModel, state, childState) {
         let merger = {};
         if ( isCollectionModel === false ) {
-            if ( state[child.name] === childState ) {
+            if ( state[childName] === childState ) {
                 return state;
             } 
-            merger[child.name] = childState;
+            merger[childName] = childState;
         } else {
             const idField = child.collectionKey;
-            if ( state[child.collectionName][childState[idField]] === childState) {
+            if ( state[childName][childState[idField]] === childState) {
                 return state;
             }
-            merger[child.collectionName] = {};
-            Object.assign(merger[child.collectionName], state[child.collectionName]);
-            merger[child.collectionName][childState[idField]] = childState;
+            merger[childName] = {};
+            Object.assign(merger[childName], state[childName]);
+            merger[childName][childState[idField]] = childState;
         }
 
         return Object.assign({}, state, merger); 
     };
 
-    this.listActions = function(current, getActions, getChildren, isCollection)
+    this.listActions = function(name, current, getActions, getChildren, isCollection)
     {
         let actions = [];
         let returnedActions = getActions(current);
         if ( Array.isArray(returnedActions) ) {
-            actions = returnedActions.map( (value) => {return value;} );
+            actions = returnedActions.map( (value) => value );
         } else {
             for( const actionName in returnedActions ) {
                 actions.push(actionName);
@@ -95,12 +94,10 @@ function StateReducer() {
         const children = getChildren(current);
         for( const childName in children ) {
             const child = children[childName];
-            actions.push( ...this.listActions(child, getActions, getChildren, current.hasCollection(childName)));
+            actions.push( ...this.listActions(childName, child, getActions, getChildren, current.hasCollection(childName)));
         }
 
-        let name = isCollection ? current.collectionName : current.name;
-
-        return actions.map( (element) => { return name+'.'+element; });
+        return actions.map( (element) => name+'.'+element );
     };
 
 }

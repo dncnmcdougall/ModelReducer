@@ -1,4 +1,5 @@
 var defaultValue = require('./Util.js').defaultValue;
+var objectOrString = require('./Util.js').objectOrString;
 
 function ModelCreatorVersion(version, modelCreator){
     this.addProperty = function(name, type) {
@@ -20,23 +21,31 @@ function ModelCreatorVersion(version, modelCreator){
         version.rename(name, newName);
     };
 
-    this.addChild = function(childModel) {
-        modelCreator.addChild(childModel);
-        version.add(childModel.name, childModel.createEmpty() );
+    this.addChild = function(childModel, childName) {
+        if ( !childName ) {
+            childName = childModel.name;
+        }
+
+        modelCreator.addChild(childModel, childName);
+        version.add(childName, childModel.createEmpty() );
     };
 
     this.addChildAsCollection = function(childModel) {
+        let collectionName = childModel.name+'[]';
+
         modelCreator.addChildAsCollection(childModel);
-        version.add(childModel.collectionName, {});
+        version.add(collectionName, {});
     };
 
     this.removeChild = function(childModel) {
-        if ( modelCreator.hasCollection( childModel.collectionName ) ) {
-            version.remove(childModel.collectionName);
-        } else {
-            version.remove(childModel.name);
+        let childName = objectOrString(childModel, (c) => c.name);
+
+        if ( !modelCreator.hasChild(childName) && modelCreator.hasChild(childName+'[]') ) {
+            childName = childName+'[]';
         }
-        modelCreator.removeChild(childModel);
+
+        modelCreator.removeChild(childName);
+        version.remove(childName);
     };
 }
 

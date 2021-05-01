@@ -44,11 +44,11 @@ describe('StateValidator: A class used for asserting that a given state object f
             expect(result.value).toBeNull();
         });
         it('Should return an error when a collection property is of the wrong type.', function() {
-            state.MockCollectionChildren[0].NumberProperty = 'A String';
+            state['MockCollectionChild[]'][0].NumberProperty = 'A String';
 
             var result = StateValidator.validateState( MockParent, state );
             expect(result.error).toEqual( 
-                'Expected property MockCollectionChildren[0].NumberProperty to have type "number", but found type "string".'
+                'Expected property MockCollectionChild[0].NumberProperty to have type "number", but found type "string".'
             );
             expect(result.value).toBeNull();
         });
@@ -68,10 +68,10 @@ describe('StateValidator: A class used for asserting that a given state object f
             expect(result.value).toBeNull();
         });
         it('Should return an error when there is a missing collection child.', function() {
-            delete state.MockCollectionChildren;
+            delete state['MockCollectionChild[]'];
 
             var result = StateValidator.validateState( MockParent, state );
-            expect(result.error).toEqual( 'Expected to find a collection named MockParent.MockCollectionChildren, but did not.');
+            expect(result.error).toEqual( 'Expected to find a collection named MockParent.MockCollectionChild[], but did not.');
             expect(result.value).toBeNull();
         });
         it('Should return an error when there is an extra property.', function() {
@@ -97,10 +97,10 @@ describe('StateValidator: A class used for asserting that a given state object f
             expect(result.value).toBeNull();
         });
         it('Should return an error when there is a missing collection child on a child.', function() {
-            delete state.MockChild.MockNestedChildren;
+            delete state.MockChild['MockNestedChild[]'];
 
             var result = StateValidator.validateState( MockParent, state );
-            expect(result.error).toEqual( 'Expected to find a collection named MockChild.MockNestedChildren, but did not.');
+            expect(result.error).toEqual( 'Expected to find a collection named MockChild.MockNestedChild[], but did not.');
             expect(result.value).toBeNull();
         });
         it('Should return an error when there is an extra property on a child.', function() {
@@ -112,38 +112,38 @@ describe('StateValidator: A class used for asserting that a given state object f
         });
 
         it('Should return an error when there is a missing property on a collection.', function() {
-            delete state.MockCollectionChildren[0].NumberProperty;
+            delete state['MockCollectionChild[]'][0].NumberProperty;
 
             var result = StateValidator.validateState( MockParent, state );
             expect(result.error).toEqual( 
-                'Expected to find a property named MockCollectionChildren[0].NumberProperty, but did not.'
+                'Expected to find a property named MockCollectionChild[0].NumberProperty, but did not.'
             );
             expect(result.value).toBeNull();
         });
         it('Should return an error when there is a missing child on a collection.', function() {
-            delete state.MockCollectionChildren[0].MockNestedChild;
+            delete state['MockCollectionChild[]'][0].MockNestedChild;
 
             var result = StateValidator.validateState( MockParent, state );
             expect(result.error).toEqual( 
-                'Expected to find a child named MockCollectionChildren[0].MockNestedChild, but did not.'
+                'Expected to find a child named MockCollectionChild[0].MockNestedChild, but did not.'
             );
             expect(result.value).toBeNull();
         });
         it('Should return an error when there is a missing collection child on a collection.', function() {
-            delete state.MockCollectionChildren[0].MockNestedChildren;
+            delete state['MockCollectionChild[]'][0]['MockNestedChild[]'];
 
             var result = StateValidator.validateState( MockParent, state );
             expect(result.error).toEqual( 
-                'Expected to find a collection named MockCollectionChildren[0].MockNestedChildren, but did not.'
+                'Expected to find a collection named MockCollectionChild[0].MockNestedChild[], but did not.'
             );
             expect(result.value).toBeNull();
         });
         it('Should return an error when there is an extra property on a collection.', function() {
-            state.MockCollectionChildren[0].ExtraProperty = 'An extra property';
+            state['MockCollectionChild[]'][0].ExtraProperty = 'An extra property';
 
             var result = StateValidator.validateState( MockParent, state );
             expect(result.error).toEqual( 
-                'Did not expect to find a property named MockCollectionChildren[0].ExtraProperty, but did.'
+                'Did not expect to find a property named MockCollectionChild[0].ExtraProperty, but did.'
             );
             expect(result.value).toBeNull();
         });
@@ -162,10 +162,10 @@ describe('StateValidator: A class used for asserting that a given state object f
                         'MockNestedChild': {
                             'NestedChildProperty': 3
                         },
-                        'MockNestedChildren': {
+                        'MockNestedChild[]': {
                             0: {
                                 'id': 0,
-                                'NestedCollectionProperty': 4
+                                'NestedChildProperty': 4
                             }
                         }
                     },
@@ -176,10 +176,10 @@ describe('StateValidator: A class used for asserting that a given state object f
                         'MockNestedChild': {
                             'NestedChildProperty': 7
                         },
-                        'MockNestedChildren': {
+                        'MockNestedChild[]': {
                             0: {
                                 'id': 0,
-                                'NestedCollectionProperty': 8
+                                'NestedChildProperty': 8
                             }
                         }
                     }
@@ -191,7 +191,7 @@ describe('StateValidator: A class used for asserting that a given state object f
 
                 var result = StateValidator.validateStateCollection( MockCollectionChild, state );
                 expect(result.error).toEqual( 
-                    'Expected to find a property named MockCollectionChildren[0].NumberProperty, but did not.'
+                    'Expected to find a property named MockCollectionChild[0].NumberProperty, but did not.'
                 );
                 expect(result.value).toBeNull();
             });
@@ -200,16 +200,16 @@ describe('StateValidator: A class used for asserting that a given state object f
 
                 var result = StateValidator.validateStateCollection( MockCollectionChild, state );
                 expect(result.error).toEqual( 
-                    'Expected to find a child named MockCollectionChildren[0].MockNestedChild, but did not.'
+                    'Expected to find a child named MockCollectionChild[0].MockNestedChild, but did not.'
                 );
                 expect(result.value).toBeNull();
             });
             it('Should return an error when there is a missing collection child.', function() {
-                delete state[0].MockNestedChildren;
+                delete state[0]['MockNestedChild[]'];
 
                 var result = StateValidator.validateStateCollection( MockCollectionChild, state );
                 expect(result.error).toEqual( 
-                    'Expected to find a collection named MockCollectionChildren[0].MockNestedChildren, but did not.'
+                    'Expected to find a collection named MockCollectionChild[0].MockNestedChild[], but did not.'
                 );
                 expect(result.value).toBeNull();
             });
@@ -218,7 +218,7 @@ describe('StateValidator: A class used for asserting that a given state object f
 
                 var result = StateValidator.validateStateCollection( MockCollectionChild, state );
                 expect(result.error).toEqual( 
-                    'Did not expect to find a property named MockCollectionChildren[0].ExtraProperty, but did.'
+                    'Did not expect to find a property named MockCollectionChild[0].ExtraProperty, but did.'
                 );
                 expect(result.value).toBeNull();
             });
@@ -227,7 +227,7 @@ describe('StateValidator: A class used for asserting that a given state object f
                 state[0].id = 1;
                 var result = StateValidator.validateStateCollection( MockCollectionChild, state );
 
-                expect(result.error).toEqual('Expected MockCollectionChildren[0] to have "id" of 0 but found 1.');
+                expect(result.error).toEqual('Expected MockCollectionChild[0] to have "id" of 0 but found 1.');
                 expect(result.value).toBeNull();
             });
 

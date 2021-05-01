@@ -3,35 +3,35 @@ var wrapResult = require('./Util.js').wrapResult;
 
 function StateValidator()
 {
-    this.validateStateCollection = (model, collection, shouldUpdate, hasCopied) => {
+    this.validateStateCollection = (model, collectionState, shouldUpdate, hasCopied) => {
         var error = null;
 
         if ( shouldUpdate && !hasCopied ) {
-            collection = Object.assign({}, collection);
+            collectionState = Object.assign({}, collectionState);
             hasCopied = true;
         }
 
-        Object.keys(collection).forEach( (id) => {
+        Object.keys(collectionState).forEach( (key) => {
             if ( !error ) {
-               var internalId = collection[id][model.collectionKey];
-                if ( internalId != id ) {
-                    error = 'Expected '+model.collectionName+'['+id+'] to have "'+
-                        model.collectionKey+'" of '+id+' but found '+internalId+'.';
+               var internalId = collectionState[key][model.collectionKey];
+                if ( internalId != key ) {
+                    error = 'Expected '+model.name+'['+key+'] to have "'+
+                        model.collectionKey+'" of '+key+' but found '+internalId+'.';
                 } else {
-                    let result = this.validateState(model, collection[id], shouldUpdate, hasCopied);
+                    let result = this.validateState(model, collectionState[key], shouldUpdate, hasCopied);
                     if ( result.error ) {
                         error = result.error;
                     } else if ( shouldUpdate ) {
-                        collection[id] = result.value;
+                        collectionState[key] = result.value;
                     }
                 }
             }
         });
 
-        return wrapResult( error, collection);
+        return wrapResult( error, collectionState);
     };
 
-    this.validateState = (model, state, shouldUpdate, hasCopied) => {
+    this.validateState = function(model, state, shouldUpdate, hasCopied) {
         var children = model.children;
         var properties = model.properties;
 
@@ -80,7 +80,7 @@ function StateValidator()
         var modelName = model.name;
         if ( state.hasOwnProperty(model.collectionKey) ) {
             let id = state[ model.collectionKey];
-            modelName = model.collectionName+'['+id+']';
+            modelName = modelName+'['+id+']';
         } 
 
         Object.keys(state).forEach( (key) => {
@@ -103,8 +103,7 @@ function StateValidator()
                     propertyCount[key].found = true;
                 }
             } else if ( childCount.hasOwnProperty(key) ) {
-                name = childCount[key].name;
-                var newChild = this.validateState(children[name], state[key], shouldUpdate); 
+                var newChild = this.validateState(children[key], state[key], shouldUpdate); 
                 if ( !newChild.error ) {
                     childCount[key].found = true;
                     if ( shouldUpdate ) {
@@ -114,8 +113,7 @@ function StateValidator()
                     error =  newChild.error;
                 }
             } else if ( collectionCount.hasOwnProperty(key) ) {
-                name = collectionCount[key].name;
-                var newCollection = this.validateStateCollection( children[name], state[key], shouldUpdate );
+                var newCollection = this.validateStateCollection( children[key], state[key], shouldUpdate );
                 if ( newCollection.error ) {
                     error = newCollection.error;
                 } else {
@@ -129,8 +127,8 @@ function StateValidator()
             } else {
                 error= 'Did not expect to find a property named '+modelName+'.'+key+', but did.';
             }
-        }
-        );
+        });
+
         Object.keys(collectionCount).forEach( (key) => {
             if ( !error && !collectionCount[key].found ) {
                 error = 'Expected to find a collection named '+modelName+'.'+key+', but did not.';
@@ -148,6 +146,14 @@ function StateValidator()
                 error = 'Expected to find a property named '+modelName+'.'+key+', but did not.';
             }
         });
+
+        if ( error ) {
+        console.log();
+        console.log(error);
+        console.log(collectionCount);
+        console.log(Object.keys(state));
+        console.log();
+        }
 
         return wrapResult( error, state);
     };
