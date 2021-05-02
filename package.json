@@ -2,7 +2,7 @@
   "name": "model-reducer",
   "version": "2.0.0",
   "description": "A reducer based on a Model structure",
-  "main": "dist/model-reducer.js",
+  "main": "dist/model-reducer.node.js",
   "scripts": {
     "test": "./node_modules/.bin/nyc npm run test_no_cov",
     "test_report": "npm run test && ./node_modules/.bin/nyc report --reporter=html-spa",

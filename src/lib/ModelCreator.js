@@ -1,7 +1,7 @@
-var StateActions = require('./StateActions.js');
-var VersioningCreator = require('./VersioningCreator.js');
-var ModelCreatorVersion = require('./ModelCreatorVersion.js');
-var Model = require('./Model.js');
+const StateActions = require('./StateActions.js');
+const VersioningCreator = require('./VersioningCreator.js');
+const ModelCreatorVersion = require('./ModelCreatorVersion.js');
+const Model = require('./Model.js');
 
 var checkType = require('./Util.js').checkType;
 var objectOrString = require('./Util.js').objectOrString;
@@ -59,6 +59,7 @@ function ModelCreator(modelName){
         var newVersion = versioningCreator.addVersion( maxVersionNumber + 1 );
         return new ModelCreatorVersion(newVersion, this);
     };
+
     this.getPropertyType = function(name) {
         return constModel.properties[name];
     };
