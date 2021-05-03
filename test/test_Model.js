@@ -81,7 +81,6 @@ describe('Model: The model returned from the creator. Used to process state.', f
             var requests = MockParent.listRequests();
             expect(requests).toContain('MockParent.ParentRequest');
             expect(requests).toContain('MockParent.State');
-            expect(requests).toContain('MockParent.AvailableMockCollectionChildId');
 
             expect(requests).toContain('MockParent.MockChild.ChildRequest');
             expect(requests).toContain('MockParent.MockChild.State');
@@ -93,7 +92,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
             expect(requests).toContain('MockParent.MockCollectionChild[].MockNestedChild.Request');
             expect(requests).toContain('MockParent.MockCollectionChild[].MockNestedChild[].Request');
 
-            expect(requests.length).toEqual(11);
+            expect(requests.length).toEqual(10);
         });
 
         it('Should list only the requests on the given model.', function() {
@@ -277,150 +276,6 @@ describe('Model: The model returned from the creator. Used to process state.', f
             );
         });
     });
-    describe('Add[ChildName] (action): Adds an empty instance of the child to its collection'+
-        ', under the given key, and returns the new state.', 
-        function() {
-            var Model;
-            var CollectionModel;
-            beforeAll( function() {
-
-                var collectionCreator = new ModelCreator('Collection');
-                collectionCreator.addProperty('NumberProp','number');
-                collectionCreator.addSetActionFor('NumberProp');
-                CollectionModel = collectionCreator.finaliseModel();
-
-                var modelCreator = new ModelCreator('Model');
-                modelCreator.addChildAsCollection( CollectionModel );
-                modelCreator.addAddActionFor( CollectionModel, 'AddCollectionChild' );
-                Model = modelCreator.finaliseModel();
-            });
-
-            it('Should add the child a child at the given id.', function() {
-                var state = Model.createEmpty();
-                expect( state['Collection[]'] ).toEqual( {} );
-
-                var newState = Model.reduce('Model.AddCollectionChild', state, 2 );
-                expect( newState['Collection[]'] ).toEqual( {
-                    '2': {
-                        'id': 2,
-                        'NumberProp': 0
-                    }
-                });
-                newState = Model.reduce('Model.AddCollectionChild', newState, 1 );
-                expect( newState['Collection[]'] ).toEqual( {
-                    '1': {
-                        'id': 1,
-                        'NumberProp': 0
-                    },
-                    '2': {
-                        'id': 2,
-                        'NumberProp': 0
-                    }
-                });
-            });
-
-            it('Should overwrite a child if it already exists.', function() {
-                var state = Model.createEmpty();
-                var newState = Model.reduce('Model.AddCollectionChild', state, 2 );
-                newState = Model.reduce('Model.Collection[].SetNumberProp', newState, 2, 4);
-                expect( newState['Collection[]'] ).toEqual( {
-                    '2': {
-                        'id': 2,
-                        'NumberProp': 4
-                    }
-                });
-
-                newState = Model.reduce('Model.AddCollectionChild', state, 2 );
-                expect( newState['Collection[]'] ).toEqual( {
-                    '2': {
-                        'id': 2,
-                        'NumberProp': 0
-                    }
-                });
-            });
-        });
-    describe('Available[ChildName] (request): Returns the available key value for the given child collection in the state.', 
-        function() {
-            var count = 9;
-            var listName = 'MockCollectionChild[]';
-            var requestName = 'AvailableMockCollectionChildId';
-            var modelName = MockParent.name;
-            function testOnRange(count){
-                var name;
-                if ( count%2 === 0 ) {
-                    name = 'even';
-                } else {
-                    name = 'odd';
-                }
-                describe('Should return the missing id of an '+name+' element array', function() {
-                    var state = {};
-                    var id;
-                    var i;
-                    beforeEach(function(){
-                        id = -1;
-                        i = 0;
-                        state = {};
-                        state[listName] = {};
-                        for ( var i = 0; i< count; i++ ) {
-                            state[listName][i] = { 'Property': 'String'};
-                        }
-                    });
-
-                    it('Should return a missing id if the list has a hole.', function() {
-                        for (i = 0; i< count; i++ ) {
-                            delete state[listName][i];
-                            id = MockParent.request(modelName+'.'+requestName, state);
-                            expect(id).toEqual(i);
-                            state[listName][i] = { 'Property': 'String'};
-                        }
-                    });
-                    it('Should return a missing id if the list a has big hole.', function() {
-                        for (i = 0; i< count-1; i++ ) {
-                            delete state[listName][i];
-                            delete state[listName][i+1];
-                            id = MockParent.request(modelName+'.'+requestName, state);
-                            expect(id).toEqual(i);
-                            state[listName][i] = { 'Property': 'String'};
-                            state[listName][i+1] = { 'Property': 'String'};
-                        }
-                    });
-                    it('Should return a missing id if the list has two holes.', function() {
-                        for (i = 0; i< count-3; i++ ) {
-                            delete state[listName][i];
-                            delete state[listName][i+3];
-                            id = MockParent.request(modelName+'.'+requestName, state);
-                            expect(id).toEqual(i);
-                            state[listName][i] = { 'Property': 'String'};
-                            state[listName][i+3] = { 'Property': 'String'};
-                        }
-                    });
-                });
-            }
-
-            it('Should handle an empty list', function() {
-                var state = {};
-                state[listName] = {};
-                var id = MockParent.request(modelName+'.'+requestName, state);
-                expect(id).toEqual(0);
-            });
-            it('Should handle a list with only one item', function() {
-                var state = {};
-                state[listName] = {
-                    '0': {' Property': 'String'} 
-                };
-                var id = MockParent.request(modelName+'.'+requestName, state);
-                expect(id).toEqual(1);
-
-                state[listName] = {
-                    '1': {' Property': 'String'} 
-                };
-                id = MockParent.request(modelName+'.'+requestName, state);
-                expect(id).toEqual(0);
-            });
-
-            testOnRange(count);
-            testOnRange(count-1);
-        });
     describe('hasCollection: returns true if the model has the named collection of children.', function() {
         var Model;
         var CollectionModel;

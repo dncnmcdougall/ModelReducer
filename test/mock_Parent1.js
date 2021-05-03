@@ -35,6 +35,5 @@ version1.addChildAsCollection(mock_OtherCollectionChild);
 version1.removeChild(mock_CollectionChild1);
 
 mockParentCreator.addAddActionFor(mock_OtherCollectionChild);
-mockParentCreator.addAvailableKeyRequestFor(mock_OtherCollectionChild);
 
 module.exports = mockParentCreator.finaliseModel();

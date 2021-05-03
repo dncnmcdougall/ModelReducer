@@ -23,6 +23,5 @@ mockParentCreator.addChild(mock_Child);
 mockParentCreator.addChildAsCollection(mock_CollectionChild);
 
 mockParentCreator.addAddActionFor(mock_CollectionChild);
-mockParentCreator.addAvailableKeyRequestFor(mock_CollectionChild);
 
 module.exports = mockParentCreator.finaliseModel();
