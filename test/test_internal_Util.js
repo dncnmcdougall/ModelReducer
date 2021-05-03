@@ -85,5 +85,14 @@ describe('Util: a private set of utilities', function() {
         });
 
     });
+    describe('assert: throws an error when the value is false.', function() {
+        it('Should not throw when the value is true.', function() {
+            expect( wrapFunction(Util.assert, true, 'Some message.') ).not.toThrow();
+        });
+        it('Should throw when the value is false.', function() {
+            let message = 'Some message';
+            expect( wrapFunction(Util.assert, false, message) ).toThrowError(message);
+        });
+    });
 });
 

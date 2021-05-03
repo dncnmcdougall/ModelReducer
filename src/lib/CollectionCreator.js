@@ -1,28 +1,12 @@
-const StateActions = require('./StateActions.js');
 const ModelCreator = require('./ModelCreator.js');
 const Collection = require('./Collection.js');
 
 var checkType = require('./Util.js').checkType;
 var objectOrString = require('./Util.js').objectOrString;
 
-var throwIfFinalised = function( finalised ) {
-    if ( finalised ) {
-        throw new Error('The model was already finalised, cannot modify it further.');
-    }
-};
-
 function CollectionCreator(modelName, collectedChild){
     ModelCreator.call(this, modelName);
     this.modelUnderConstruction = new Collection(modelName, collectedChild);
-
-
-    this.addAddActionFor = function(child, actionName) {
-        StateActions.addAddActionFor( this, collectedChild, actionName);
-    };
-
-    this.addAvailableKeyRequestFor = function(child, actionName) {
-        StateActions.addAvailableKeyRequestFor( this, child, actionName);
-    };
 
     this.addRequest('Keys', function(state) {
         return this.keys(state);
