@@ -12,29 +12,8 @@ var wrapFunction = require('./Util.js').wrapFunction;
 
 describe('Model: The model returned from the creator. Used to process state.', function() {
     describe('listActions: Lists all the actions registered on this model, recursively.', function() {
-        it('Should list all the actions on the model.', function() {
-            var actions = MockParent.listActions();
-            expect(actions).toContain('MockParent.NullAction');
-            expect(actions).toContain('MockParent.IncrementAction');
-            // CBB: DMD: change this to MockParent.MockCollectionChild[].PushEmpty
-            expect(actions).toContain('MockParent.AddMockCollectionChild');
 
-            expect(actions).toContain('MockParent.MockChild.NullAction');
-            expect(actions).toContain('MockParent.MockChild.IncrementAction');
-            expect(actions).toContain('MockParent.MockChild.MockNestedChild.Action');
-            expect(actions).toContain('MockParent.MockChild.MockNestedChild[].Action');
-            // CBB: DMD: change this to MockParent.MockChild.MockNestedChild[].PushEmpty
-            expect(actions).toContain('MockParent.MockChild.AddMockNestedChild');
-
-            expect(actions).toContain('MockParent.MockCollectionChild[].NullAction');
-            expect(actions).toContain('MockParent.MockCollectionChild[].IncrementAction');
-            expect(actions).toContain('MockParent.MockCollectionChild[].MockNestedChild.Action');
-            expect(actions).toContain('MockParent.MockCollectionChild[].MockNestedChild[].Action');
-
-            expect(actions.length).toEqual(12);
-        });
-
-        it('Should list only the actions on the given model.', function() {
+        it('Should list only the actions on the model.', function() {
             var actions = MockChild.listActions();
 
             expect(actions).toContain('MockChild.NullAction');
@@ -42,8 +21,13 @@ describe('Model: The model returned from the creator. Used to process state.', f
             expect(actions).toContain('MockChild.AddMockNestedChild');
             expect(actions).toContain('MockChild.MockNestedChild.Action');
             expect(actions).toContain('MockChild.MockNestedChild[].Action');
+            expect(actions).toContain('MockChild.MockNestedChild[].PushEmpty');
+            expect(actions).toContain('MockChild.MockNestedChild[].AddEmpty');
+            expect(actions).toContain('MockChild.MockNestedChild[].Remove');
+            expect(actions).toContain('MockChild.MockNestedChild[].RemoveHead');
+            expect(actions).toContain('MockChild.MockNestedChild[].RemoveTail');
 
-            expect(actions.length).toEqual(5);
+            expect(actions.length).toEqual(10);
         });
     });
     describe('listCustomActions: Lists all the user defined actions registered on this model, recursively.', function() {
@@ -77,33 +61,20 @@ describe('Model: The model returned from the creator. Used to process state.', f
         });
     });
     describe('listRequests: Lists all the requests registered on this model, recursively.', function() {
-        it('Should list all the requests on the model.', function() {
-            var requests = MockParent.listRequests();
-            expect(requests).toContain('MockParent.ParentRequest');
-            expect(requests).toContain('MockParent.State');
 
-            expect(requests).toContain('MockParent.MockChild.ChildRequest');
-            expect(requests).toContain('MockParent.MockChild.State');
-            expect(requests).toContain('MockParent.MockChild.MockNestedChild.Request');
-            expect(requests).toContain('MockParent.MockChild.MockNestedChild[].Request');
-
-            expect(requests).toContain('MockParent.MockCollectionChild[].CollectionChildRequest');
-            expect(requests).toContain('MockParent.MockCollectionChild[].State');
-            expect(requests).toContain('MockParent.MockCollectionChild[].MockNestedChild.Request');
-            expect(requests).toContain('MockParent.MockCollectionChild[].MockNestedChild[].Request');
-
-            expect(requests.length).toEqual(10);
-        });
-
-        it('Should list only the requests on the given model.', function() {
+        it('Should list only the requests on the model.', function() {
             var requests = MockChild.listRequests();
 
             expect(requests).toContain('MockChild.ChildRequest');
             expect(requests).toContain('MockChild.State');
             expect(requests).toContain('MockChild.MockNestedChild.Request');
             expect(requests).toContain('MockChild.MockNestedChild[].Request');
+            expect(requests).toContain('MockChild.MockNestedChild[].Keys');
+            expect(requests).toContain('MockChild.MockNestedChild[].Length');
+            expect(requests).toContain('MockChild.MockNestedChild[].HeadState');
+            expect(requests).toContain('MockChild.MockNestedChild[].TailState');
 
-            expect(requests.length).toEqual(4);
+            expect(requests.length).toEqual(8);
         });
     });
     describe('listCustomRequests: Lists all the user defined requests registered on this model, recursively.', function() {

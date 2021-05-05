@@ -17,41 +17,35 @@ function Model(name) {
 }
 
 Model.prototype.reduce = function(actionString, state, ...args) {
-    return StateReducer.reduce(this.name, this, 
+    return StateReducer.newReduce(this.name, this, 
         (child) => child.actions, 
-        (child) => child.children, 
         true, actionString, state, ...args);
 };
 
 Model.prototype.request = function(requestString, state, ...args) {
-    return StateReducer.reduce(this.name, this, 
+    return StateReducer.newReduce(this.name, this, 
         (child) => child.requests, 
-        (child) => child.children, 
         false, requestString, state, ...args);
 };
 
 Model.prototype.listActions = function() {
     return StateReducer.listActions(this.name, this, 
-        (child) => child.actions, 
-        (child) => child.children, false);
+        (child) => child.actions);
 };
 
 Model.prototype.listCustomActions = function() {
     return StateReducer.listActions(this.name, this, 
-        (child) => child.customActions, 
-        (child) => child.children, false);
+        (child) => child.customActions);
 };
 
 Model.prototype.listRequests = function() {
     return StateReducer.listActions(this.name, this, 
-        (child) => child.requests, 
-        (child) => child.children, false);
+        (child) => child.requests);
 };
 
 Model.prototype.listCustomRequests = function() {
     return StateReducer.listActions(this.name, this, 
-        (child) => child.customRequests, 
-        (child) => child.children, false);
+        (child) => child.customRequests);
 };
 
 Model.prototype.hasChild = function(childName) {
@@ -61,6 +55,10 @@ Model.prototype.hasChild = function(childName) {
 Model.prototype.hasCollection = function(childName) {
     return this.children.hasOwnProperty(childName) &&
         this.collections[childName];
+};
+
+Model.prototype.isCollection = function() {
+    return false;
 };
 
 Model.prototype.createEmpty = function() {

@@ -2,6 +2,7 @@
 
 var ModelReducer = require('./Util.js').ModelReducer;
 var ModelCreator = ModelReducer.ModelCreator;
+var CollectionCreator = ModelReducer.CollectionCreator;
 
 var wrapFunction = require('./Util.js').wrapFunction;
 
@@ -166,7 +167,7 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect( wrapFunction(newModelCreator2,'copyFrom', model) ).toThrow();
         });
     });
-    describe('setCollectionKeyField: Sets the name of the field which is used to store the numeric '+
+    describe('setCollectionKey: Sets the name of the field which is used to store the numeric '+
         'identifier of an instance of this model in a collection.', 
         function() {
             it('The collection key defaults to "id"', function() {
@@ -397,6 +398,9 @@ describe('ModelCreator: A class used for building a model.', function() {
 
             expect(model.children['TestModel']).not.toBeUndefined();
             expect(model.children['TestModel']).toBe(testModel);
+
+            expect(model.hasChild('TestModel')).toBeTrue();
+            expect(model.hasCollection('TestModel')).not.toBeTrue();
         });
         it('Should add a child to the model with the specified name.', function() {
 
@@ -407,7 +411,7 @@ describe('ModelCreator: A class used for building a model.', function() {
             expect(model.children['NewChild']).not.toBeUndefined();
             expect(model.children['NewChild']).toBe(testModel);
         });
-        it('Should throw if a child that already exists is added again.', function() {
+        it('Should throw if the child would override an existing child.', function() {
             modelCreator.addChild( testModel);
             expect( wrapFunction(modelCreator,'addChild', testModel )).toThrow();
         });
@@ -415,10 +419,51 @@ describe('ModelCreator: A class used for building a model.', function() {
             modelCreator.addChild( testModel);
             expect( wrapFunction(modelCreator,'addChild', testModel, 'NewChild' )).not.toThrow();
         });
-        it('Should throw if the child is not an object.', function() {
+        it('Should throw if the child would override an existing property.', function() {
+            modelCreator.addProperty('cats', 'string');
+            expect( wrapFunction(modelCreator,'addChild', testModel, 'cats' )).toThrow();
+        });
+        it('Should throw if the child would override a the collectionKey.', function() {
+            modelCreator.setCollectionKey('key');
+            expect( wrapFunction(modelCreator,'addChild', testModel, 'key' )).toThrow();
+        });
+        it('Should throw if the child would override an action.', function() {
+            modelCreator.addAction('NullAction', (state) => state);
+            expect( wrapFunction(modelCreator,'addChild', testModel, 'NullAction' )).toThrow();
+        });
+        it('Should throw if the child would override a request.', function() {
+            modelCreator.addAction('NullRequest', (state) => null);
+            expect( wrapFunction(modelCreator,'addChild', testModel, 'NullRequest' )).toThrow();
+        });
+        it('Should throw if the child is not an instance of Model.', function() {
             expect( wrapFunction(modelCreator,'addChild') ).toThrow();
             expect( wrapFunction(modelCreator,'addChild',42) ).toThrow();
             expect( wrapFunction(modelCreator,'addChild',true) ).toThrow();
+            expect( wrapFunction(modelCreator,'addChild',{}) ).toThrow();
+        });
+    });
+    describe('addChild: Adds a collection to this model.', function() {
+        var testModel = (new CollectionCreator('Collection')).finaliseModel();
+
+        it('Should add a collection to the model.', function() {
+
+            modelCreator.addChild(testModel);
+            var model = modelCreator.finaliseModel();
+
+            expect(model.children['Collection']).not.toBeUndefined();
+            expect(model.children['Collection']).toBe(testModel);
+
+            expect(model.hasChild('Collection')).toBeTrue();
+            expect(model.hasCollection('Collection')).toBeTrue();
+        });
+        it('Should add a child to the model with the specified name.', function() {
+
+            modelCreator.addChild(testModel, 'Col');
+            var model = modelCreator.finaliseModel();
+
+            expect(model.children['Collection']).toBeUndefined();
+            expect(model.children['Col']).not.toBeUndefined();
+            expect(model.children['Col']).toBe(testModel);
         });
     });
     describe('removeChild: Removes a child model from this model.', function() {

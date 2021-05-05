@@ -8,6 +8,7 @@
     "test_report": "npm run test && ./node_modules/.bin/nyc report --reporter=html-spa",
     "coveralls": "npm run test && ./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.json ./src/ ./test/",
+    "test_and_trace": "node --trace-warnings test/main.js",
     "test_no_cov": "node test/main.js",
     "build": "webpack && cat dist/model-reducer.umd.js src/model-tail.mjs > dist/model-reducer.mjs"
   },

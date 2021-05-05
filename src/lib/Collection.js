@@ -14,6 +14,10 @@ Object.defineProperty(Collection.prototype, 'constructor', {
     writable: true
 });
 
+Collection.prototype.isCollection = function() {
+    return true;
+};
+
 Collection.prototype.isValidKey = function(key) {
     return key !== this.collectionKey
         && !(key in this.properties)

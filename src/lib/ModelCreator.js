@@ -2,9 +2,14 @@ const StateActions = require('./StateActions.js');
 const VersioningCreator = require('./VersioningCreator.js');
 const ModelCreatorVersion = require('./ModelCreatorVersion.js');
 const Model = require('./Model.js');
+const Collection = require('./Collection.js');
 
 var checkType = require('./Util.js').checkType;
 var objectOrString = require('./Util.js').objectOrString;
+var assert = require('./Util.js').assert;
+
+module.exports =  ModelCreator;
+const CollectionCreator = require('./CollectionCreator.js');
 
 var throwIfFinalised = function( finalised ) {
     if ( finalised ) {
@@ -16,6 +21,7 @@ function ModelCreator(modelName){
     var versioningCreator = new VersioningCreator();
     var finalised = false;
     this.modelUnderConstruction = new Model(modelName);
+    this.collectionsUnderConstruction = {};
 
     this.hasChild = function(childName) {
         return this.modelUnderConstruction.hasChild(childName);
@@ -85,36 +91,60 @@ function ModelCreator(modelName){
     };
 
     this.addChild = function(childModel, childName) {
+        assert( childModel instanceof Model, 
+            'Expected the parameter to be an instance of model, but received a "'+typeof(childModel)+'"');
+        throwIfFinalised(finalised);
+
         if ( childName ) {
             checkType(childName, 'string');
         } else {
             childName = childModel.name;
         }
 
-        checkType(childModel, 'object');
-        throwIfFinalised(finalised);
-
-        if ( this.modelUnderConstruction.children.hasOwnProperty(childName) ) {
-            throw new Error('The child named "'+childName+'" already exists in this model.'+
-                ' Do you have two models with the same name?');
+        if ( childName == this.modelUnderConstruction.collectionKey ){
+            throw new Error('Tried to add a child item with name "'+childName+'", which would override the collection key.');
+        } else if ( childName in this.modelUnderConstruction.properties ){
+            throw new Error('Tried to add a child item with name "'+childName+'", which would override a property.');
+        } else if ( childName in this.modelUnderConstruction.children ){
+            throw new Error('Tried to add a child item with name "'+childName+'", which would override another child.');
+        } else if ( childName in this.modelUnderConstruction.actions ){
+            throw new Error('Tried to add a child item with name "'+childName+'", which would override an action.');
+        } else if ( childName in this.modelUnderConstruction.requests ){
+            throw new Error('Tried to add a child item with name "'+childName+'", which would override a request.');
         }
 
         this.modelUnderConstruction.children[childName] = childModel;
-        this.modelUnderConstruction.collections[childName] = false;
+        // this.modelUnderConstruction.collections[childName] = false;
+        this.modelUnderConstruction.collections[childName] = (childModel instanceof Collection);
     };
 
-    this.addChildAsCollection = function(childModel) {
-        checkType(childModel, 'object');
+    this.addChildAsCollection = function(childModel, collectionName) {
+        assert( childModel instanceof Model, 
+            'Expected the parameter to be an instance of model, but received a "'+typeof(childModel)+'"');
         throwIfFinalised(finalised);
-        let collectionName = childModel.name+'[]';
 
-        if ( this.modelUnderConstruction.children.hasOwnProperty(collectionName) ) {
-            throw new Error('The child named "'+collectionName+'" already exists in this model.'+
-                ' Do you have two models with the same name?');
+        if ( collectionName ) {
+            checkType(collectionName, 'string');
+        } else {
+            collectionName = childModel.name+'[]';
         }
 
-        this.modelUnderConstruction.children[collectionName] = childModel;
+        if ( collectionName == this.modelUnderConstruction.collectionKey ){
+            throw new Error('Tried to add a child item with name "'+collectionName+'", which would override the collection key.');
+        } else if ( collectionName in this.modelUnderConstruction.properties ){
+            throw new Error('Tried to add a child item with name "'+collectionName+'", which would override a property.');
+        } else if ( collectionName in this.modelUnderConstruction.children ){
+            throw new Error('Tried to add a child item with name "'+collectionName+'", which would override another child.');
+        } else if ( collectionName in this.modelUnderConstruction.actions ){
+            throw new Error('Tried to add a child item with name "'+collectionName+'", which would override an action.');
+        } else if ( collectionName in this.modelUnderConstruction.requests ){
+            throw new Error('Tried to add a child item with name "'+collectionName+'", which would override a request.');
+        }
+
+        this.collectionsUnderConstruction[collectionName] = new CollectionCreator(collectionName, childModel);
+        this.modelUnderConstruction.children[collectionName] = null;
         this.modelUnderConstruction.collections[collectionName] = true;
+        return this.collectionsUnderConstruction[collectionName];
     };
 
     this.removeChild = function(childModel) {
@@ -206,6 +236,11 @@ function ModelCreator(modelName){
             throw new Error('The property "'+this.modelUnderConstruction.collectionKey+'" shadows the collection key.');
         }
 
+        Object.keys(this.collectionsUnderConstruction).forEach( (key) => {
+            let collection = this.collectionsUnderConstruction[key].finaliseModel();
+            this.modelUnderConstruction.children[key] = collection;
+        });
+
         this.modelUnderConstruction.versioning = versioningCreator.finalise();
 
         finalised = true;
@@ -215,4 +250,3 @@ function ModelCreator(modelName){
 }
 
 
-module.exports =  ModelCreator;

@@ -16,7 +16,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
 
             spyOn(MockParent.requests, 'ParentRequest').and.callThrough();
             spyOn(MockParent.children.MockChild.requests, 'ChildRequest').and.callThrough();
-            spyOn(MockParent.children['MockCollectionChild[]'].requests, 'CollectionChildRequest').and.callThrough();
+            spyOn(MockParent.children['MockCollectionChild[]'].collectedChild.requests, 'CollectionChildRequest').and.callThrough();
         });
 
         it('Should call the correct parent action', function() {
@@ -25,7 +25,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
             expect(MockParent.requests.ParentRequest).toHaveBeenCalled();
             expect(MockParent.requests.ParentRequest).toHaveBeenCalledWith(state);
             expect(MockParent.children.MockChild.requests.ChildRequest).not.toHaveBeenCalled();
-            expect(MockParent.children['MockCollectionChild[]'].requests.CollectionChildRequest).not.toHaveBeenCalled();
+            expect(MockParent.children['MockCollectionChild[]'].collectedChild.requests.CollectionChildRequest).not.toHaveBeenCalled();
         });
 
         it('Should call the correct child action', function() {
@@ -36,7 +36,7 @@ describe('Model: The model returned from the creator. Used to process state.', f
             expect(MockParent.requests.ParentRequest).not.toHaveBeenCalled();
             expect(MockParent.children.MockChild.requests.ChildRequest).toHaveBeenCalled();
             expect(MockParent.children.MockChild.requests.ChildRequest).toHaveBeenCalledWith(subState);
-            expect(MockParent.children['MockCollectionChild[]'].requests.CollectionChildRequest).not.toHaveBeenCalled();
+            expect(MockParent.children['MockCollectionChild[]'].collectedChild.requests.CollectionChildRequest).not.toHaveBeenCalled();
         });
 
         it('Should call the correct collection action', function() {
@@ -47,8 +47,8 @@ describe('Model: The model returned from the creator. Used to process state.', f
 
             expect(MockParent.requests.ParentRequest).not.toHaveBeenCalled();
             expect(MockParent.children.MockChild.requests.ChildRequest).not.toHaveBeenCalled();
-            expect(MockParent.children['MockCollectionChild[]'].requests.CollectionChildRequest).toHaveBeenCalled();
-            expect(MockParent.children['MockCollectionChild[]'].requests.CollectionChildRequest).toHaveBeenCalledWith(subState);
+            expect(MockParent.children['MockCollectionChild[]'].collectedChild.requests.CollectionChildRequest).toHaveBeenCalled();
+            expect(MockParent.children['MockCollectionChild[]'].collectedChild.requests.CollectionChildRequest).toHaveBeenCalledWith(subState);
         });
 
     });

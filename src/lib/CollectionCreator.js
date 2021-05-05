@@ -10,19 +10,19 @@ function CollectionCreator(modelName, collectedChild){
 
     this.addRequest('Keys', function(state) {
         return this.keys(state);
-    });
+    }, true);
 
     this.addRequest('Length', function(state) {
         return this.length(state);
-    });
+    }, true);
 
     this.addRequest('HeadState', function(state) {
         return this.headState(state);
-    });
+    }, true);
 
     this.addRequest('TailState', function(state) {
         return this.tailState(state);
-    });
+    }, true);
 
     this.addAction('PushEmpty', function(state) {
         let key = this.largestKey(state);
@@ -36,7 +36,7 @@ function CollectionCreator(modelName, collectedChild){
         let merger = {};
         merger[key] = childState;
         return Object.assign({}, state, merger);
-    });
+    }, true);
 
     this.addAction('AddEmpty', function(state, key) {
         if ( key == this.collectionKey ){
@@ -57,7 +57,7 @@ function CollectionCreator(modelName, collectedChild){
         let merger = {};
         merger[key] = childState;
         return Object.assign({}, state, merger);
-    });
+    }, true);
 
     this.addAction('Remove', function(state, key) {
         if ( key == this.collectionKey ){
@@ -76,7 +76,7 @@ function CollectionCreator(modelName, collectedChild){
         let newState = Object.assign({}, state);
         delete newState[key];
         return newState;
-    });
+    }, true);
     
     this.addAction('RemoveTail', function(state) {
         let key = this.largestKey(state);
@@ -86,7 +86,7 @@ function CollectionCreator(modelName, collectedChild){
         let newState = Object.assign({}, state);
         delete newState[key];
         return newState;
-    });
+    }, true);
 
     this.addAction('RemoveHead', function(state) {
         let key = this.smallestKey(state);
@@ -96,7 +96,7 @@ function CollectionCreator(modelName, collectedChild){
         let newState = Object.assign({}, state);
         delete newState[key];
         return newState;
-    });
+    }, true);
 
 }
 
