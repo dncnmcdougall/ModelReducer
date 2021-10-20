@@ -1,63 +1,82 @@
 var checkType = require('./Util.js').checkType;
 var wrapResult = require('./Util.js').wrapResult;
+// var assert = require('./Util.js').assert;
 
-function StateValidator()
-{
-    this.validateStateCollection = (model, collectionState, shouldUpdate, hasCopied) => {
-        var error = null;
+var CollectionCreator = require('./CollectionCreator.js');
 
-        if ( shouldUpdate && !hasCopied ) {
-            collectionState = Object.assign({}, collectionState);
-            hasCopied = true;
+
+function checkProperty(state, modelName, key, propertyCount, error) {
+    var type = propertyCount[key].type;
+    if ( type != null ) {
+        try {
+            checkType( state[key], type );
+            propertyCount[key].found = true;
+        } catch (err)  {
+            error = 'Expected property '+modelName+'.'+key+' to have type "'+
+                type+'", but found type "'+typeof( state[key] )+'".';
         }
+    } else {
+        propertyCount[key].found = true;
+    }
+    return wrapResult(error, state);
+}
 
-        Object.keys(collectionState).forEach( (key) => {
-            if ( !error ) {
-               var internalId = collectionState[key][model.collectionKey];
-                if ( internalId != key ) {
-                    error = 'Expected '+model.name+'['+key+'] to have "'+
-                        model.collectionKey+'" of '+key+' but found '+internalId+'.';
-                } else {
-                    let result = this.validateState(model, collectionState[key], shouldUpdate, hasCopied);
-                    if ( result.error ) {
-                        error = result.error;
-                    } else if ( shouldUpdate ) {
-                        collectionState[key] = result.value;
-                    }
-                }
-            }
-        });
+function checkChild(state, key, children, childCount, shouldUpdate, error, validateState) {
+    var result = validateState(children[key], state[key], shouldUpdate); 
+    if ( result.error ) {
+        error = result.error;
+    } else {
+        childCount[key].found = true;
+        if ( shouldUpdate ) {
+            state[key] = result.value;
+        }
+    }
+    return wrapResult(error, state);
+}
 
-        return wrapResult( error, collectionState);
-    };
+function checkItem(state, key, model, modelName, shouldUpdate, error, validateState) {
+    var internalKey = model.collectedChild.collectionKey;
+    var internalId = state[key][internalKey];
+    if ( internalId != key ) {
+        error = 'Expected '+modelName+'['+key+'] to have "'+
+            internalKey+'" of '+key+' but found '+internalId+'.';
+    } else {
+        var result = validateState(model.collectedChild, state[key], shouldUpdate);
+        if ( result.error ) {
+            error = result.error;
+        } else if ( shouldUpdate ) {
+            state[key] = result.value;
+        }
+    }
+    return wrapResult(error, state);
+}
 
-    this.validateState = function(model, state, shouldUpdate, hasCopied) {
+function checkCount(modelName, count, countName, error) {
+    Object.keys(count).forEach( (key) => {
+        if ( !error && !count[key].found ) {
+            error = 'Expected to find a '+countName+' named '+modelName+'.'+key+', but did not.';
+        }
+    });
+    return error;
+}
+
+function validateState(model, state, shouldUpdate, hasCopied) {
         var children = model.children;
         var properties = model.properties;
 
-        var childCount = {};
-        var collectionCount = {};
         var propertyCount = {};
-        var collectionKeyCount = {
+        var childCount = {};
+        var collectionKeyCount = {};
+        collectionKeyCount[model.collectionKey] = {
             'found': false,
             'name': model.collectionKey,
-            'type': null
         };
-
         Object.keys(children).forEach( (childName) => { 
-            if ( model.hasCollection(childName) ) {
-                collectionCount[childName] = {
-                    'found': false,
-                    'name': childName
-                }; 
-            } else {
-                childCount[childName] = {
-                    'found': false,
-                    'name': childName
-                };
-            }
+            childCount[childName] = {
+                'found': false,
+                'name': childName
+            };
         });
-
         Object.keys(properties).forEach( (prop) => { 
             propertyCount[prop] = {
                 'found': false,
@@ -84,70 +103,56 @@ function StateValidator()
         } 
 
         Object.keys(state).forEach( (key) => {
-            var name;
+            var result = { error:null, value:state };
             if (error) {
                 return;
             } else if ( key == 'version' ) {
                 return;
-            } else if ( propertyCount.hasOwnProperty(key) ) {
-                var type = propertyCount[key].type;
-                if ( type != null ) {
-                    try {
-                        checkType( state[key], type );
-                        propertyCount[key].found = true;
-                    } catch (err)  {
-                        error = 'Expected property '+modelName+'.'+key+' to have type "'+
-                            type+'", but found type "'+typeof( state[key] )+'".';
-                    }
-                } else {
-                    propertyCount[key].found = true;
-                }
-            } else if ( childCount.hasOwnProperty(key) ) {
-                var newChild = this.validateState(children[key], state[key], shouldUpdate); 
-                if ( !newChild.error ) {
-                    childCount[key].found = true;
-                    if ( shouldUpdate ) {
-                        state[key] = newChild.value;
-                    }
-                } else {
-                    error =  newChild.error;
-                }
-            } else if ( collectionCount.hasOwnProperty(key) ) {
-                var newCollection = this.validateStateCollection( children[key], state[key], shouldUpdate );
-                if ( newCollection.error ) {
-                    error = newCollection.error;
-                } else {
-                    if ( shouldUpdate ) {
-                        state[key] = newCollection.value;
-                    }
-                    collectionCount[key].found = true;
-                }
-            } else if ( collectionKeyCount.name == key ) {
+            } else if ( key in propertyCount ) {
+                result = checkProperty(state, modelName, key, propertyCount, error);
+            } else if ( key in childCount ) {
+                result = checkChild(state, key, children, childCount, shouldUpdate, error, validateState);
+            } else if ( key in collectionKeyCount) {
                 collectionKeyCount.found = true;
+            } else if ( model.isCollection() ) {
+                result = checkItem(state, key, model, modelName, shouldUpdate, error, validateState);
             } else {
-                error= 'Did not expect to find a property named '+modelName+'.'+key+', but did.';
+                result = wrapResult('Did not expect to find a property named '+modelName+'.'+key+', but did.', null);
+            }
+
+            if ( result.error ) {
+                error = result.error;
+            } else {
+                state = result.value;
             }
         });
 
-        Object.keys(collectionCount).forEach( (key) => {
-            if ( !error && !collectionCount[key].found ) {
-                error = 'Expected to find a collection named '+modelName+'.'+key+', but did not.';
-            }
-        });
-
-        Object.keys(childCount).forEach( (key) => {
-            if ( !error && !childCount[key].found ) {
-                error = 'Expected to find a child named '+modelName+'.'+key+', but did not.';
-            }
-        });
-
-        Object.keys(propertyCount).forEach( (key) => {
-            if ( !error && !propertyCount[key].found ) {
-                error = 'Expected to find a property named '+modelName+'.'+key+', but did not.';
-            }
-        });
+        error = checkCount(modelName, childCount, 'child', error);
+        error = checkCount(modelName, propertyCount, 'property', error);
+        // error = checkCount(modelName, collectionKeyCount, 'collection key', error);
 
         return wrapResult( error, state);
+}
+
+function StateValidator()
+{
+    this.validateStateCollection = function(model, state, shouldUpdate, hasCopied) {
+        var collectionModel = null;
+
+        if ( model.isCollection() == false ) {
+            collectionModel = new CollectionCreator(model, model.name).finaliseModel();
+        }
+
+        // if( model.isCollection() == false ) {
+        //     error = 'Expected the model "'+model.name+'" to be a collection, but was not.';
+        //     return wrapResult( error, null);
+        // }
+
+        return validateState(collectionModel, state, shouldUpdate, hasCopied);
+    };
+
+    this.validateState = function(model, state, shouldUpdate, hasCopied) {
+        return validateState(model, state, shouldUpdate, hasCopied);
     };
 }
 

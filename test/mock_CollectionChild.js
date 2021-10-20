@@ -11,8 +11,12 @@ mockChildCreator.addAction('NullAction', function(state){
     return state;
 });
 mockChildCreator.addAction('IncrementAction', function(state){
+    console.log('MockCollectionChild: IncrementAction');
+    console.log(state);
     var newState = Object.assign({},state);
     newState.NumberProperty++;
+    console.log('After: ');
+    console.log(newState);
     return newState;
 });
 mockChildCreator.addRequest('CollectionChildRequest', function(state){

@@ -71,7 +71,7 @@ describe('StateValidator: A class used for asserting that a given state object f
             delete state['MockCollectionChild[]'];
 
             var result = StateValidator.validateState( MockParent, state );
-            expect(result.error).toEqual( 'Expected to find a collection named MockParent.MockCollectionChild[], but did not.');
+            expect(result.error).toEqual( 'Expected to find a child named MockParent.MockCollectionChild[], but did not.');
             expect(result.value).toBeNull();
         });
         it('Should return an error when there is an extra property.', function() {
@@ -100,7 +100,7 @@ describe('StateValidator: A class used for asserting that a given state object f
             delete state.MockChild['MockNestedChild[]'];
 
             var result = StateValidator.validateState( MockParent, state );
-            expect(result.error).toEqual( 'Expected to find a collection named MockChild.MockNestedChild[], but did not.');
+            expect(result.error).toEqual( 'Expected to find a child named MockChild.MockNestedChild[], but did not.');
             expect(result.value).toBeNull();
         });
         it('Should return an error when there is an extra property on a child.', function() {
@@ -134,7 +134,7 @@ describe('StateValidator: A class used for asserting that a given state object f
 
             var result = StateValidator.validateState( MockParent, state );
             expect(result.error).toEqual( 
-                'Expected to find a collection named MockCollectionChild[0].MockNestedChild[], but did not.'
+                'Expected to find a child named MockCollectionChild[0].MockNestedChild[], but did not.'
             );
             expect(result.value).toBeNull();
         });
@@ -209,7 +209,7 @@ describe('StateValidator: A class used for asserting that a given state object f
 
                 var result = StateValidator.validateStateCollection( MockCollectionChild, state );
                 expect(result.error).toEqual( 
-                    'Expected to find a collection named MockCollectionChild[0].MockNestedChild[], but did not.'
+                    'Expected to find a child named MockCollectionChild[0].MockNestedChild[], but did not.'
                 );
                 expect(result.value).toBeNull();
             });

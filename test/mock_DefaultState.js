@@ -97,7 +97,7 @@ module.exports = function(version) {
                     }
                 }
             },
-            'MockOtherCollectionChild[]': {
+            'OtherCollectionChild[]': {
                 0: {
                     'version': 1,
                     'id': 0,

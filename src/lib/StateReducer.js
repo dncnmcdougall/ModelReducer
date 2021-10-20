@@ -41,7 +41,7 @@ function StateReducer() {
                 expansionKey = id;
                 childState = state[id];
                 childArgs = args.slice(1);
-                newChildState = collectedChildActions[actionParts[1]](childState, ...childArgs);
+                newChildState = collectedChildActions[actionName](childState, ...childArgs);
             } else if ( isCollection ) {
                 throw new Error('Looked for action "'+actionName+'" or item "'+id+
                     '" on '+modelName+', but did not find either.');
@@ -79,7 +79,7 @@ function StateReducer() {
                 return state;
             } else {
                 let merger = {};
-                merger[expansionKey] = childState;
+                merger[expansionKey] = newChildState;
                 return Object.assign({}, state, merger);
             }
         } else {
